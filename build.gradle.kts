@@ -23,6 +23,10 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.55.0")
+    implementation("org.jetbrains.exposed:exposed-core:0.55.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.55.0") // Для JDBC
+    implementation("org.postgresql:postgresql:42.7.2")
 }
 
 compose.desktop {
