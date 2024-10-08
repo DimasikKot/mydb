@@ -15,6 +15,9 @@ repositories {
     google()
 }
 
+val exposedVersion: String by project
+val postgresDriverVersion: String by project
+
 dependencies {
     // Note, if you develop a library, you should use compose.desktop.common.
     // compose.desktop.currentOs should be used in launcher-sourceSet
@@ -23,10 +26,16 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:0.55.0")
-    implementation("org.jetbrains.exposed:exposed-core:0.55.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.55.0") // Для JDBC
-    implementation("org.postgresql:postgresql:42.7.2")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation("org.postgresql:postgresql:$postgresDriverVersion")
 }
 
 compose.desktop {
