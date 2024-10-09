@@ -8,8 +8,12 @@ import mainWindow.Page1
 import mainWindow.Page2
 import mainWindow.Page3
 import mainWindow.TopBar
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 import viewModels.MainViewModel
 import viewModels.NavigationViewModel
+import java.sql.Connection
+import java.sql.DriverManager
 
 @Composable
 fun App(mainVM: MainViewModel) {
