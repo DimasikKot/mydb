@@ -1,4 +1,4 @@
-package mainWindow
+package composable.pages.app
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.BottomAppBar
@@ -12,7 +12,7 @@ import androidx.compose.material.icons.filled.Sms
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import viewModels.NavigationViewModel
+import data.viewModels.NavigationViewModel
 
 @Composable
 fun TopBar(

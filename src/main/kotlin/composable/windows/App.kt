@@ -1,23 +1,18 @@
-import ui.theme.MainTheme
+package composable.windows
+
+import theme.MainTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import mainWindow.Page1
-import mainWindow.Page2
-import mainWindow.Page3
-import mainWindow.TopBar
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
-import viewModels.MainViewModel
-import viewModels.NavigationViewModel
-import java.sql.Connection
-import java.sql.DriverManager
+import composable.pages.app.*
+import data.viewModels.MainViewModel
+import data.viewModels.NavigationViewModel
 
 @Composable
 fun App(mainVM: MainViewModel) {
-    MainTheme(mainVM.settingsVM.currentTheme) {
+    MainTheme(mainVM.setVM.currentTheme) {
         val navVM = remember { NavigationViewModel() }
         Scaffold(
             topBar = {
@@ -26,8 +21,8 @@ fun App(mainVM: MainViewModel) {
         ) {
             Box(modifier = Modifier.padding(it)) {
                 when (navVM.currentPage) {
-                    3 -> Page3(mainVM)
                     2 -> Page2(mainVM)
+                    3 -> AppSettings(mainVM)
                     else -> Page1(mainVM)
                 }
             }

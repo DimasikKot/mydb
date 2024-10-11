@@ -1,7 +1,7 @@
-package viewModels
+package data.viewModels
 
 import androidx.lifecycle.ViewModel
-import data.properties.IntDB
+import data.db.IntDB
 
 class SettingsViewModel: ViewModel() {
     var currentTheme by IntDB("theme", 0)
