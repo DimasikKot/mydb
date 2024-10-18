@@ -1,6 +1,5 @@
-package composable.db
+package composable.pages.app
 
-import DatabaseOff
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,7 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import composable.db.DbType
+import composable.db.DbTypes
 import composable.ui.UiButton
+import icons.DatabaseOff
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -21,7 +23,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun Types() {
+fun UiTypes() {
     Column {
         val allTypes = remember { mutableStateListOf<DbType>() }
         var isCreate by remember { mutableStateOf(false) }
@@ -170,10 +172,10 @@ private fun ListTypes(allTypes: MutableList<DbType>) {
         }
         item {
             Row {
-                var newId by remember { mutableStateOf("AUTO") }
+                var newId by remember { mutableStateOf("") }
                 var newName by remember { mutableStateOf("") }
                 UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
-                    if (newId == "AUTO") {
+                    if (newId == "") {
                         try {
                             insertType(newName)
                             allTypes.add(DbType(0, newName))
@@ -194,6 +196,7 @@ private fun ListTypes(allTypes: MutableList<DbType>) {
                         TextField(
                             newId,
                             { newId = it },
+                            label = { Text(if (newId == "") "AUTO" else "New ID")},
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                         )
                         TextField(

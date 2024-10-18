@@ -1,4 +1,4 @@
-package composable.db
+package composable.pages.app
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -28,19 +28,19 @@ fun TablesBar(navVM: NavigationViewModel, modifier: Modifier = Modifier.width(20
                 modifier = Modifier.weight(1f).fillMaxSize()
             )
             NavigationRailItem(
-                icon = { UiTab(Icons.Default.People, "Сотрудники", navVM.currentPage == 3) },
+                icon = { UiTab(Icons.Default.Newspaper, "Строки", navVM.currentPage == 3) },
                 selected = navVM.currentPage == 3,
                 onClick = { navVM.currentPage = 3 },
                 modifier = Modifier.weight(1f).fillMaxSize()
             )
             NavigationRailItem(
-                icon = { UiTab(Icons.Default.Groups, "Отделы", navVM.currentPage == 4) },
+                icon = { UiTab(Icons.Default.People, "Сотрудники", navVM.currentPage == 4) },
                 selected = navVM.currentPage == 4,
                 onClick = { navVM.currentPage = 4 },
                 modifier = Modifier.weight(1f).fillMaxSize()
             )
             NavigationRailItem(
-                icon = { UiTab(Icons.Default.Newspaper, "Учёт", navVM.currentPage == 5) },
+                icon = { UiTab(Icons.Default.Groups, "Отделы", navVM.currentPage == 5) },
                 selected = navVM.currentPage == 5,
                 onClick = { navVM.currentPage = 5 },
                 modifier = Modifier.weight(1f).fillMaxSize()

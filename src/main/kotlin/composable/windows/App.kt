@@ -24,7 +24,7 @@ fun App(mainVM: MainViewModel) {
                 Crossfade(navVM.currentPage) { currentPage ->
                     when (currentPage) {
                         2 -> AppSettings(mainVM)
-                        else -> AppTables()
+                        else -> AppTables(mainVM)
                     }
                 }
             }
