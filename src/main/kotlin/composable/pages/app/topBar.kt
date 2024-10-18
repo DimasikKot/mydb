@@ -1,17 +1,15 @@
 package composable.pages.app
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Sms
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import composable.ui.UiTab
 import data.viewModels.NavigationViewModel
 
 @Composable
@@ -19,27 +17,19 @@ fun TopBar(
     navVM: NavigationViewModel,
     unit1: () -> Unit = { navVM.currentPage = 1 },
     unit2: () -> Unit = { navVM.currentPage = 2 },
-    unit3: () -> Unit = { navVM.currentPage = 3 },
     modifier: Modifier = Modifier.height(60.dp)
 ) {
-    BottomAppBar(modifier = modifier) {
+    BottomAppBar(modifier = modifier.fillMaxSize()) {
         BottomNavigationItem(
-            icon = { Icon(imageVector = Icons.Default.Face, toString(), modifier = Modifier.weight(1f)) },
-            label = { Text("Face") },
+            icon = { UiTab(Icons.Default.TableRows, "Таблицы", navVM.currentPage == 1) },
             selected = navVM.currentPage == 1,
             onClick = unit1
         )
         BottomNavigationItem(
-            icon = { Icon(imageVector = Icons.Default.Sms, toString(), modifier = Modifier.weight(1f)) },
-            label = { Text("Sms") },
+            icon = { UiTab(Icons.Default.Settings, "Настройки", navVM.currentPage == 2) },
+            //label = { Text("Натсройки") },
             selected = navVM.currentPage == 2,
             onClick = unit2
-        )
-        BottomNavigationItem(
-            icon = { Icon(imageVector = Icons.Default.Settings, toString(), modifier = Modifier.weight(1f)) },
-            label = { Text("Settings") },
-            selected = navVM.currentPage == 3,
-            onClick = unit3
         )
     }
 }

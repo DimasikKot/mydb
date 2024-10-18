@@ -1,5 +1,6 @@
 package composable.windows
 
+import androidx.compose.animation.Crossfade
 import theme.MainTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -20,10 +21,11 @@ fun App(mainVM: MainViewModel) {
             }
         ) {
             Box(modifier = Modifier.padding(it)) {
-                when (navVM.currentPage) {
-                    2 -> Page2(mainVM)
-                    3 -> AppSettings(mainVM)
-                    else -> Page1(mainVM)
+                Crossfade(navVM.currentPage) { currentPage ->
+                    when (currentPage) {
+                        2 -> AppSettings(mainVM)
+                        else -> AppTables()
+                    }
                 }
             }
         }
