@@ -15,7 +15,7 @@ fun main() = application {
     val mainVM = remember { MainViewModel() }
 
     if (mainVM.winVM.app) {
-        val windowState = rememberWindowState(placement = WindowPlacement.Maximized )
+        val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = { mainVM.winVM.app = false },
             title = "My database app",
@@ -28,7 +28,10 @@ fun main() = application {
     if (mainVM.winVM.report) {
         val windowState = rememberWindowState()
         Window(
-            onCloseRequest = { mainVM.winVM.report = false },
+            onCloseRequest = {
+                mainVM.winVM.report = false
+                mainVM.winVM.currentDevice = 0
+            },
             title = "Report Device",
             state = windowState
         ) {

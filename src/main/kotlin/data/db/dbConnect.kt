@@ -1,12 +1,6 @@
 package data.db
 
-import composable.db.DbDevices
-import composable.db.DbEmployees
-import composable.db.DbGroups
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-
 //import java.sql.Connection
 //import java.sql.DriverManager
 
@@ -27,15 +21,22 @@ fun dbConnect() {
         e.printStackTrace()
     }
 
-    transaction {
-        SchemaUtils.create(DbDevices)
-    }
-
 //    try {
 //        Class.forName(driver)
 //        val connection: Connection = DriverManager.getConnection(url, user, password)
-//        println("Connected to the database!")
-//        // Ваш код работы с базой данных здесь
+//
+//        val resultSet = connection.createStatement().executeQuery(
+//            """
+//                SELECT device_id, date, employee_id
+//                FROM dbstrings
+//                WHERE dbstrings.device_id = 11
+//                ORDER BY date
+//            """
+//        )
+//
+//        while (resultSet.next()) {
+//            //Что делать с элементами
+//        }
 //    } catch (e: Exception) {
 //        e.printStackTrace()
 //    }

@@ -287,6 +287,6 @@ private fun insertEmployee(newName: String, newGroupId: Int) {
 
 private fun deleteEmployee(id: Int) {
     transaction {
-        DbEmployees.deleteWhere { DbDevices.id eq id }
+        DbEmployees.deleteWhere { DbEmployees.id.eq(id) }
     }
 }

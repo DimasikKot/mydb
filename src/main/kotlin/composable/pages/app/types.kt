@@ -230,6 +230,6 @@ private fun insertType(newName: String) {
 
 private fun deleteType(id: Int) {
     transaction {
-        DbTypes.deleteWhere { DbTypes.id eq id }
+        DbTypes.deleteWhere { DbTypes.id.eq(id) }
     }
 }

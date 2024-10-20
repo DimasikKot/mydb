@@ -6,6 +6,6 @@ import data.db.IntDS
 
 class WindowsViewModel : ViewModel() {
     var app by BooleanDS(true)
-    var report by BooleanDS(true)
-    var currentDevice by IntDS(1)
+    var report by BooleanDS(false)
+    var currentDevice by IntDS(0)
 }

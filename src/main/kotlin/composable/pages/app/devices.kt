@@ -278,8 +278,13 @@ private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel
                                 modifier = Modifier
                                     .padding(start = 10.dp).size(35.dp)
                                     .clickable {
-                                        mainVM.winVM.report = true
-                                        mainVM.winVM.currentDevice = it.id
+                                        if (mainVM.winVM.report) {
+                                            mainVM.winVM.report = false
+                                            mainVM.winVM.currentDevice = 0
+                                        } else {
+                                            mainVM.winVM.report = true
+                                            mainVM.winVM.currentDevice = it.id
+                                        }
                                     }
                             )
                         }
@@ -379,6 +384,6 @@ private fun insertDevice(newName: String, newDate: String, newPrice: Int, newTyp
 
 private fun deleteDevice(id: Int) {
     transaction {
-        DbDevices.deleteWhere { DbDevices.id eq id }
+        DbDevices.deleteWhere { DbDevices.id.eq(id) }
     }
 }

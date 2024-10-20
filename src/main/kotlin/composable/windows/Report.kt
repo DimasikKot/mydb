@@ -9,36 +9,86 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.db.DbString
-import composable.db.DbStrings
+import composable.db.*
 import data.viewModels.MainViewModel
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import theme.MainTheme
 
 @Composable
 fun Report(mainVM: MainViewModel) {
-    val reportDevice = ReportDevice(11, "Lenovo...", 1, "Laptop", "22.08.2023", 44000)
+    var reportDevice = ReportDevice(0, "", 0, "", "", 0)
     val allReportStrings = remember { mutableStateListOf<ReportString>() }
-//    var isCreate by remember { mutableStateOf(false) }
-//    if (!isCreate) {
-//        isCreate = true
-//        allReportStrings.clear()
-//        transaction {
-//            DbStrings.selectAll().forEach {
-//                allReportStrings.add(
-//                    ReportString(
-//                        it[DbStrings.id],
-//                        it[DbStrings.deviceId],
-//                        it[DbStrings.date],
-//                        it[DbStrings.employeeId]
-//                    )
-//                )
-//            }
-//        }
-//        allStrings.sortBy { it.id }
-//    }
+    var isCreate by remember { mutableStateOf(false) }
+    if (!isCreate) {
+        isCreate = true
+
+        allReportStrings.clear()
+        var stringNumber by remember { mutableIntStateOf(0) }
+        transaction {
+            try {
+                DbDevices
+                    .select(DbDevices.date, DbDevices.name, DbDevices.typeId, DbDevices.price)
+                    .where(DbDevices.id.eq(mainVM.winVM.currentDevice))
+                    .forEach { device ->
+                        val typeId = device[DbDevices.typeId]
+                        var typeName = ""
+                        DbTypes
+                            .select(DbTypes.name)
+                            .where(DbTypes.id.eq(typeId))
+                            .forEach {
+                                typeName = it[DbTypes.name]
+                            }
+                        reportDevice = ReportDevice(
+                            mainVM.winVM.currentDevice,
+                            device[DbDevices.name],
+                            typeId,
+                            typeName,
+                            device[DbDevices.date],
+                            device[DbDevices.price]
+                        )
+                    }
+
+
+                DbStrings
+                    .select(DbStrings.date, DbStrings.employeeId)
+                    .where(DbStrings.deviceId.eq(mainVM.winVM.currentDevice))
+                    .orderBy(DbStrings.date)
+                    .forEach { string ->
+                        stringNumber += 1
+                        val employeeID = string[DbStrings.employeeId]
+                        var employeeName = ""
+                        var groupId = 0
+                        DbEmployees
+                            .select(DbEmployees.name, DbEmployees.groupId)
+                            .where(DbEmployees.id.eq(employeeID))
+                            .forEach {
+                                employeeName = it[DbEmployees.name]
+                                groupId = it[DbEmployees.groupId]
+                            }
+                        var groupName = ""
+                        DbGroups
+                            .select(DbGroups.name)
+                            .where(DbGroups.id.eq(groupId))
+                            .forEach {
+                                groupName = it[DbGroups.name]
+                            }
+                        allReportStrings.add(
+                            ReportString(
+                                stringNumber,
+                                string[DbStrings.date],
+                                employeeID,
+                                employeeName,
+                                groupId,
+                                groupName
+                            )
+                        )
+                    }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
     MainTheme(mainVM.setVM.currentTheme) {
         Scaffold {
             Card(elevation = 5.dp, modifier = Modifier.padding(10.dp)) {
@@ -53,20 +103,22 @@ fun Report(mainVM: MainViewModel) {
 }
 
 @Composable
-private fun UiTabListReportStrings(allReportStrings: MutableList<ReportString>) {}
+private fun UiTabListReportStrings(allReportStrings: MutableList<ReportString>) {
+}
 
 @Composable
 private fun UiListReportStrings(allReportStrings: MutableList<ReportString>) {
     Card(
-        elevation = 25.dp
+        elevation = 25.dp,
+        modifier = Modifier.padding(top = 10.dp)
     ) {
         LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
             items(allReportStrings) {
-                Row {
+                Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
                     Text(
                         it.stringNumber.toString(),
                         style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Text(
                         it.date,
@@ -95,7 +147,8 @@ private fun UiListReportStrings(allReportStrings: MutableList<ReportString>) {
                     )
                 }
                 Spacer(
-                    Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
+                    Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp)
+                        .border(1.dp, MaterialTheme.colors.background)
                 )
             }
             item {
@@ -108,7 +161,8 @@ private fun UiListReportStrings(allReportStrings: MutableList<ReportString>) {
 @Composable
 private fun UiReportDevice(reportDevice: ReportDevice) {
     Card(
-        elevation = 25.dp
+        elevation = 25.dp,
+        modifier = Modifier.padding(top = 10.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Row {
@@ -216,6 +270,6 @@ private data class ReportString(
     val date: String,
     val employeeID: Int,
     val employeeName: String,
-    val groupId: Int,
-    val groupName: String,
+    var groupId: Int,
+    var groupName: String,
 )

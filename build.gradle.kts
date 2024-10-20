@@ -33,7 +33,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-money:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresDriverVersion")
 }
@@ -45,11 +44,11 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "mydb"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.1"
             windows {
-                packageVersion = "1.0.0"
-                msiPackageVersion = "1.0.0"
-                exePackageVersion = "1.0.0"
+                packageVersion = "1.0.1"
+                msiPackageVersion = "1.0.1"
+                exePackageVersion = "1.0.1"
             }
         }
     }

@@ -230,6 +230,6 @@ private fun insertGroup(newName: String) {
 
 private fun deleteGroup(id: Int) {
     transaction {
-        DbGroups.deleteWhere { DbGroups.id eq id }
+        DbGroups.deleteWhere { DbGroups.id.eq(id) }
     }
 }
