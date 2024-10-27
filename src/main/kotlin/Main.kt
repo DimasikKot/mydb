@@ -1,5 +1,4 @@
 import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
@@ -17,7 +16,7 @@ fun main() = application {
     if (mainVM.winVM.app) {
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
-            onCloseRequest = { mainVM.winVM.app = false },
+            onCloseRequest = ::exitApplication,
             title = "My database app",
             state = windowState
         ) {
@@ -38,9 +37,4 @@ fun main() = application {
             Report(mainVM)
         }
     }
-
-//    if (!mainVM.windowVM.main and !mainVM.windowVM.two) {
-//        ::exitApplication
-//    }
-
 }

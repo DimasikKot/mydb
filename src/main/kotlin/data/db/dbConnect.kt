@@ -1,7 +1,7 @@
 package data.db
 
 import org.jetbrains.exposed.sql.Database
-//import java.sql.Connection
+
 //import java.sql.DriverManager
 
 fun dbConnect() {
