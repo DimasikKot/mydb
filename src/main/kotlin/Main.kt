@@ -3,10 +3,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import data.dbConnect
 import data.viewModels.MainViewModel
-import data.db.dbConnect
-import composable.windows.App
-import composable.windows.Report
+import windows.App
+import windows.Report
 
 fun main() = application {
 

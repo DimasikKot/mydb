@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import composable.app.tables.*
 import data.viewModels.MainViewModel
 import data.viewModels.NavigationViewModel
 
@@ -13,7 +14,7 @@ import data.viewModels.NavigationViewModel
 fun AppTables(mainVM: MainViewModel) {
     val navVM = remember { NavigationViewModel() }
     Row {
-        TablesBar(navVM)
+        AppTablesBar(navVM)
         CurrentTable(navVM, mainVM)
     }
 }
@@ -27,11 +28,11 @@ private fun CurrentTable(
         Box(modifier = Modifier.padding(10.dp)) {
             Crossfade(navVM.currentPage) { currentPage ->
                 when (currentPage) {
-                    2 -> UiDevices(mainVM)
-                    3 -> UiStrings()
-                    4 -> UiEmployees()
-                    5 -> UiGroups()
-                    else -> UiTypes()
+                    2 -> AppTablesDevices(mainVM)
+                    3 -> AppTablesStrings()
+                    4 -> AppTablesEmployees()
+                    5 -> AppTablesGroups()
+                    else -> AppTablesTypes()
                 }
             }
         }

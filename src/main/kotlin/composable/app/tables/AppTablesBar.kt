@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app.tables
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -12,7 +12,7 @@ import composable.ui.UiTab
 import data.viewModels.NavigationViewModel
 
 @Composable
-fun TablesBar(navVM: NavigationViewModel, modifier: Modifier = Modifier.width(200.dp)) {
+fun AppTablesBar(navVM: NavigationViewModel, modifier: Modifier = Modifier.width(200.dp)) {
     Card(elevation = 5.dp, modifier = modifier.padding(10.dp)) {
         Column(modifier = Modifier.fillMaxSize().padding(5.dp)) {
             NavigationRailItem(

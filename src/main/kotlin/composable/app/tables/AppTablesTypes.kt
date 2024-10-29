@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app.tables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,10 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.db.DbType
-import composable.db.DbTypes
 import composable.ui.UiButton
-import icons.DatabaseOff
+import composable.icons.DatabaseOff
+import data.TypeFromTable
+import data.TypesTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -23,28 +23,28 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun UiTypes() {
+fun AppTablesTypes() {
     Column {
-        val allTypes = remember { mutableStateListOf<DbType>() }
+        val listTypes = remember { mutableStateListOf<TypeFromTable>() }
         var isCreate by remember { mutableStateOf(false) }
         if (!isCreate) {
             isCreate = true
-            allTypes.clear()
+            listTypes.clear()
             transaction {
-                DbTypes.selectAll().forEach { allTypes.add(DbType(it[DbTypes.id], it[DbTypes.name])) }
+                TypesTable.selectAll().forEach { listTypes.add(TypeFromTable(it[TypesTable.id], it[TypesTable.name])) }
             }
-            allTypes.sortBy { it.id }
+            listTypes.sortBy { it.id }
         }
         Row {
             UiButton(
-                if (allTypes.size == 0) DatabaseOff else Icons.Default.Update,
+                if (listTypes.size == 0) DatabaseOff else Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                allTypes.clear()
+                listTypes.clear()
                 transaction {
-                    DbTypes.selectAll().forEach { allTypes.add(DbType(it[DbTypes.id], it[DbTypes.name])) }
+                    TypesTable.selectAll().forEach { listTypes.add(TypeFromTable(it[TypesTable.id], it[TypesTable.name])) }
                 }
-                allTypes.sortBy { it.id }
+                listTypes.sortBy { it.id }
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 Card(
@@ -80,10 +80,10 @@ fun UiTypes() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allTypes.sortByDescending { it.id }
+                                            listTypes.sortByDescending { it.id }
                                         } else {
                                             descending = true
-                                            allTypes.sortBy { it.id }
+                                            listTypes.sortBy { it.id }
                                         }
                                     }
                             )
@@ -102,10 +102,10 @@ fun UiTypes() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allTypes.sortByDescending { it.name }
+                                            listTypes.sortByDescending { it.name }
                                         } else {
                                             descending = true
-                                            allTypes.sortBy { it.name }
+                                            listTypes.sortBy { it.name }
                                         }
                                     }
                             )
@@ -119,14 +119,14 @@ fun UiTypes() {
                 }
             }
         }
-        ListTypes(allTypes)
+        ListTypes(listTypes)
     }
 }
 
 @Composable
-private fun ListTypes(allTypes: MutableList<DbType>) {
+private fun ListTypes(listTypes: MutableList<TypeFromTable>) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(allTypes) {
+        items(listTypes) {
             Row {
                 var canUpdate by remember { mutableStateOf(true) }
                 var canDelete by remember { mutableStateOf(true) }
@@ -148,7 +148,7 @@ private fun ListTypes(allTypes: MutableList<DbType>) {
                 ) {
                     try {
                         deleteType(it.id)
-                        allTypes.remove(it)
+                        listTypes.remove(it)
                     } catch (e: Exception) {
                         canDelete = false
                         e.printStackTrace()
@@ -178,14 +178,14 @@ private fun ListTypes(allTypes: MutableList<DbType>) {
                     if (newId == "") {
                         try {
                             insertType(newName)
-                            allTypes.add(DbType(0, newName))
+                            listTypes.add(TypeFromTable(0, newName))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     } else {
                         try {
                             insertType(newId.toInt(), newName)
-                            allTypes.add(DbType(newId.toInt(), newName))
+                            listTypes.add(TypeFromTable(newId.toInt(), newName))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -213,7 +213,7 @@ private fun ListTypes(allTypes: MutableList<DbType>) {
 
 private fun insertType(newId: Int, newName: String) {
     transaction {
-        DbTypes.insert {
+        TypesTable.insert {
             it[id] = newId
             it[name] = newName
         }
@@ -222,7 +222,7 @@ private fun insertType(newId: Int, newName: String) {
 
 private fun insertType(newName: String) {
     transaction {
-        DbTypes.insert {
+        TypesTable.insert {
             it[name] = newName
         }
     }
@@ -230,6 +230,6 @@ private fun insertType(newName: String) {
 
 private fun deleteType(id: Int) {
     transaction {
-        DbTypes.deleteWhere { DbTypes.id.eq(id) }
+        TypesTable.deleteWhere { TypesTable.id.eq(id) }
     }
 }

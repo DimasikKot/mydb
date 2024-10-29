@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable

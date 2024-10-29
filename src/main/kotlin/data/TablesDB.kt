@@ -1,58 +1,58 @@
-package composable.db
+package data
 
 import org.jetbrains.exposed.sql.Table
 
-object DbTypes : Table() {
+object TypesTable : Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100).uniqueIndex()
 
     override val primaryKey = PrimaryKey(id, name = "PK_Types_ID")
 }
 
-data class DbType(val id: Int, val name: String)
+data class TypeFromTable(val id: Int, val name: String)
 
 
-object DbDevices : Table() {
+object DevicesTable : Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100)
     val date = varchar("date", 16)
     val price = integer("price")
-    val typeId = integer("type_id") references DbTypes.id
+    val typeId = integer("type_id") references TypesTable.id
 
     override val primaryKey = PrimaryKey(id, name = "PK_Devices_ID")
 }
 
-data class DbDevice(val id: Int, val name: String, val date: String, val price: Int, val typeId: Int)
+data class DeviceFromTable(val id: Int, val name: String, val date: String, val price: Int, val typeId: Int)
 
 
-object DbStrings : Table() {
+object StringsTable : Table() {
     val id = integer("id").autoIncrement()
-    val deviceId = integer("device_id") references DbDevices.id
+    val deviceId = integer("device_id") references DevicesTable.id
     val date = varchar("date", 16)
-    val employeeId = integer("employee_id") references DbEmployees.id
+    val employeeId = integer("employee_id") references EmployeesTable.id
 
     override val primaryKey = PrimaryKey(id, deviceId, name = "PK_Strings_ID")
 }
 
-data class DbString(val id: Int, val deviceId: Int, val date: String, val employeeId: Int)
+data class StringFromTable(val id: Int, val deviceId: Int, val date: String, val employeeId: Int)
 
 
-object DbEmployees : Table() {
+object EmployeesTable : Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100)
-    val groupId = integer("group_id") references DbGroups.id
+    val groupId = integer("group_id") references GroupsTable.id
 
     override val primaryKey = PrimaryKey(id, name = "PK_Employees_ID")
 }
 
-data class DbEmployee(val id: Int, val name: String, val groupId: Int)
+data class EmployeeFromTable(val id: Int, val name: String, val groupId: Int)
 
 
-object DbGroups : Table() {
+object GroupsTable : Table() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100).uniqueIndex()
 
     override val primaryKey = PrimaryKey(id, name = "PK_Groups_ID")
 }
 
-data class DbGroup(val id: Int, val name: String)
+data class GroupFromTable(val id: Int, val name: String)

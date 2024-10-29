@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -13,7 +13,7 @@ import composable.ui.UiTab
 import data.viewModels.NavigationViewModel
 
 @Composable
-fun TopBar(
+fun AppBar(
     navVM: NavigationViewModel,
     unit1: () -> Unit = { navVM.currentPage = 1 },
     unit2: () -> Unit = { navVM.currentPage = 2 },

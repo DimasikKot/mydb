@@ -1,6 +1,8 @@
-package data.db
+package data
 
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 
 //import java.sql.DriverManager
 
@@ -20,6 +22,10 @@ fun dbConnect() {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+
+//    transaction {
+//        SchemaUtils.create(TypesTable, DevicesTable, StringsTable, EmployeesTable, GroupsTable)
+//    }
 
 //    try {
 //        Class.forName(driver)

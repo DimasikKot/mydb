@@ -1,4 +1,4 @@
-package icons
+package composable.icons
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

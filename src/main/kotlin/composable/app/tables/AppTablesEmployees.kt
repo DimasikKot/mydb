@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app.tables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,13 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.db.DbDevice
-import composable.db.DbDevices
 import composable.ui.UiButton
-import data.viewModels.MainViewModel
-import icons.DatabaseOff
-import icons.ExportNotes
-import icons.IconWindow
+import composable.icons.DatabaseOff
+import data.EmployeeFromTable
+import data.EmployeesTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -26,48 +23,44 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun UiDevices(mainVM: MainViewModel) {
+fun AppTablesEmployees() {
     Column {
-        val allDevices = remember { mutableStateListOf<DbDevice>() }
+        val listEmployees = remember { mutableStateListOf<EmployeeFromTable>() }
         var isCreate by remember { mutableStateOf(false) }
         if (!isCreate) {
             isCreate = true
-            allDevices.clear()
+            listEmployees.clear()
             transaction {
-                DbDevices.selectAll().forEach {
-                    allDevices.add(
-                        DbDevice(
-                            it[DbDevices.id],
-                            it[DbDevices.name],
-                            it[DbDevices.date],
-                            it[DbDevices.price],
-                            it[DbDevices.typeId]
+                EmployeesTable.selectAll().forEach {
+                    listEmployees.add(
+                        EmployeeFromTable(
+                            it[EmployeesTable.id],
+                            it[EmployeesTable.name],
+                            it[EmployeesTable.groupId]
                         )
                     )
                 }
             }
-            allDevices.sortBy { it.id }
+            listEmployees.sortBy { it.id }
         }
         Row {
             UiButton(
-                if (allDevices.size == 0) DatabaseOff else Icons.Default.Update,
+                if (listEmployees.size == 0) DatabaseOff else Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                allDevices.clear()
+                listEmployees.clear()
                 transaction {
-                    DbDevices.selectAll().forEach {
-                        allDevices.add(
-                            DbDevice(
-                                it[DbDevices.id],
-                                it[DbDevices.name],
-                                it[DbDevices.date],
-                                it[DbDevices.price],
-                                it[DbDevices.typeId]
+                    EmployeesTable.selectAll().forEach {
+                        listEmployees.add(
+                            EmployeeFromTable(
+                                it[EmployeesTable.id],
+                                it[EmployeesTable.name],
+                                it[EmployeesTable.groupId]
                             )
                         )
                     }
                 }
-                allDevices.sortBy { it.id }
+                listEmployees.sortBy { it.id }
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 Card(
@@ -76,11 +69,11 @@ fun UiDevices(mainVM: MainViewModel) {
                 ) {
                     Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
                         Icon(
-                            Icons.Default.Devices, contentDescription = null,
+                            Icons.Default.People, contentDescription = null,
                             modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         )
                         Text(
-                            "Устройства",
+                            "Сотрудники",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
@@ -103,10 +96,10 @@ fun UiDevices(mainVM: MainViewModel) {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allDevices.sortByDescending { it.id }
+                                            listEmployees.sortByDescending { it.id }
                                         } else {
                                             descending = true
-                                            allDevices.sortBy { it.id }
+                                            listEmployees.sortBy { it.id }
                                         }
                                     }
                             )
@@ -125,10 +118,10 @@ fun UiDevices(mainVM: MainViewModel) {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allDevices.sortByDescending { it.name }
+                                            listEmployees.sortByDescending { it.name }
                                         } else {
                                             descending = true
-                                            allDevices.sortBy { it.name }
+                                            listEmployees.sortBy { it.name }
                                         }
                                     }
                             )
@@ -147,59 +140,15 @@ fun UiDevices(mainVM: MainViewModel) {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allDevices.sortByDescending { it.date }
+                                            listEmployees.sortByDescending { it.groupId }
                                         } else {
                                             descending = true
-                                            allDevices.sortBy { it.date }
+                                            listEmployees.sortBy { it.groupId }
                                         }
                                     }
                             )
                             Text(
-                                "Date",
-                                style = MaterialTheme.typography.h5,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
-                        Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                            var descending by remember { mutableStateOf(false) }
-                            Icon(
-                                if (descending) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                                contentDescription = null,
-                                modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                                    .clickable {
-                                        if (descending) {
-                                            descending = false
-                                            allDevices.sortByDescending { it.price }
-                                        } else {
-                                            descending = true
-                                            allDevices.sortBy { it.price }
-                                        }
-                                    }
-                            )
-                            Text(
-                                "Price",
-                                style = MaterialTheme.typography.h5,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
-                        Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                            var descending by remember { mutableStateOf(false) }
-                            Icon(
-                                if (descending) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                                contentDescription = null,
-                                modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                                    .clickable {
-                                        if (descending) {
-                                            descending = false
-                                            allDevices.sortByDescending { it.typeId }
-                                        } else {
-                                            descending = true
-                                            allDevices.sortBy { it.typeId }
-                                        }
-                                    }
-                            )
-                            Text(
-                                "TypeID",
+                                "GroupID",
                                 style = MaterialTheme.typography.h5,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
@@ -208,14 +157,14 @@ fun UiDevices(mainVM: MainViewModel) {
                 }
             }
         }
-        ListDevices(allDevices, mainVM)
+        ListDevices(listEmployees)
     }
 }
 
 @Composable
-private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel) {
+private fun ListDevices(listEmployees: MutableList<EmployeeFromTable>) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(allDevices) {
+        items(listEmployees) {
             Row {
                 var canUpdate by remember { mutableStateOf(true) }
                 var canDelete by remember { mutableStateOf(true) }
@@ -236,8 +185,8 @@ private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel
                         .padding(start = 10.dp).size(55.dp)
                 ) {
                     try {
-                        deleteDevice(it.id)
-                        allDevices.remove(it)
+                        deleteEmployee(it.id)
+                        listEmployees.remove(it)
                     } catch (e: Exception) {
                         canDelete = false
                         e.printStackTrace()
@@ -256,38 +205,10 @@ private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
                         Text(
-                            "${it.date} ",
+                            "${it.groupId} ",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
-                        Text(
-                            "${it.price} ",
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                        )
-                        Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
-                            Text(
-                                "${it.typeId} ",
-                                style = MaterialTheme.typography.h5,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Icon(
-                                if (mainVM.winVM.currentDevice == it.id && mainVM.winVM.report) IconWindow else ExportNotes,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .padding(start = 10.dp).size(35.dp)
-                                    .clickable {
-                                        if (mainVM.winVM.report) {
-                                            mainVM.winVM.report = false
-                                            mainVM.winVM.currentDevice = 0
-                                        } else {
-                                            mainVM.winVM.report = true
-                                            mainVM.winVM.currentDevice = it.id
-                                        }
-                                    }
-                            )
-                        }
                     }
                 }
             }
@@ -296,27 +217,23 @@ private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel
             Row {
                 var newId by remember { mutableStateOf("") }
                 var newName by remember { mutableStateOf("") }
-                var newDate by remember { mutableStateOf("") }
-                var newPrice by remember { mutableStateOf("") }
-                var newTypeId by remember { mutableStateOf("") }
+                var newGroupId by remember { mutableStateOf("") }
                 UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
                     if (newId == "") {
                         try {
-                            insertDevice(newName, newDate, newPrice.toInt(), newTypeId.toInt())
-                            allDevices.add(DbDevice(0, newName, newDate, newPrice.toInt(), newTypeId.toInt()))
+                            insertEmployee(newName, newGroupId.toInt())
+                            listEmployees.add(EmployeeFromTable(0, newName, newGroupId.toInt()))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     } else {
                         try {
-                            insertDevice(newId.toInt(), newName, newDate, newPrice.toInt(), newTypeId.toInt())
-                            allDevices.add(
-                                DbDevice(
+                            insertEmployee(newId.toInt(), newName, newGroupId.toInt())
+                            listEmployees.add(
+                                EmployeeFromTable(
                                     newId.toInt(),
                                     newName,
-                                    newDate,
-                                    newPrice.toInt(),
-                                    newTypeId.toInt()
+                                    newGroupId.toInt()
                                 )
                             )
                         } catch (e: Exception) {
@@ -338,18 +255,8 @@ private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
                         TextField(
-                            newDate,
-                            { newDate = it },
-                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                        )
-                        TextField(
-                            newPrice,
-                            { newPrice = it },
-                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                        )
-                        TextField(
-                            newTypeId,
-                            { newTypeId = it },
+                            newGroupId,
+                            { newGroupId = it },
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
                     }
@@ -359,31 +266,27 @@ private fun ListDevices(allDevices: MutableList<DbDevice>, mainVM: MainViewModel
     }
 }
 
-private fun insertDevice(newId: Int, newName: String, newDate: String, newPrice: Int, newTypeId: Int) {
+private fun insertEmployee(newId: Int, newName: String, newGroupId: Int) {
     transaction {
-        DbDevices.insert {
+        EmployeesTable.insert {
             it[id] = newId
             it[name] = newName
-            it[date] = newDate
-            it[price] = newPrice
-            it[typeId] = newTypeId
+            it[groupId] = newGroupId
         }
     }
 }
 
-private fun insertDevice(newName: String, newDate: String, newPrice: Int, newTypeId: Int) {
+private fun insertEmployee(newName: String, newGroupId: Int) {
     transaction {
-        DbDevices.insert {
+        EmployeesTable.insert {
             it[name] = newName
-            it[date] = newDate
-            it[price] = newPrice
-            it[typeId] = newTypeId
+            it[groupId] = newGroupId
         }
     }
 }
 
-private fun deleteDevice(id: Int) {
+private fun deleteEmployee(id: Int) {
     transaction {
-        DbDevices.deleteWhere { DbDevices.id.eq(id) }
+        EmployeesTable.deleteWhere { EmployeesTable.id.eq(id) }
     }
 }

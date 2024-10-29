@@ -1,4 +1,4 @@
-package data.db
+package data
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel

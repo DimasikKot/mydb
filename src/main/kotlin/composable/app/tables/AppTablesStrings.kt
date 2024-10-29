@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app.tables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,56 +12,55 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.db.DbDevices
-import composable.db.DbEmployee
-import composable.db.DbEmployees
 import composable.ui.UiButton
-import icons.DatabaseOff
+import composable.icons.DatabaseOff
+import data.StringFromTable
+import data.StringsTable
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun UiEmployees() {
+fun AppTablesStrings() {
     Column {
-        val allEmployees = remember { mutableStateListOf<DbEmployee>() }
+        val listStrings = remember { mutableStateListOf<StringFromTable>() }
         var isCreate by remember { mutableStateOf(false) }
         if (!isCreate) {
             isCreate = true
-            allEmployees.clear()
+            listStrings.clear()
             transaction {
-                DbEmployees.selectAll().forEach {
-                    allEmployees.add(
-                        DbEmployee(
-                            it[DbEmployees.id],
-                            it[DbEmployees.name],
-                            it[DbEmployees.groupId]
+                StringsTable.selectAll().forEach {
+                    listStrings.add(
+                        StringFromTable(
+                            it[StringsTable.id],
+                            it[StringsTable.deviceId],
+                            it[StringsTable.date],
+                            it[StringsTable.employeeId]
                         )
                     )
                 }
             }
-            allEmployees.sortBy { it.id }
+            listStrings.sortBy { it.id }
         }
         Row {
             UiButton(
-                if (allEmployees.size == 0) DatabaseOff else Icons.Default.Update,
+                if (listStrings.size == 0) DatabaseOff else Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                allEmployees.clear()
+                listStrings.clear()
                 transaction {
-                    DbEmployees.selectAll().forEach {
-                        allEmployees.add(
-                            DbEmployee(
-                                it[DbEmployees.id],
-                                it[DbEmployees.name],
-                                it[DbEmployees.groupId]
+                    StringsTable.selectAll().forEach {
+                        listStrings.add(
+                            StringFromTable(
+                                it[StringsTable.id],
+                                it[StringsTable.deviceId],
+                                it[StringsTable.date],
+                                it[StringsTable.employeeId]
                             )
                         )
                     }
                 }
-                allEmployees.sortBy { it.id }
+                listStrings.sortBy { it.id }
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 Card(
@@ -70,11 +69,11 @@ fun UiEmployees() {
                 ) {
                     Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
                         Icon(
-                            Icons.Default.People, contentDescription = null,
+                            Icons.Default.Newspaper, contentDescription = null,
                             modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         )
                         Text(
-                            "Сотрудники",
+                            "Строки",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
@@ -97,10 +96,10 @@ fun UiEmployees() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allEmployees.sortByDescending { it.id }
+                                            listStrings.sortByDescending { it.id }
                                         } else {
                                             descending = true
-                                            allEmployees.sortBy { it.id }
+                                            listStrings.sortBy { it.id }
                                         }
                                     }
                             )
@@ -119,15 +118,15 @@ fun UiEmployees() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allEmployees.sortByDescending { it.name }
+                                            listStrings.sortByDescending { it.deviceId }
                                         } else {
                                             descending = true
-                                            allEmployees.sortBy { it.name }
+                                            listStrings.sortBy { it.deviceId }
                                         }
                                     }
                             )
                             Text(
-                                "Name",
+                                "DeviceID",
                                 style = MaterialTheme.typography.h5,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
@@ -141,15 +140,37 @@ fun UiEmployees() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allEmployees.sortByDescending { it.groupId }
+                                            listStrings.sortByDescending { it.date }
                                         } else {
                                             descending = true
-                                            allEmployees.sortBy { it.groupId }
+                                            listStrings.sortBy { it.date }
                                         }
                                     }
                             )
                             Text(
-                                "GroupID",
+                                "Date",
+                                style = MaterialTheme.typography.h5,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                        }
+                        Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                            var descending by remember { mutableStateOf(false) }
+                            Icon(
+                                if (descending) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                                contentDescription = null,
+                                modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                                    .clickable {
+                                        if (descending) {
+                                            descending = false
+                                            listStrings.sortByDescending { it.employeeId }
+                                        } else {
+                                            descending = true
+                                            listStrings.sortBy { it.employeeId }
+                                        }
+                                    }
+                            )
+                            Text(
+                                "EmployeeID",
                                 style = MaterialTheme.typography.h5,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
@@ -158,14 +179,14 @@ fun UiEmployees() {
                 }
             }
         }
-        ListDevices(allEmployees)
+        ListGroups(listStrings)
     }
 }
 
 @Composable
-private fun ListDevices(allEmployees: MutableList<DbEmployee>) {
+private fun ListGroups(listStrings: MutableList<StringFromTable>) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(allEmployees) {
+        items(listStrings) {
             Row {
                 var canUpdate by remember { mutableStateOf(true) }
                 var canDelete by remember { mutableStateOf(true) }
@@ -186,8 +207,8 @@ private fun ListDevices(allEmployees: MutableList<DbEmployee>) {
                         .padding(start = 10.dp).size(55.dp)
                 ) {
                     try {
-                        deleteEmployee(it.id)
-                        allEmployees.remove(it)
+                        deleteString(it.id, it.deviceId)
+                        listStrings.remove(it)
                     } catch (e: Exception) {
                         canDelete = false
                         e.printStackTrace()
@@ -201,12 +222,17 @@ private fun ListDevices(allEmployees: MutableList<DbEmployee>) {
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                         )
                         Text(
-                            "${it.name} ",
+                            "${it.deviceId} ",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
                         Text(
-                            "${it.groupId} ",
+                            "${it.date} ",
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        )
+                        Text(
+                            "${it.employeeId} ",
                             style = MaterialTheme.typography.h5,
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
@@ -216,47 +242,48 @@ private fun ListDevices(allEmployees: MutableList<DbEmployee>) {
         }
         item {
             Row {
-                var newId by remember { mutableStateOf("AUTO") }
-                var newName by remember { mutableStateOf("") }
-                var newGroupId by remember { mutableStateOf("") }
+                var newId by remember { mutableStateOf("") }
+                var newDeviceId by remember { mutableStateOf("") }
+                var newDate by remember { mutableStateOf("") }
+                var newEmployeeID by remember { mutableStateOf("") }
                 UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
-                    if (newId == "AUTO") {
+                    if (newId == "") {
                         try {
-                            insertEmployee(newName, newGroupId.toInt())
-                            allEmployees.add(DbEmployee(0, newName, newGroupId.toInt()))
+                            insertString(newDeviceId.toInt(), newDate, newEmployeeID.toInt())
+                            listStrings.add(StringFromTable(0, newDeviceId.toInt(), newDate, newEmployeeID.toInt()))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     } else {
                         try {
-                            insertEmployee(newId.toInt(), newName, newGroupId.toInt())
-                            allEmployees.add(
-                                DbEmployee(
-                                    newId.toInt(),
-                                    newName,
-                                    newGroupId.toInt()
-                                )
-                            )
+                            insertString(newId.toInt(), newDeviceId.toInt(), newDate, newEmployeeID.toInt())
+                            listStrings.add(StringFromTable(newId.toInt(), newDeviceId.toInt(), newDate, newEmployeeID.toInt()))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
                 }
                 Card(elevation = 25.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
-                    Row(Modifier.heightIn(min = 60.dp).padding(10.dp)) {
+                    Row(Modifier.padding(10.dp)) {
                         TextField(
                             newId,
                             { newId = it },
+                            label = { Text(if (newId == "") "AUTO" else "New ID") },
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                         )
                         TextField(
-                            newName,
-                            { newName = it },
+                            newDeviceId,
+                            { newDeviceId = it },
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
                         TextField(
-                            newGroupId,
-                            { newGroupId = it },
+                            newDate,
+                            { newDate = it },
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        )
+                        TextField(
+                            newEmployeeID,
+                            { newEmployeeID = it },
                             modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                         )
                     }
@@ -266,27 +293,29 @@ private fun ListDevices(allEmployees: MutableList<DbEmployee>) {
     }
 }
 
-private fun insertEmployee(newId: Int, newName: String, newGroupId: Int) {
+private fun insertString(newId: Int, newDeviceId: Int, newDate: String, newEmployeeId: Int) {
     transaction {
-        DbEmployees.insert {
+        StringsTable.insert {
             it[id] = newId
-            it[name] = newName
-            it[groupId] = newGroupId
+            it[deviceId] = newDeviceId
+            it[date] = newDate
+            it[employeeId] = newEmployeeId
         }
     }
 }
 
-private fun insertEmployee(newName: String, newGroupId: Int) {
+private fun insertString(newDeviceId: Int, newDate: String, newEmployeeId: Int) {
     transaction {
-        DbEmployees.insert {
-            it[name] = newName
-            it[groupId] = newGroupId
+        StringsTable.insert {
+            it[deviceId] = newDeviceId
+            it[date] = newDate
+            it[employeeId] = newEmployeeId
         }
     }
 }
 
-private fun deleteEmployee(id: Int) {
+private fun deleteString(id: Int, deviceId: Int) {
     transaction {
-        DbEmployees.deleteWhere { DbEmployees.id.eq(id) }
+        StringsTable.deleteWhere { StringsTable.id.eq(id) and StringsTable.deviceId.eq(deviceId) }
     }
 }

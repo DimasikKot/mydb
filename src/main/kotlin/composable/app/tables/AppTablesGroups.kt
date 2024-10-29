@@ -1,4 +1,4 @@
-package composable.pages.app
+package composable.app.tables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,10 +12,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.db.DbGroup
-import composable.db.DbGroups
 import composable.ui.UiButton
-import icons.DatabaseOff
+import composable.icons.DatabaseOff
+import data.GroupFromTable
+import data.GroupsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -23,28 +23,28 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
-fun UiGroups() {
+fun AppTablesGroups() {
     Column {
-        val allGroups = remember { mutableStateListOf<DbGroup>() }
+        val listGroups = remember { mutableStateListOf<GroupFromTable>() }
         var isCreate by remember { mutableStateOf(false) }
         if (!isCreate) {
             isCreate = true
-            allGroups.clear()
+            listGroups.clear()
             transaction {
-                DbGroups.selectAll().forEach { allGroups.add(DbGroup(it[DbGroups.id], it[DbGroups.name])) }
+                GroupsTable.selectAll().forEach { listGroups.add(GroupFromTable(it[GroupsTable.id], it[GroupsTable.name])) }
             }
-            allGroups.sortBy { it.id }
+            listGroups.sortBy { it.id }
         }
         Row {
             UiButton(
-                if (allGroups.size == 0) DatabaseOff else Icons.Default.Update,
+                if (listGroups.size == 0) DatabaseOff else Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                allGroups.clear()
+                listGroups.clear()
                 transaction {
-                    DbGroups.selectAll().forEach { allGroups.add(DbGroup(it[DbGroups.id], it[DbGroups.name])) }
+                    GroupsTable.selectAll().forEach { listGroups.add(GroupFromTable(it[GroupsTable.id], it[GroupsTable.name])) }
                 }
-                allGroups.sortBy { it.id }
+                listGroups.sortBy { it.id }
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 Card(
@@ -80,10 +80,10 @@ fun UiGroups() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allGroups.sortByDescending { it.id }
+                                            listGroups.sortByDescending { it.id }
                                         } else {
                                             descending = true
-                                            allGroups.sortBy { it.id }
+                                            listGroups.sortBy { it.id }
                                         }
                                     }
                             )
@@ -102,10 +102,10 @@ fun UiGroups() {
                                     .clickable {
                                         if (descending) {
                                             descending = false
-                                            allGroups.sortByDescending { it.name }
+                                            listGroups.sortByDescending { it.name }
                                         } else {
                                             descending = true
-                                            allGroups.sortBy { it.name }
+                                            listGroups.sortBy { it.name }
                                         }
                                     }
                             )
@@ -119,14 +119,14 @@ fun UiGroups() {
                 }
             }
         }
-        ListGroups(allGroups)
+        ListGroups(listGroups)
     }
 }
 
 @Composable
-private fun ListGroups(allGroups: MutableList<DbGroup>) {
+private fun ListGroups(listGroups: MutableList<GroupFromTable>) {
     LazyColumn(modifier = Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(allGroups) {
+        items(listGroups) {
             Row {
                 var canUpdate by remember { mutableStateOf(true) }
                 var canDelete by remember { mutableStateOf(true) }
@@ -148,7 +148,7 @@ private fun ListGroups(allGroups: MutableList<DbGroup>) {
                 ) {
                     try {
                         deleteGroup(it.id)
-                        allGroups.remove(it)
+                        listGroups.remove(it)
                     } catch (e: Exception) {
                         canDelete = false
                         e.printStackTrace()
@@ -178,14 +178,14 @@ private fun ListGroups(allGroups: MutableList<DbGroup>) {
                     if (newId == "") {
                         try {
                             insertGroup(newName)
-                            allGroups.add(DbGroup(0, newName))
+                            listGroups.add(GroupFromTable(0, newName))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     } else {
                         try {
                             insertGroup(newId.toInt(), newName)
-                            allGroups.add(DbGroup(newId.toInt(), newName))
+                            listGroups.add(GroupFromTable(newId.toInt(), newName))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -213,7 +213,7 @@ private fun ListGroups(allGroups: MutableList<DbGroup>) {
 
 private fun insertGroup(newId: Int, newName: String) {
     transaction {
-        DbGroups.insert {
+        GroupsTable.insert {
             it[id] = newId
             it[name] = newName
         }
@@ -222,7 +222,7 @@ private fun insertGroup(newId: Int, newName: String) {
 
 private fun insertGroup(newName: String) {
     transaction {
-        DbGroups.insert {
+        GroupsTable.insert {
             it[name] = newName
         }
     }
@@ -230,6 +230,6 @@ private fun insertGroup(newName: String) {
 
 private fun deleteGroup(id: Int) {
     transaction {
-        DbGroups.deleteWhere { DbGroups.id.eq(id) }
+        GroupsTable.deleteWhere { GroupsTable.id.eq(id) }
     }
 }

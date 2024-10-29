@@ -1,4 +1,4 @@
-package composable.windows
+package windows
 
 import androidx.compose.animation.Crossfade
 import theme.MainTheme
@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import composable.pages.app.*
+import composable.app.AppBar
+import composable.app.AppSettings
+import composable.app.AppTables
 import data.viewModels.MainViewModel
 import data.viewModels.NavigationViewModel
 
@@ -15,11 +17,7 @@ import data.viewModels.NavigationViewModel
 fun App(mainVM: MainViewModel) {
     MainTheme(mainVM.setVM.currentTheme) {
         val navVM = remember { NavigationViewModel() }
-        Scaffold(
-            topBar = {
-                TopBar(navVM)
-            }
-        ) {
+        Scaffold(topBar = { AppBar(navVM) }) {
             Box(modifier = Modifier.padding(it)) {
                 Crossfade(navVM.currentPage) { currentPage ->
                     when (currentPage) {
