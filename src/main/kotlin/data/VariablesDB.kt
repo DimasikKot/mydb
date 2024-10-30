@@ -40,7 +40,7 @@ class BooleanDB(private val key: String, default: Boolean) {
 class IntDB(private val key: String, default: Int) {
     private var value by mutableIntStateOf(Preferences.userRoot().node(this::class.java.name).getInt(key, default))
     private fun countSave(value: Int) = Preferences.userRoot().node(this::class.java.name).putInt(key, value)
-    operator fun getValue(viewModel: ViewModel, property: KProperty<*>): Int = value
+    operator fun getValue(viewModel: ViewModel, property: KProperty<*>): Int = value.toInt()
     operator fun setValue(viewModel: ViewModel, property: KProperty<*>, newValue: Int) {
         value = newValue
         countSave(value)
@@ -49,6 +49,9 @@ class IntDB(private val key: String, default: Int) {
     operator fun setValue(nothing: Nothing?, property: KProperty<*>, newValue: Int) {
         value = newValue
         countSave(value)
+    }
+    fun toInt(): Int {
+        return value
     }
 }
 

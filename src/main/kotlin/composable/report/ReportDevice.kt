@@ -12,10 +12,13 @@ import androidx.compose.ui.unit.dp
 import windows.ReportDeviceFromDB
 
 @Composable
-fun ReportDevice(reportDevice: ReportDeviceFromDB) {
+fun ReportDevice(
+    reportDevice: ReportDeviceFromDB,
+    modifier: Modifier = Modifier,
+) {
     Card(
-        elevation = 25.dp,
-        modifier = Modifier.padding(top = 10.dp)
+        elevation = 10.dp,
+        modifier = modifier
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Row {

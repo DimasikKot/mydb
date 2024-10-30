@@ -14,14 +14,17 @@ import androidx.compose.ui.unit.dp
 import windows.ReportStringFromDB
 
 @Composable
-fun ReportList(allReportStrings: MutableList<ReportStringFromDB>) {
+fun ReportList(
+    listReportStrings: MutableList<ReportStringFromDB>,
+    modifier: Modifier = Modifier,
+) {
     Card(
-        elevation = 25.dp,
-        modifier = Modifier.padding(top = 10.dp)
+        elevation = 10.dp,
+        modifier = modifier
     ) {
-        LazyColumn(modifier = Modifier.padding(top = 10.dp)) {
-            items(allReportStrings) {
-                Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
+        LazyColumn(modifier = Modifier.padding(10.dp)) {
+            items(listReportStrings) {
+                Row {
                     Text(
                         it.stringNumber.toString(),
                         style = MaterialTheme.typography.h5,

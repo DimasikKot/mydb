@@ -1,4 +1,7 @@
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
@@ -10,8 +13,8 @@ import windows.Report
 
 fun main() = application {
 
-    dbConnect()
     val mainVM = remember { MainViewModel() }
+    dbConnect(mainVM)
 
     if (mainVM.winVM.app) {
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
@@ -29,12 +32,12 @@ fun main() = application {
         Window(
             onCloseRequest = {
                 mainVM.winVM.report = false
-                mainVM.winVM.currentDevice = 0
+                mainVM.winVM.reportCurrentDevice = 0
             },
             title = "Report Device",
             state = windowState
         ) {
-            Report(mainVM)
+            Report(mainVM, Modifier.padding(10.dp))
         }
     }
 }

@@ -1,18 +1,26 @@
 package data
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import org.jetbrains.exposed.sql.Table
 
-object TypesTable : Table() {
+object TypesTable : Table("types") {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100).uniqueIndex()
 
     override val primaryKey = PrimaryKey(id, name = "PK_Types_ID")
 }
 
-data class TypeFromTable(val id: Int, val name: String)
+data class TypeFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+)
 
 
-object DevicesTable : Table() {
+object DevicesTable : Table("devices") {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100)
     val date = varchar("date", 16)
@@ -22,10 +30,19 @@ object DevicesTable : Table() {
     override val primaryKey = PrimaryKey(id, name = "PK_Devices_ID")
 }
 
-data class DeviceFromTable(val id: Int, val name: String, val date: String, val price: Int, val typeId: Int)
+data class DeviceFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+    val date: String,
+    val price: Int,
+    val typeId: Int,
+)
 
 
-object StringsTable : Table() {
+object StringsTable : Table("strings") {
     val id = integer("id").autoIncrement()
     val deviceId = integer("device_id") references DevicesTable.id
     val date = varchar("date", 16)
@@ -37,7 +54,7 @@ object StringsTable : Table() {
 data class StringFromTable(val id: Int, val deviceId: Int, val date: String, val employeeId: Int)
 
 
-object EmployeesTable : Table() {
+object EmployeesTable : Table("employees") {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100)
     val groupId = integer("group_id") references GroupsTable.id
@@ -48,7 +65,7 @@ object EmployeesTable : Table() {
 data class EmployeeFromTable(val id: Int, val name: String, val groupId: Int)
 
 
-object GroupsTable : Table() {
+object GroupsTable : Table("groups") {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 100).uniqueIndex()
 

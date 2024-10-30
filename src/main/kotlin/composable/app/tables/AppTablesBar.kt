@@ -1,50 +1,153 @@
 package composable.app.tables
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.NavigationRailItem
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.ui.UiTab
 import data.viewModels.NavigationViewModel
 
 @Composable
-fun AppTablesBar(navVM: NavigationViewModel, modifier: Modifier = Modifier.width(200.dp)) {
-    Card(elevation = 5.dp, modifier = modifier.padding(10.dp)) {
-        Column(modifier = Modifier.fillMaxSize().padding(5.dp)) {
-            NavigationRailItem(
-                icon = { UiTab(Icons.Default.Style, "Типы устройств", navVM.currentPage == 1) },
-                selected = navVM.currentPage == 1,
-                onClick = { navVM.currentPage = 1 },
-                modifier = Modifier.weight(1f).fillMaxSize()
-            )
-            NavigationRailItem(
-                icon = { UiTab(Icons.Default.Devices, "Устройства", navVM.currentPage == 2) },
-                selected = navVM.currentPage == 2,
-                onClick = { navVM.currentPage = 2 },
-                modifier = Modifier.weight(1f).fillMaxSize()
-            )
-            NavigationRailItem(
-                icon = { UiTab(Icons.Default.Newspaper, "Строки", navVM.currentPage == 3) },
-                selected = navVM.currentPage == 3,
-                onClick = { navVM.currentPage = 3 },
-                modifier = Modifier.weight(1f).fillMaxSize()
-            )
-            NavigationRailItem(
-                icon = { UiTab(Icons.Default.People, "Сотрудники", navVM.currentPage == 4) },
-                selected = navVM.currentPage == 4,
-                onClick = { navVM.currentPage = 4 },
-                modifier = Modifier.weight(1f).fillMaxSize()
-            )
-            NavigationRailItem(
-                icon = { UiTab(Icons.Default.Groups, "Отделы", navVM.currentPage == 5) },
-                selected = navVM.currentPage == 5,
-                onClick = { navVM.currentPage = 5 },
-                modifier = Modifier.weight(1f).fillMaxSize()
-            )
+fun AppTablesBar(
+    navVM: NavigationViewModel,
+    unit1: () -> Unit = { navVM.appTablesBarCurrentPage = 1 },
+    unit2: () -> Unit = { navVM.appTablesBarCurrentPage = 2 },
+    unit3: () -> Unit = { navVM.appTablesBarCurrentPage = 3 },
+    unit4: () -> Unit = { navVM.appTablesBarCurrentPage = 4 },
+    unit5: () -> Unit = { navVM.appTablesBarCurrentPage = 5 },
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        elevation = 10.dp,
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Card(
+                elevation = 10.dp,
+                modifier = Modifier.weight(1f)
+            ) {
+                NavigationRailItem(
+                    icon = {
+                        Column(Modifier.fillMaxSize()) {
+                            Icon(
+                                Icons.Default.Style,
+                                contentDescription = null,
+                                Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
+                            )
+                            Text(
+                                "Типы устройств",
+                                style = MaterialTheme.typography.button,
+                                modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    },
+                    selected = navVM.appTablesBarCurrentPage == 1,
+                    onClick = unit1,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            Card(
+                elevation = 10.dp,
+                modifier = Modifier.weight(1f)
+            ) {
+                NavigationRailItem(
+                    icon = {
+                        Column(Modifier.fillMaxSize()) {
+                            Icon(
+                                Icons.Default.Devices,
+                                contentDescription = null,
+                                Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
+                            )
+                            Text(
+                                "Устройства",
+                                style = MaterialTheme.typography.button,
+                                modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    },
+                    selected = navVM.appTablesBarCurrentPage == 2,
+                    onClick = unit2,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            Card(
+                elevation = 10.dp,
+                modifier = Modifier.weight(1f)
+            ) {
+                NavigationRailItem(
+                    icon = {
+                        Column(Modifier.fillMaxSize()) {
+                            Icon(
+                                Icons.Default.Newspaper,
+                                contentDescription = null,
+                                Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
+                            )
+                            Text(
+                                "Строки",
+                                style = MaterialTheme.typography.button,
+                                modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    },
+                    selected = navVM.appTablesBarCurrentPage == 3,
+                    onClick = unit3,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            Card(
+                elevation = 10.dp,
+                modifier = Modifier.weight(1f)
+            ) {
+                NavigationRailItem(
+                    icon = {
+                        Column(Modifier.fillMaxSize()) {
+                            Icon(
+                                Icons.Default.People,
+                                contentDescription = null,
+                                Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
+                            )
+                            Text(
+                                "Сотрудники",
+                                style = MaterialTheme.typography.button,
+                                modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    },
+                    selected = navVM.appTablesBarCurrentPage == 4,
+                    onClick = unit4,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            Card(
+                elevation = 10.dp,
+                modifier = Modifier.weight(1f)
+            ) {
+                NavigationRailItem(
+                    icon = {
+                        Column(Modifier.fillMaxSize()) {
+                            Icon(
+                                Icons.Default.Groups,
+                                contentDescription = null,
+                                Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
+                            )
+                            Text(
+                                "Отделы",
+                                style = MaterialTheme.typography.button,
+                                modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
+                            )
+                        }
+                    },
+                    selected = navVM.appTablesBarCurrentPage == 5,
+                    onClick = unit5,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

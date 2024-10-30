@@ -7,32 +7,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.app.tables.*
+import composable.app.tables.devices.AppTablesDevices
+import composable.app.tables.types.AppTablesTypes
 import data.viewModels.MainViewModel
-import data.viewModels.NavigationViewModel
 
 @Composable
-fun AppTables(mainVM: MainViewModel) {
-    val navVM = remember { NavigationViewModel() }
-    Row {
-        AppTablesBar(navVM)
-        CurrentTable(navVM, mainVM)
+fun AppTables(mainVM: MainViewModel, modifier: Modifier = Modifier) {
+    Row(modifier = modifier) {
+        AppTablesBar(mainVM.navVM, modifier = Modifier.width(200.dp))
+        CurrentTable(mainVM, Modifier.padding(start = 10.dp).fillMaxSize())
     }
 }
 
 @Composable
 private fun CurrentTable(
-    navVM: NavigationViewModel,
-    mainVM: MainViewModel
+    mainVM: MainViewModel,
+    modifier: Modifier = Modifier
 ) {
-    Card(elevation = 5.dp, modifier = Modifier.fillMaxSize().padding(top = 10.dp, bottom = 10.dp, end = 10.dp)) {
+    Card(elevation = 10.dp, modifier = modifier.fillMaxSize()) {
         Box(modifier = Modifier.padding(10.dp)) {
-            Crossfade(navVM.currentPage) { currentPage ->
+            Crossfade(mainVM.navVM.appTablesBarCurrentPage) { currentPage ->
                 when (currentPage) {
                     2 -> AppTablesDevices(mainVM)
                     3 -> AppTablesStrings()
                     4 -> AppTablesEmployees()
                     5 -> AppTablesGroups()
-                    else -> AppTablesTypes()
+                    else -> AppTablesTypes(mainVM)
                 }
             }
         }

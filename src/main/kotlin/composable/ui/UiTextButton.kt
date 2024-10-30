@@ -23,7 +23,6 @@ fun UiTextButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
             .border(border = BorderStroke(0.dp, MaterialTheme.colors.primary), shape = RoundedCornerShape(10.dp))
             .padding(10.dp)
     ) {

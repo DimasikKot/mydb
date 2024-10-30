@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
-import composable.icons.DatabaseOff
+import icons.DatabaseOff
 import data.EmployeeFromTable
 import data.EmployeesTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq

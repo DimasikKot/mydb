@@ -1,23 +1,19 @@
 package data
 
+import data.viewModels.MainViewModel
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 //import java.sql.DriverManager
 
-fun dbConnect() {
-    val url = "jdbc:postgresql://localhost:5432/mydb"
-    val driver = "org.postgresql.Driver"
-    val user = "postgres"
-    val password = "Dima2004"
-
+fun dbConnect(mainVM: MainViewModel) {
     try {
         Database.connect(
-            url = url,
-            driver = driver,
-            user = user,
-            password = password
+            url = mainVM.url,
+            driver = mainVM.driver,
+            user = mainVM.user,
+            password = mainVM.password
         )
     } catch (e: Exception) {
         e.printStackTrace()

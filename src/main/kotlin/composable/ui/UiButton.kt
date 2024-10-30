@@ -10,7 +10,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun UiButton(imageVector: ImageVector, modifier: Modifier = Modifier.size(55.dp), onClick: () -> Unit) {
+fun UiButton(
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier.size(55.dp),
+    onClick: () -> Unit,
+) {
     Button(onClick = onClick, modifier = modifier) {
         Icon(imageVector = imageVector, contentDescription = null, modifier = Modifier.fillMaxSize())
     }

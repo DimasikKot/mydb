@@ -13,7 +13,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import theme.MainTheme
 
 @Composable
-fun Report(mainVM: MainViewModel) {
+fun Report(mainVM: MainViewModel,
+           modifier: Modifier = Modifier) {
     var reportDeviceFromDB = ReportDeviceFromDB(0, "", 0, "", "", 0)
     val allReportStrings = remember { mutableStateListOf<ReportStringFromDB>() }
     var isCreate by remember { mutableStateOf(false) }
@@ -26,7 +27,7 @@ fun Report(mainVM: MainViewModel) {
             try {
                 DevicesTable
                     .select(DevicesTable.date, DevicesTable.name, DevicesTable.typeId, DevicesTable.price)
-                    .where(DevicesTable.id.eq(mainVM.winVM.currentDevice))
+                    .where(DevicesTable.id.eq(mainVM.winVM.reportCurrentDevice))
                     .forEach { device ->
                         val typeId = device[DevicesTable.typeId]
                         var typeName = ""
@@ -37,7 +38,7 @@ fun Report(mainVM: MainViewModel) {
                                 typeName = it[TypesTable.name]
                             }
                         reportDeviceFromDB = ReportDeviceFromDB(
-                            mainVM.winVM.currentDevice,
+                            mainVM.winVM.reportCurrentDevice,
                             device[DevicesTable.name],
                             typeId,
                             typeName,
@@ -49,7 +50,7 @@ fun Report(mainVM: MainViewModel) {
 
                 StringsTable
                     .select(StringsTable.date, StringsTable.employeeId)
-                    .where(StringsTable.deviceId.eq(mainVM.winVM.currentDevice))
+                    .where(StringsTable.deviceId.eq(mainVM.winVM.reportCurrentDevice))
                     .orderBy(StringsTable.date)
                     .forEach { string ->
                         stringNumber += 1
@@ -86,13 +87,13 @@ fun Report(mainVM: MainViewModel) {
             }
         }
     }
-    MainTheme(mainVM.setVM.currentTheme) {
+    MainTheme(mainVM.setVM.theme) {
         Scaffold {
-            Card(elevation = 5.dp, modifier = Modifier.padding(10.dp)) {
+            Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     ReportDevice(reportDeviceFromDB)
-                    ReportTab(allReportStrings)
-                    ReportList(allReportStrings)
+                    ReportTab(allReportStrings, Modifier.padding(top = 10.dp))
+                    ReportList(allReportStrings, Modifier.padding(top = 10.dp))
                 }
             }
         }
