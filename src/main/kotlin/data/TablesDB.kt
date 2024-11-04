@@ -51,7 +51,15 @@ object StringsTable : Table("strings") {
     override val primaryKey = PrimaryKey(id, deviceId, name = "PK_Strings_ID")
 }
 
-data class StringFromTable(val id: Int, val deviceId: Int, val date: String, val employeeId: Int)
+data class StringFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val deviceId: Int,
+    val date: String,
+    val employeeId: Int,
+)
 
 
 object EmployeesTable : Table("employees") {
@@ -62,7 +70,14 @@ object EmployeesTable : Table("employees") {
     override val primaryKey = PrimaryKey(id, name = "PK_Employees_ID")
 }
 
-data class EmployeeFromTable(val id: Int, val name: String, val groupId: Int)
+data class EmployeeFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+    val groupId: Int,
+)
 
 
 object GroupsTable : Table("groups") {
@@ -72,4 +87,10 @@ object GroupsTable : Table("groups") {
     override val primaryKey = PrimaryKey(id, name = "PK_Groups_ID")
 }
 
-data class GroupFromTable(val id: Int, val name: String)
+data class GroupFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+)

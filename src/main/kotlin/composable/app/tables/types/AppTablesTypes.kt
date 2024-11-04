@@ -1,13 +1,13 @@
 package composable.app.tables.types
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import data.viewModels.MainViewModel
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.Composable
+import data.viewModels.TablesTypesViewModel
 
 @Composable
-fun AppTablesTypes(mainVM: MainViewModel) {
+fun AppTablesTypes(tabVM: TablesTypesViewModel) {
     Column {
-        AppTablesTypesBar(mainVM)
-        AppTablesTypesList(mainVM)
+        AppTablesTypesBar(tabVM)
+        AppTablesTypesList(tabVM)
     }
 }

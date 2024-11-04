@@ -1,13 +1,13 @@
 package composable.app.tables.devices
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import data.viewModels.MainViewModel
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.Composable
+import data.viewModels.TablesDevicesViewModel
 
 @Composable
-fun AppTablesDevices(mainVM: MainViewModel) {
+fun AppTablesDevices(tabVM: TablesDevicesViewModel) {
     Column {
-        AppTablesDevicesBar(mainVM)
-        AppTablesDevicesList(mainVM)
+        AppTablesDevicesBar(tabVM)
+        AppTablesDevicesList(tabVM)
     }
 }

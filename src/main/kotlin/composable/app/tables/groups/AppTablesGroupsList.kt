@@ -1,6 +1,5 @@
-package composable.app.tables.types
+package composable.app.tables.groups
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,13 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
-import data.TypeFromTable
-import data.viewModels.TablesTypesViewModel
+import data.GroupFromTable
+import data.viewModels.TablesGroupsViewModel
 
 @Composable
-fun AppTablesTypesList(tabVM: TablesTypesViewModel) {
+fun AppTablesGroupsList(tabVM: TablesGroupsViewModel) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(top = 10.dp).animateContentSize(),
+        modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.listGet()) {
@@ -32,10 +31,10 @@ fun AppTablesTypesList(tabVM: TablesTypesViewModel) {
 
 @Composable
 private fun Row(
-    tabVM: TablesTypesViewModel,
-    it: TypeFromTable,
+    tabVM: TablesGroupsViewModel,
+    it: GroupFromTable,
 ) {
-    Row(Modifier.animateContentSize()) {
+    Row {
         val newId = mutableStateOf(it.id.toString())
         val newName = mutableStateOf(it.name)
         UiButton(
@@ -81,12 +80,12 @@ private fun Row(
 
 @Composable
 private fun RowUpdate(
-    it: TypeFromTable,
+    it: GroupFromTable,
     newId: MutableState<String>,
     newName: MutableState<String>,
 ) {
     Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
-        Row(Modifier.padding(10.dp).animateContentSize()) {
+        Row(Modifier.padding(10.dp)) {
             TextField(
                 newId.value,
                 { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },

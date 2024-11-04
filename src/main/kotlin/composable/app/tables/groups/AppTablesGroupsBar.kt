@@ -1,4 +1,4 @@
-package composable.app.tables.devices
+package composable.app.tables.groups
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -12,11 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
-import data.DateTransformation
-import data.viewModels.TablesDevicesViewModel
+import data.viewModels.TablesGroupsViewModel
 
 @Composable
-fun AppTablesDevicesBar(tabVM: TablesDevicesViewModel) {
+fun AppTablesGroupsBar(tabVM: TablesGroupsViewModel) {
     tabVM.listUpdate()
     Column(Modifier.animateContentSize()) {
         Row {
@@ -41,18 +40,18 @@ fun AppTablesDevicesBar(tabVM: TablesDevicesViewModel) {
 }
 
 @Composable
-private fun RowInfo(tabVM: TablesDevicesViewModel) {
+private fun RowInfo(tabVM: TablesGroupsViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.heightIn(min = 55.dp)
     ) {
         Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
             Icon(
-                Icons.Default.Devices, contentDescription = null,
+                Icons.Default.Groups, contentDescription = null,
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
-                "Устройства",
+                "Отделы",
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -68,7 +67,7 @@ private fun RowInfo(tabVM: TablesDevicesViewModel) {
 }
 
 @Composable
-private fun RowBar(tabVM: TablesDevicesViewModel) {
+private fun RowBar(tabVM: TablesGroupsViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp)
@@ -109,68 +108,20 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
-            Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                var descending by remember { mutableStateOf(false) }
-                Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                        .clickable {
-                            descending = tabVM.listOrderBy("date")
-                        }
-                )
-                Text(
-                    "Даты",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-            }
-            Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                var descending by remember { mutableStateOf(false) }
-                Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                        .clickable {
-                            descending = tabVM.listOrderBy("price")
-                        }
-                )
-                Text(
-                    "Цены",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-            }
-            Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                var descending by remember { mutableStateOf(false) }
-                Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                        .clickable {
-                            descending = tabVM.listOrderBy("type_id")
-                        }
-                )
-                Text(
-                    "ID типов",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-            }
         }
     }
 }
 
 @Composable
 private fun RowSearch(
-    tabVM: TablesDevicesViewModel,
+    tabVM: TablesGroupsViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
         UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
-        Card(elevation = 25.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
+        Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
                 TextField(
                     tabVM.whereId,
@@ -184,28 +135,6 @@ private fun RowSearch(
                     label = { Text(if (tabVM.whereName == "") "Искать по названию" else "Ищем по названию") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
-                TextField(
-                    singleLine = true,
-                    value = tabVM.whereDate,
-                    onValueChange = {
-                        if (it.length <= 8 && it.matches(regex = Regex("^\\d*\$"))) tabVM.whereDate = it
-                    },
-                    label = { Text(if (tabVM.whereDate == "") "Искать по дате" else "Ищем по дате") },
-                    visualTransformation = DateTransformation(),
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-                TextField(
-                    tabVM.wherePrice,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.wherePrice = it },
-                    label = { Text(if (tabVM.wherePrice == "") "Искать по цене" else "Ищем по цене") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-                TextField(
-                    tabVM.whereTypeId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereTypeId = it },
-                    label = { Text(if (tabVM.whereTypeId == "") "Искать по ID типа" else "Ищем по ID типа") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
             }
         }
     }
@@ -213,20 +142,17 @@ private fun RowSearch(
 
 @Composable
 private fun RowCreate(
-    tabVM: TablesDevicesViewModel,
+    tabVM: TablesGroupsViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
         var newId by remember { mutableStateOf("") }
         var newName by remember { mutableStateOf("") }
-        var newDate by remember { mutableStateOf("") }
-        var newPrice by remember { mutableStateOf("") }
-        var newTypeId by remember { mutableStateOf("") }
         UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
-                tabVM.insert(newName, newDate, newPrice.toInt(), newTypeId.toInt())
+                tabVM.insert(newName)
             } else {
-                tabVM.insert(newId.toInt(), newName, newDate, newPrice.toInt(), newTypeId.toInt())
+                tabVM.insert(newId.toInt(), newName)
             }
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -241,28 +167,6 @@ private fun RowCreate(
                     newName,
                     { newName = it },
                     label = { Text("Новое название") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-                TextField(
-                    singleLine = true,
-                    value = newDate,
-                    onValueChange = {
-                        if (it.length <= 8 && it.matches(regex = Regex("^\\d*\$"))) newDate = it
-                    },
-                    label = { Text("Новая дата") },
-                    visualTransformation = DateTransformation(),
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-                TextField(
-                    newPrice,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newPrice = it },
-                    label = { Text("Новая цена") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-                TextField(
-                    newTypeId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newTypeId = it },
-                    label = { Text("Новый ID типа") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
             }

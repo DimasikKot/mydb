@@ -10,5 +10,10 @@ class MainViewModel: ViewModel() {
     val setVM = SettingsViewModel()
     val winVM = WindowsViewModel()
     val navVM = NavigationViewModel()
-    val tabVM = TablesViewModel()
+    val tabTypesVM = TablesTypesViewModel()
+    val tabDevicesVM = TablesDevicesViewModel()
+    val tabStringsVM = TablesStringsViewModel()
+    val tabEmployeesVM = TablesEmployeesViewModel()
+    val tabGroupsVM = TablesGroupsViewModel()
+    val tabReportVM = TablesReportViewModel()
 }

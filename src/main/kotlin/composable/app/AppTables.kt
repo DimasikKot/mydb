@@ -8,6 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.app.tables.*
 import composable.app.tables.devices.AppTablesDevices
+import composable.app.tables.employees.AppTablesEmployees
+import composable.app.tables.groups.AppTablesGroups
+import composable.app.tables.strings.AppTablesStrings
 import composable.app.tables.types.AppTablesTypes
 import data.viewModels.MainViewModel
 
@@ -28,11 +31,11 @@ private fun CurrentTable(
         Box(modifier = Modifier.padding(10.dp)) {
             Crossfade(mainVM.navVM.appTablesBarCurrentPage) { currentPage ->
                 when (currentPage) {
-                    2 -> AppTablesDevices(mainVM)
-                    3 -> AppTablesStrings()
-                    4 -> AppTablesEmployees()
-                    5 -> AppTablesGroups()
-                    else -> AppTablesTypes(mainVM)
+                    2 -> AppTablesDevices(mainVM.tabDevicesVM)
+                    3 -> AppTablesStrings(mainVM.tabStringsVM)
+                    4 -> AppTablesEmployees(mainVM.tabEmployeesVM)
+                    5 -> AppTablesGroups(mainVM.tabGroupsVM)
+                    else -> AppTablesTypes(mainVM.tabTypesVM)
                 }
             }
         }

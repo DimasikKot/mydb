@@ -1,4 +1,4 @@
-package composable.app.tables.devices
+package composable.app.tables.strings
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
-import data.viewModels.TablesDevicesViewModel
+import data.viewModels.TablesStringsViewModel
 
 @Composable
-fun AppTablesDevicesBar(tabVM: TablesDevicesViewModel) {
+fun AppTablesStringsBar(tabVM: TablesStringsViewModel) {
     tabVM.listUpdate()
     Column(Modifier.animateContentSize()) {
         Row {
@@ -41,34 +41,40 @@ fun AppTablesDevicesBar(tabVM: TablesDevicesViewModel) {
 }
 
 @Composable
-private fun RowInfo(tabVM: TablesDevicesViewModel) {
+private fun RowInfo(tabVM: TablesStringsViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.heightIn(min = 55.dp)
     ) {
         Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
             Icon(
-                Icons.Default.Devices, contentDescription = null,
+                Icons.Default.Newspaper, contentDescription = null,
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
-                "Устройства",
+                "Строки",
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             Spacer(Modifier.weight(1f))
-            Icon(Icons.Default.Search, contentDescription = null, Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
-                tabVM.searching = !tabVM.searching
-            })
-            Icon(Icons.Default.NewLabel, contentDescription = null, Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
-                tabVM.creating = !tabVM.creating
-            })
+            Icon(
+                Icons.Default.Search,
+                contentDescription = null,
+                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
+                    tabVM.searching = !tabVM.searching
+                })
+            Icon(
+                Icons.Default.NewLabel,
+                contentDescription = null,
+                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
+                    tabVM.creating = !tabVM.creating
+                })
         }
     }
 }
 
 @Composable
-private fun RowBar(tabVM: TablesDevicesViewModel) {
+private fun RowBar(tabVM: TablesStringsViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp)
@@ -100,22 +106,6 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
-                            descending = tabVM.listOrderBy("name")
-                        }
-                )
-                Text(
-                    "Названия",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-            }
-            Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                var descending by remember { mutableStateOf(false) }
-                Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                        .clickable {
                             descending = tabVM.listOrderBy("date")
                         }
                 )
@@ -132,11 +122,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
-                            descending = tabVM.listOrderBy("price")
+                            descending = tabVM.listOrderBy("device_id")
                         }
                 )
                 Text(
-                    "Цены",
+                    "ID устройств",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -148,11 +138,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
-                            descending = tabVM.listOrderBy("type_id")
+                            descending = tabVM.listOrderBy("employee_id")
                         }
                 )
                 Text(
-                    "ID типов",
+                    "ID сотрудников",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -163,7 +153,7 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
 
 @Composable
 private fun RowSearch(
-    tabVM: TablesDevicesViewModel,
+    tabVM: TablesStringsViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -179,12 +169,6 @@ private fun RowSearch(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 TextField(
-                    tabVM.whereName,
-                    { tabVM.whereName = it },
-                    label = { Text(if (tabVM.whereName == "") "Искать по названию" else "Ищем по названию") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-                TextField(
                     singleLine = true,
                     value = tabVM.whereDate,
                     onValueChange = {
@@ -195,15 +179,15 @@ private fun RowSearch(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    tabVM.wherePrice,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.wherePrice = it },
-                    label = { Text(if (tabVM.wherePrice == "") "Искать по цене" else "Ищем по цене") },
+                    tabVM.whereDeviceId,
+                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereDeviceId = it },
+                    label = { Text(if (tabVM.whereDeviceId == "") "Искать по ID устройства" else "Ищем по ID устройства") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    tabVM.whereTypeId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereTypeId = it },
-                    label = { Text(if (tabVM.whereTypeId == "") "Искать по ID типа" else "Ищем по ID типа") },
+                    tabVM.whereEmployeeId,
+                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereEmployeeId = it },
+                    label = { Text(if (tabVM.whereEmployeeId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
             }
@@ -213,20 +197,19 @@ private fun RowSearch(
 
 @Composable
 private fun RowCreate(
-    tabVM: TablesDevicesViewModel,
+    tabVM: TablesStringsViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
         var newId by remember { mutableStateOf("") }
-        var newName by remember { mutableStateOf("") }
         var newDate by remember { mutableStateOf("") }
-        var newPrice by remember { mutableStateOf("") }
-        var newTypeId by remember { mutableStateOf("") }
+        var newDeviceId by remember { mutableStateOf("") }
+        var newEmployeeId by remember { mutableStateOf("") }
         UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
-                tabVM.insert(newName, newDate, newPrice.toInt(), newTypeId.toInt())
+                tabVM.insert(newDate, newDeviceId.toInt(), newEmployeeId.toInt())
             } else {
-                tabVM.insert(newId.toInt(), newName, newDate, newPrice.toInt(), newTypeId.toInt())
+                tabVM.insert(newId.toInt(), newDate, newDeviceId.toInt(), newEmployeeId.toInt())
             }
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -236,12 +219,6 @@ private fun RowCreate(
                     { if (it.matches(regex = Regex("^\\d*\$"))) newId = it },
                     label = { Text(if (newId == "") "Автоматический ID" else "Новый ID") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
-                TextField(
-                    newName,
-                    { newName = it },
-                    label = { Text("Новое название") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
                     singleLine = true,
@@ -254,15 +231,15 @@ private fun RowCreate(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    newPrice,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newPrice = it },
-                    label = { Text("Новая цена") },
+                    newDeviceId,
+                    { if (it.matches(regex = Regex("^\\d*\$"))) newDeviceId = it },
+                    label = { Text("Новый ID устройства") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    newTypeId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newTypeId = it },
-                    label = { Text("Новый ID типа") },
+                    newEmployeeId,
+                    { if (it.matches(regex = Regex("^\\d*\$"))) newEmployeeId = it },
+                    label = { Text("Новый ID сотрудника") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
             }

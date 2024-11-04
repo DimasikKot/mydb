@@ -27,7 +27,7 @@ fun Report(mainVM: MainViewModel,
             try {
                 DevicesTable
                     .select(DevicesTable.date, DevicesTable.name, DevicesTable.typeId, DevicesTable.price)
-                    .where(DevicesTable.id.eq(mainVM.winVM.reportCurrentDevice))
+                    .where(DevicesTable.id.eq(mainVM.tabDevicesVM.report))
                     .forEach { device ->
                         val typeId = device[DevicesTable.typeId]
                         var typeName = ""
@@ -38,7 +38,7 @@ fun Report(mainVM: MainViewModel,
                                 typeName = it[TypesTable.name]
                             }
                         reportDeviceFromDB = ReportDeviceFromDB(
-                            mainVM.winVM.reportCurrentDevice,
+                            mainVM.tabDevicesVM.report,
                             device[DevicesTable.name],
                             typeId,
                             typeName,
@@ -50,7 +50,7 @@ fun Report(mainVM: MainViewModel,
 
                 StringsTable
                     .select(StringsTable.date, StringsTable.employeeId)
-                    .where(StringsTable.deviceId.eq(mainVM.winVM.reportCurrentDevice))
+                    .where(StringsTable.deviceId.eq(mainVM.tabDevicesVM.report))
                     .orderBy(StringsTable.date)
                     .forEach { string ->
                         stringNumber += 1
