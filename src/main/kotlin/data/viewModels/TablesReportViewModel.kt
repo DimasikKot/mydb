@@ -2,9 +2,9 @@ package data.viewModels
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-import data.DevicesTable
 import data.StringsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -187,15 +187,18 @@ class TablesReportViewModel : ViewModel() {
         }
     }
 
-    fun update(itId: Int, newId: Int, newName: String, newDate: String, newPrice: Int, newTypeId: Int): Boolean {
+    fun update(
+        itId: Int,
+        newId: Int,
+        newDate: String,
+        newEmployeeId: Int,
+    ): Boolean {
         try {
             transaction {
-                DevicesTable.update({ StringsTable.id eq itId }) {
+                StringsTable.update({ StringsTable.id.eq(itId) and StringsTable.deviceId.eq(report) }) {
                     it[id] = newId
-                    it[name] = newName
                     it[date] = newDate
-                    it[price] = newPrice
-                    it[typeId] = newTypeId
+                    it[employeeId] = newEmployeeId
                 }
             }
             listUpdate()
@@ -206,33 +209,26 @@ class TablesReportViewModel : ViewModel() {
         }
     }
 
-    fun insert(newId: Int, newName: String, newDate: String, newPrice: Int, newTypeId: Int): Boolean {
+    fun insert(
+        newId: String,
+        newDate: String,
+        newEmployeeId: Int,
+    ): Boolean {
         try {
             transaction {
-                DevicesTable.insert {
-                    it[id] = newId
-                    it[name] = newName
-                    it[date] = newDate
-                    it[price] = newPrice
-                    it[typeId] = newTypeId
-                }
-            }
-            listUpdate()
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-    }
-
-    fun insert(newName: String, newDate: String, newPrice: Int, newTypeId: Int): Boolean {
-        try {
-            transaction {
-                DevicesTable.insert {
-                    it[name] = newName
-                    it[date] = newDate
-                    it[price] = newPrice
-                    it[typeId] = newTypeId
+                if (newId == "") {
+                    StringsTable.insert {
+                        it[date] = newDate
+                        it[employeeId] = newEmployeeId
+                        it[deviceId] = report
+                    }
+                } else {
+                    StringsTable.insert {
+                        it[id] = newId.toInt()
+                        it[date] = newDate
+                        it[employeeId] = newEmployeeId
+                        it[deviceId] = report
+                    }
                 }
             }
             listUpdate()

@@ -415,11 +415,7 @@ private fun RowCreate(
         var newGroupIdMenu by remember { mutableStateOf(false) }
         var newGroupName by remember { mutableStateOf("") }
         UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
-            if (newId == "") {
-                TODO()
-            } else {
-                TODO()
-            }
+            tabVM.insert(newId, newDate, newEmployeeId.toInt())
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {

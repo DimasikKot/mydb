@@ -59,11 +59,15 @@ private fun Row(
             modifier = Modifier.size(55.dp)
         ) {
             if (it.editing.value) {
-                it.canUpdate.value = true
-                TODO()
-//                if (it.canUpdate.value) {
-//                    it.editing.value = false
-//                }
+                it.canUpdate.value = tabVM.update(
+                    it.id,
+                    newId.value.toInt(),
+                    newDate.value,
+                    newEmployeeId.value.toInt(),
+                )
+                if (it.canUpdate.value) {
+                    it.editing.value = false
+                }
             } else {
                 it.editing.value = true
             }
@@ -81,7 +85,7 @@ private fun Row(
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
                     Text(
-                        "$number (${it.id})",
+                        "$number) ${it.id}",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                     )
@@ -193,6 +197,7 @@ private fun RowUpdate(
                 value = newEmployeeName.value,
                 onValueChange = { newEmployeeName.value = it },
                 label = { Text(if (newEmployeeName.value == "") it.employeeName else "Новое название сотрудника") },
+                readOnly = true,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
@@ -232,12 +237,14 @@ private fun RowUpdate(
                         }
                     }
                 },
+                readOnly = true,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
                 value = newGroupName.value,
                 onValueChange = { newGroupName.value = it },
                 label = { Text(if (newGroupName.value == "") it.groupName else "Новое название сотрудника") },
+                readOnly = true,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
         }
