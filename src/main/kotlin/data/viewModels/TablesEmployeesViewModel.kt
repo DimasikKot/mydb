@@ -16,7 +16,7 @@ class TablesEmployeesViewModel : ViewModel() {
     var creating by mutableStateOf(false)
 
     private var request by mutableStateOf("SELECT id, name, group_id FROM employees ORDER BY id")
-    private var order1 by mutableStateOf("id")
+    var order1 by mutableStateOf("id")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
     var whereId by mutableStateOf("")

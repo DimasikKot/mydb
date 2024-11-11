@@ -18,24 +18,38 @@ private fun dateFilter(text: AnnotatedString): TransformedText {
     var out = ""
     for (i in trimmed.indices) {
         out += trimmed[i]
-        if (i % 2 == 1 && i < 4) out += "/"
+        if (i == 3 || i == 5) out += "/"
     }
 
     val numberOffsetTranslator = object : OffsetMapping {
         override fun originalToTransformed(offset: Int): Int {
-            if (offset <= 1) return offset
-            if (offset <= 3) return offset + 1
+            if (offset <= 3) return offset
+            if (offset <= 5) return offset + 1
             if (offset <= 8) return offset + 2
             return 10
         }
 
         override fun transformedToOriginal(offset: Int): Int {
-            if (offset <= 2) return offset
-            if (offset <= 5) return offset - 1
+            if (offset <= 4) return offset
+            if (offset <= 7) return offset - 1
             if (offset <= 10) return offset - 2
             return 8
         }
     }
 
     return TransformedText(AnnotatedString(out), numberOffsetTranslator)
+}
+
+fun formatDate(date: String): String {
+    val newDate = if (date.length <= 8) {
+        date.padEnd(10, '_')
+    } else {
+        date
+    }
+
+    val year = newDate.substring(0, 4) // первые 4 символа - год
+    val month = newDate.substring(4, 6) // следующие 2 символа - месяц
+    val day = newDate.substring(6, 8) // последние 2 символа - день
+
+    return "$year/$month/$day"
 }

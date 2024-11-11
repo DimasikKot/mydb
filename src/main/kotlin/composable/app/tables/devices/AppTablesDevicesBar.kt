@@ -87,7 +87,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
             Row(Modifier.weight(1f)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (descending) {
+                        if (tabVM.order1 == "id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                    } else {
+                        if (tabVM.order1 == "id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                    },
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
@@ -103,7 +107,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
             Row(Modifier.weight(1f).padding(start = 10.dp)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (descending) {
+                        if (tabVM.order1 == "name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                    } else {
+                        if (tabVM.order1 == "name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                    },
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
@@ -119,7 +127,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
             Row(Modifier.weight(1f).padding(start = 10.dp)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (descending) {
+                        if (tabVM.order1 == "date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                    } else {
+                        if (tabVM.order1 == "date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                    },
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
@@ -135,7 +147,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
             Row(Modifier.weight(1f).padding(start = 10.dp)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (descending) {
+                        if (tabVM.order1 == "price DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                    } else {
+                        if (tabVM.order1 == "price") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                    },
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {
@@ -151,7 +167,11 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
             Row(Modifier.weight(1f).padding(start = 10.dp)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
-                    if (descending) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (descending) {
+                        if (tabVM.order1 == "type_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                    } else {
+                        if (tabVM.order1 == "type_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                    },
                     contentDescription = null,
                     modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                         .clickable {

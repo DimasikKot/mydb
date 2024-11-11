@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
 import data.StringFromTable
+import data.formatDate
 import data.viewModels.TablesDevicesViewModel
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesStringsViewModel
@@ -77,7 +78,7 @@ private fun Row(
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                     )
                     Text(
-                        it.date,
+                        formatDate(it.date),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )

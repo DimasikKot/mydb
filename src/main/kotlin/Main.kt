@@ -29,7 +29,7 @@ fun main() = application {
 
     if (mainVM.tabDevicesVM.report != 0) {
         mainVM.tabReportVM.report = mainVM.tabDevicesVM.report
-        val windowState = rememberWindowState()
+        val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
                 mainVM.tabDevicesVM.report = 0

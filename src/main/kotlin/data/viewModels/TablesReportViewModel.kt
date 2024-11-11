@@ -43,9 +43,9 @@ class TablesReportViewModel : ViewModel() {
                 "JOIN employees ON strings.employee_id = employees.id " +
                 "JOIN groups ON employees.group_id = groups.id " +
                 "WHERE strings.device_id = $report " +
-                "ORDER BY strings.id"
+                "ORDER BY strings.date"
     )
-    private var order1 by mutableStateOf("strings.id")
+    var order1 by mutableStateOf("strings.date")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
     private var order4 by mutableStateOf("")

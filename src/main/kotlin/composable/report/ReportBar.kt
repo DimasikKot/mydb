@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
+import data.formatDate
 import data.viewModels.*
 
 @Composable
@@ -127,7 +128,7 @@ private fun RowDevice(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.date,
+                    formatDate(reportDevice.date),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -187,12 +188,159 @@ private fun RowBar(
     tabVM: TablesReportViewModel,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        elevation = 10.dp,
-        modifier = modifier
-    ) {
-        Row(modifier = Modifier.padding(10.dp)) {
-
+    Row(modifier = modifier) {
+        Card(
+            elevation = 10.dp,
+            modifier = Modifier.size(55.dp).clickable {
+                tabVM.searching = !tabVM.searching
+            }) {
+            Icon(
+                Icons.Default.Search,
+                contentDescription = null,
+                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
+            )
+        }
+        Card(
+            elevation = 10.dp,
+            modifier = Modifier.padding(start = 10.dp).size(55.dp)
+                .clickable {
+                    tabVM.creating = !tabVM.creating
+                }) {
+            Icon(
+                Icons.Default.NewLabel,
+                contentDescription = null,
+                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
+            )
+        }
+        Card(
+            elevation = 10.dp,
+            modifier = Modifier.padding(start = 10.dp)
+        ) {
+            Row(
+                Modifier
+                    .background(MaterialTheme.colors.secondaryVariant).padding(10.dp)
+            ) {
+                Row(Modifier.weight(1f)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "strings.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "strings.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("strings.id")
+                            }
+                    )
+                    Text(
+                        "ID",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "strings.date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "strings.date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("strings.date")
+                            }
+                    )
+                    Text(
+                        "Даты",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "employees.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "employees.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("employees.id")
+                            }
+                    )
+                    Text(
+                        "ID сотрудника",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "employees.name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "employees.name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("employees.name")
+                            }
+                    )
+                    Text(
+                        "Название сотрудника",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "groups.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "groups.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("groups.id")
+                            }
+                    )
+                    Text(
+                        "ID групп",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "groups.name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "groups.name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("groups.name")
+                            }
+                    )
+                    Text(
+                        "Название группы",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+            }
         }
     }
 }
@@ -364,7 +512,7 @@ private fun RowCreate(
                                             groupVM.listUpdate()
                                         }
                                     },
-                                    label = { Text(if (tabVM.whereGroupId == "") "Искать по ID группы" else "Ищем по ID группы") }
+                                    label = { Text(if (groupVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
                                 )
                             }
                             for (item in groupVM.listGet()) {
