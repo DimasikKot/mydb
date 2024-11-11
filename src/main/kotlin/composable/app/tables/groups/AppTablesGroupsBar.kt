@@ -16,7 +16,6 @@ import data.viewModels.TablesGroupsViewModel
 
 @Composable
 fun AppTablesGroupsBar(tabVM: TablesGroupsViewModel) {
-    tabVM.listUpdate()
     Column(Modifier.animateContentSize()) {
         Row {
             UiButton(

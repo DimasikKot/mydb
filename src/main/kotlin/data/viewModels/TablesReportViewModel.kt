@@ -1,12 +1,8 @@
 package data.viewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-import data.DeviceFromTable
 import data.DevicesTable
-import data.StringFromTable
 import data.StringsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -14,37 +10,119 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+data class ReportDeviceFromTables(
+    val id: Int,
+    val name: String,
+    val date: String,
+    val price: Int,
+    val typeId: Int,
+    val typeName: String,
+)
+
+data class ReportStringFromTables(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val date: String,
+    val employeeID: Int,
+    val employeeName: String,
+    var groupId: Int,
+    var groupName: String,
+)
+
 class TablesReportViewModel : ViewModel() {
+    var report by mutableIntStateOf(0)
+
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf("SELECT id, name, date, price, type_id FROM devices")
-    private var order1 by mutableStateOf("id")
+    private var request by mutableStateOf(
+        "SELECT strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
+                "FROM strings " +
+                "JOIN employees ON strings.employee_id = employees.id " +
+                "JOIN groups ON employees.group_id = groups.id " +
+                "WHERE strings.device_id = $report " +
+                "ORDER BY strings.id"
+    )
+    private var order1 by mutableStateOf("strings.id")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
     private var order4 by mutableStateOf("")
     private var order5 by mutableStateOf("")
+    private var order6 by mutableStateOf("")
     var whereId by mutableStateOf("")
-    var whereName by mutableStateOf("")
     var whereDate by mutableStateOf("")
-    var wherePrice by mutableStateOf("")
-    var whereTypeId by mutableStateOf("")
+    var whereEmployeeID by mutableStateOf("")
+    var whereEmployeeName by mutableStateOf("")
+    var whereGroupId by mutableStateOf("")
+    var whereGroupName by mutableStateOf("")
+
+    fun deviceGet(): ReportDeviceFromTables {
+        try {
+            val requestDevice =
+                "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
+                        "FROM devices JOIN types ON devices.type_id = types.id " +
+                        "WHERE devices.id = $report " +
+                        "LIMIT 1"
+            return transaction {
+                exec(requestDevice) { row ->
+                    if (row.next()) {
+                        ReportDeviceFromTables(
+                            id = row.getInt("id"),
+                            name = row.getString("name"),
+                            date = row.getString("date"),
+                            price = row.getInt("price"),
+                            typeId = row.getInt("type_id"),
+                            typeName = row.getString("type_name")
+                        )
+                    } else {
+                        ReportDeviceFromTables(-1, "REQUEST", "REQUEST", -1, -1, "$row")
+                    }
+                }!!
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ReportDeviceFromTables(-1, "DB", "DB", -1, -1, "$e")
+        }
+    }
 
     fun listUpdate() {
-        var requestNew = "SELECT id, name, date, price, type_id FROM devices"
+        var requestNew =
+            "SELECT strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
+                    "FROM strings " +
+                    "JOIN employees ON strings.employee_id = employees.id " +
+                    "JOIN groups ON employees.group_id = groups.id " +
+                    "WHERE strings.device_id = $report"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
-        if (whereName.isNotEmpty()) { conditions.add("name LIKE '%$whereName%'") }
-        if (whereDate.isNotEmpty()) { conditions.add("date LIKE '%$whereDate%'") }
-        if (wherePrice.isNotEmpty()) { conditions.add("price >= $wherePrice") }
-        if (whereTypeId.isNotEmpty()) { conditions.add("type_id >= $whereTypeId") }
-        if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" and ") }
+        if (whereId.isNotEmpty()) {
+            conditions.add("strings.id >= $whereId")
+        }
+        if (whereDate.isNotEmpty()) {
+            conditions.add("strings.date LIKE '%$whereDate%'")
+        }
+        if (whereEmployeeID.isNotEmpty()) {
+            conditions.add("strings.employee_id >= $whereEmployeeID")
+        }
+        if (whereEmployeeName.isNotEmpty()) {
+            conditions.add("employees.name LIKE '%$whereEmployeeName%'")
+        }
+        if (whereGroupId.isNotEmpty()) {
+            conditions.add("employees.group_id >= $whereGroupId")
+        }
+        if (whereGroupName.isNotEmpty()) {
+            conditions.add("groups.name LIKE '%$whereGroupName%'")
+        }
+        if (conditions.isNotEmpty()) {
+            requestNew += " and " + conditions.joinToString(" and ")
+        }
         requestNew += " ORDER BY $order1"
         requestNew += if (order2.isNotEmpty()) ", $order2" else ""
         requestNew += if (order3.isNotEmpty()) ", $order3" else ""
         requestNew += if (order4.isNotEmpty()) ", $order4" else ""
         requestNew += if (order5.isNotEmpty()) ", $order5" else ""
-        request = "SELECT id FROM devices"
+        requestNew += if (order6.isNotEmpty()) ", $order5" else ""
+        request = ""
         request = requestNew
     }
 
@@ -58,6 +136,7 @@ class TablesReportViewModel : ViewModel() {
         } else if (order1 == "$order DESC") {
             order1 = order
         } else {
+            order6 = order5
             order5 = order4
             order4 = order3
             order3 = order2
@@ -68,20 +147,23 @@ class TablesReportViewModel : ViewModel() {
         return descending
     }
 
-    fun listGet(): List<DeviceFromTable> {
+    fun listGet(): List<ReportStringFromTables> {
         try {
             return transaction {
                 val result = exec(request) { row ->
                     generateSequence {
                         if (row.next()) {
-                            DeviceFromTable(
+                            ReportStringFromTables(
                                 id = row.getInt("id"),
-                                name = row.getString("name"),
                                 date = row.getString("date"),
-                                price = row.getInt("price"),
-                                typeId = row.getInt("type_id")
+                                employeeID = row.getInt("employee_id"),
+                                employeeName = row.getString("employee_name"),
+                                groupId = row.getInt("group_id"),
+                                groupName = row.getString("group_name"),
                             )
-                        } else null
+                        } else {
+                            null
+                        }
                     }.toList()
                 }
                 result ?: emptyList()
@@ -95,7 +177,7 @@ class TablesReportViewModel : ViewModel() {
     fun delete(itId: Int): Boolean {
         try {
             transaction {
-                DevicesTable.deleteWhere { id.eq(itId) }
+                StringsTable.deleteWhere { id.eq(itId) }
             }
             listUpdate()
             return true

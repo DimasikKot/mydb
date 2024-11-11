@@ -16,7 +16,7 @@ class TablesStringsViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf("SELECT id, date, device_id, employee_id FROM strings")
+    private var request by mutableStateOf("SELECT id, date, device_id, employee_id FROM strings ORDER BY id")
     private var order1 by mutableStateOf("id")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")

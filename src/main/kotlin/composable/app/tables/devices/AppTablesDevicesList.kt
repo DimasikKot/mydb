@@ -10,11 +10,14 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
 import data.DeviceFromTable
 import data.viewModels.TablesDevicesViewModel
+import data.viewModels.TablesGroupsViewModel
+import data.viewModels.TablesTypesViewModel
 import icons.ExportNotes
 import icons.IconWindow
 
@@ -129,22 +132,22 @@ private fun RowUpdate(
     newPrice: MutableState<String>,
     newTypeId: MutableState<String>,
 ) {
+    var newTypeIdMenu by mutableStateOf(false)
     Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
         Row(Modifier.padding(10.dp)) {
             TextField(
-                newId.value,
-                { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
+                value = newId.value,
+                onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
                 label = { Text(if (newId.value == "") it.id.toString() else "Новый ID") },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
             )
             TextField(
-                newName.value,
-                { newName.value = it },
+                value = newName.value,
+                onValueChange = { newName.value = it },
                 label = { Text(if (newName.value == "") it.name else "Новое название") },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
-                singleLine = true,
                 value = newDate.value,
                 onValueChange = { if (it.length <= 8 && it.matches(regex = Regex("^\\d*\$"))) newDate.value = it },
                 label = { Text(if (newDate.value == "") it.date else "Новая дата") },
@@ -152,15 +155,47 @@ private fun RowUpdate(
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
-                newPrice.value,
-                { if (it.matches(regex = Regex("^\\d*\$"))) newPrice.value = it },
+                value = newPrice.value,
+                onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) newPrice.value = it },
                 label = { Text(if (newPrice.value == "") it.price.toString() else "Новая цена") },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
-                newTypeId.value,
-                { if (it.matches(regex = Regex("^\\d*\$"))) newTypeId.value = it },
-                label = { Text(if (newTypeId.value == "") it.typeId.toString() else "Новый ID типа") },
+                value = newTypeId.value,
+                onValueChange = {
+                    if (it.matches(regex = Regex("^\\d*\$"))) newTypeId.value = it
+                    if (newTypeId.value.length == 1) newTypeIdMenu = true
+                },
+                label = {
+                    Text(if (newTypeId.value == "") it.typeId.toString() else "Новый ID типа")
+                    DropdownMenu(
+                        expanded = newTypeIdMenu,
+                        onDismissRequest = { newTypeIdMenu = false },
+                        offset = DpOffset(0.dp, 30.dp)
+                    ) {
+                        val typesVM = remember { TablesTypesViewModel() }
+                        DropdownMenuItem({}) {
+                            TextField(
+                                value = typesVM.whereId,
+                                onValueChange = {
+                                    if (it.matches(regex = Regex("^\\d*\$"))) {
+                                        typesVM.whereId = it
+                                        typesVM.listUpdate()
+                                    }
+                                },
+                                label = { Text(if (typesVM.whereId == "") "Искать по ID типа" else "Ищем по ID типа") }
+                            )
+                        }
+                        for (item in typesVM.listGet()) {
+                            DropdownMenuItem({
+                                newTypeId.value = item.id.toString()
+                                newTypeIdMenu = false
+                            }) {
+                                Text("${item.id}: ${item.name}")
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
         }

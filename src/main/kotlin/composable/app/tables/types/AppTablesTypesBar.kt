@@ -16,7 +16,6 @@ import data.viewModels.TablesTypesViewModel
 
 @Composable
 fun AppTablesTypesBar(tabVM: TablesTypesViewModel) {
-    tabVM.listUpdate()
     Column(Modifier.animateContentSize()) {
         Row {
             UiButton(

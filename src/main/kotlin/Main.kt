@@ -8,7 +8,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import data.dbConnect
 import data.viewModels.MainViewModel
-import kotlinx.coroutines.runBlocking
 import windows.App
 import windows.Report
 
@@ -29,10 +28,12 @@ fun main() = application {
     }
 
     if (mainVM.tabDevicesVM.report != 0) {
+        mainVM.tabReportVM.report = mainVM.tabDevicesVM.report
         val windowState = rememberWindowState()
         Window(
             onCloseRequest = {
                 mainVM.tabDevicesVM.report = 0
+                mainVM.tabReportVM.report = 0
             },
             title = "Report Device",
             state = windowState

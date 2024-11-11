@@ -10,13 +10,14 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.viewModels.TablesEmployeesViewModel
+import data.viewModels.TablesGroupsViewModel
 
 @Composable
 fun AppTablesEmployeesBar(tabVM: TablesEmployeesViewModel) {
-    tabVM.listUpdate()
     Column(Modifier.animateContentSize()) {
         Row {
             UiButton(
@@ -177,6 +178,7 @@ private fun RowCreate(
         var newId by remember { mutableStateOf("") }
         var newName by remember { mutableStateOf("") }
         var newGroupId by remember { mutableStateOf("") }
+        var newGroupIdMenu by remember { mutableStateOf(false) }
         UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
                 tabVM.insert(newName, newGroupId.toInt())
@@ -200,8 +202,40 @@ private fun RowCreate(
                 )
                 TextField(
                     newGroupId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newGroupId = it },
-                    label = { Text("Новый ID группы") },
+                    {
+                        if (it.matches(regex = Regex("^\\d*\$"))) newGroupId = it
+                        if (newGroupId.length == 1) newGroupIdMenu = true
+                    },
+                    label = {
+                        Text("Новый ID группы")
+                        DropdownMenu(
+                            expanded = newGroupIdMenu,
+                            onDismissRequest = { newGroupIdMenu = false },
+                            offset = DpOffset(0.dp,30.dp)
+                        ) {
+                            val groupsVM = remember { TablesGroupsViewModel() }
+                            DropdownMenuItem({}) {
+                                TextField(
+                                    value = groupsVM.whereId,
+                                    onValueChange = {
+                                        if (it.matches(regex = Regex("^\\d*\$"))) {
+                                            groupsVM.whereId = it
+                                            groupsVM.listUpdate()
+                                        }
+                                    },
+                                    label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
+                                )
+                            }
+                            for (item in groupsVM.listGet()) {
+                                DropdownMenuItem({
+                                    newGroupId = item.id.toString()
+                                    newGroupIdMenu = false
+                                }) {
+                                    Text("${item.id}: ${item.name}")
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
             }

@@ -10,14 +10,16 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
+import data.viewModels.TablesDevicesViewModel
+import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesStringsViewModel
 
 @Composable
 fun AppTablesStringsBar(tabVM: TablesStringsViewModel) {
-    tabVM.listUpdate()
     Column(Modifier.animateContentSize()) {
         Row {
             UiButton(
@@ -163,13 +165,12 @@ private fun RowSearch(
         Card(elevation = 25.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
                 TextField(
-                    tabVM.whereId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereId = it },
+                    value = tabVM.whereId,
+                    onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereId = it },
                     label = { Text(if (tabVM.whereId == "") "Искать по ID" else "Ищем по ID") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 TextField(
-                    singleLine = true,
                     value = tabVM.whereDate,
                     onValueChange = {
                         if (it.length <= 8 && it.matches(regex = Regex("^\\d*\$"))) tabVM.whereDate = it
@@ -179,14 +180,14 @@ private fun RowSearch(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    tabVM.whereDeviceId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereDeviceId = it },
+                    value = tabVM.whereDeviceId,
+                    onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereDeviceId = it },
                     label = { Text(if (tabVM.whereDeviceId == "") "Искать по ID устройства" else "Ищем по ID устройства") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    tabVM.whereEmployeeId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereEmployeeId = it },
+                    value = tabVM.whereEmployeeId,
+                    onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereEmployeeId = it },
                     label = { Text(if (tabVM.whereEmployeeId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -204,7 +205,9 @@ private fun RowCreate(
         var newId by remember { mutableStateOf("") }
         var newDate by remember { mutableStateOf("") }
         var newDeviceId by remember { mutableStateOf("") }
+        var newDeviceIdMenu by remember { mutableStateOf(false) }
         var newEmployeeId by remember { mutableStateOf("") }
+        var newEmployeeIdMenu by remember { mutableStateOf(false) }
         UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
                 tabVM.insert(newDate, newDeviceId.toInt(), newEmployeeId.toInt())
@@ -215,13 +218,12 @@ private fun RowCreate(
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
                 TextField(
-                    newId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newId = it },
+                    value = newId,
+                    onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) newId = it },
                     label = { Text(if (newId == "") "Автоматический ID" else "Новый ID") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 TextField(
-                    singleLine = true,
                     value = newDate,
                     onValueChange = {
                         if (it.length <= 8 && it.matches(regex = Regex("^\\d*\$"))) newDate = it
@@ -231,15 +233,79 @@ private fun RowCreate(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    newDeviceId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newDeviceId = it },
-                    label = { Text("Новый ID устройства") },
+                    value = newDeviceId,
+                    onValueChange = {
+                        if (it.matches(regex = Regex("^\\d*\$"))) newDeviceId = it
+                        if (newDeviceId.length == 1) newDeviceIdMenu = true
+                    },
+                    label = {
+                        Text("Новый ID устройства")
+                        DropdownMenu(
+                            expanded = newDeviceIdMenu,
+                            onDismissRequest = { newDeviceIdMenu = false },
+                            offset = DpOffset(0.dp, 30.dp)
+                        ) {
+                            val devicesVM = remember { TablesDevicesViewModel() }
+                            DropdownMenuItem({}) {
+                                TextField(
+                                    value = devicesVM.whereId,
+                                    onValueChange = {
+                                        if (it.matches(regex = Regex("^\\d*\$"))) {
+                                            devicesVM.whereId = it
+                                            devicesVM.listUpdate()
+                                        }
+                                    },
+                                    label = { Text(if (devicesVM.whereId == "") "Искать по ID устройства" else "Ищем по ID устройства") }
+                                )
+                            }
+                            for (item in devicesVM.listGet()) {
+                                DropdownMenuItem({
+                                    newDeviceId = item.id.toString()
+                                    newDeviceIdMenu = false
+                                }) {
+                                    Text("${item.id}: ${item.name}")
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
                 TextField(
-                    newEmployeeId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newEmployeeId = it },
-                    label = { Text("Новый ID сотрудника") },
+                    value = newEmployeeId,
+                    onValueChange = {
+                        if (it.matches(regex = Regex("^\\d*\$"))) newEmployeeId = it
+                        if (newEmployeeId.length == 1) newEmployeeIdMenu = true
+                    },
+                    label = {
+                        Text("Новый ID сотрудника")
+                        DropdownMenu(
+                            expanded = newEmployeeIdMenu,
+                            onDismissRequest = { newEmployeeIdMenu = false },
+                            offset = DpOffset(0.dp, 30.dp)
+                        ) {
+                            val employeesVM = remember { TablesEmployeesViewModel() }
+                            DropdownMenuItem({}) {
+                                TextField(
+                                    value = employeesVM.whereId,
+                                    onValueChange = {
+                                        if (it.matches(regex = Regex("^\\d*\$"))) {
+                                            employeesVM.whereId = it
+                                            employeesVM.listUpdate()
+                                        }
+                                    },
+                                    label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
+                                )
+                            }
+                            for (item in employeesVM.listGet()) {
+                                DropdownMenuItem({
+                                    newEmployeeId = item.id.toString()
+                                    newEmployeeIdMenu = false
+                                }) {
+                                    Text("${item.id}: ${item.name}")
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
             }

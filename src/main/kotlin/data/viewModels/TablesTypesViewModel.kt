@@ -13,7 +13,7 @@ class TablesTypesViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf("SELECT id, name FROM types")
+    private var request by mutableStateOf("SELECT id, name FROM types ORDER BY id")
     private var order1 by mutableStateOf("id")
     private var order2 by mutableStateOf("")
     var whereId by mutableStateOf("")
