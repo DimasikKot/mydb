@@ -10,6 +10,7 @@ import data.dbConnect
 import data.viewModels.MainViewModel
 import windows.App
 import windows.Report
+import windows.ReportEmployee
 
 fun main() = application {
 
@@ -20,7 +21,7 @@ fun main() = application {
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = ::exitApplication,
-            title = "My database app",
+            title = "Учёт устройств",
             state = windowState
         ) {
             App(mainVM)
@@ -35,10 +36,25 @@ fun main() = application {
                 mainVM.tabDevicesVM.report = 0
                 mainVM.tabReportVM.report = 0
             },
-            title = "Report Device",
+            title = "Учёт устройства",
             state = windowState
         ) {
             Report(mainVM, Modifier.padding(10.dp))
+        }
+    }
+
+    if (mainVM.tabEmployeesVM.report != 0) {
+        mainVM.tabReportEmployeeVM.report = mainVM.tabEmployeesVM.report
+        val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
+        Window(
+            onCloseRequest = {
+                mainVM.tabEmployeesVM.report = 0
+                mainVM.tabReportEmployeeVM.report = 0
+            },
+            title = "Учёт устройств сотрудника",
+            state = windowState
+        ) {
+            ReportEmployee(mainVM, Modifier.padding(10.dp))
         }
     }
 }

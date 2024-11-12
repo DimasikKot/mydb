@@ -1,6 +1,7 @@
 package data.viewModels
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 class TablesEmployeesViewModel : ViewModel() {
+    var report by mutableIntStateOf(0)
+
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 

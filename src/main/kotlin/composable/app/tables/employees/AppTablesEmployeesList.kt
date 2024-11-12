@@ -1,5 +1,6 @@
 package composable.app.tables.employees
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,8 @@ import composable.ui.UiButton
 import data.EmployeeFromTable
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesGroupsViewModel
+import icons.ExportNotes
+import icons.IconWindow
 
 @Composable
 fun AppTablesEmployeesList(tabVM: TablesEmployeesViewModel) {
@@ -77,11 +80,27 @@ private fun Row(
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
-                    Text(
-                        it.groupId.toString(),
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
+                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                        Text(
+                            it.groupId.toString(),
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            if (tabVM.report == it.id) IconWindow else ExportNotes,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 10.dp).size(35.dp)
+                                .clickable {
+                                    if (tabVM.report != 0) {
+                                        tabVM.report = 0
+                                    } else {
+                                        tabVM.report = it.id
+                                    }
+                                }
+                        )
+                    }
                 }
             }
         }

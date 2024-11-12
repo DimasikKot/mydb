@@ -1,4 +1,4 @@
-package composable.report
+package composable.reportEmployee
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -19,8 +19,8 @@ import data.formatDate
 import data.viewModels.*
 
 @Composable
-fun ReportBar(
-    tabVM: TablesReportViewModel,
+fun ReportEmployeeBar(
+    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     tabVM.listUpdate()
@@ -34,7 +34,7 @@ fun ReportBar(
             }
             RowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        RowDevice(tabVM.deviceGet(), Modifier.padding(top = 10.dp))
+        RowDevice(tabVM.employeeGet(), Modifier.padding(top = 10.dp))
         RowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
             RowSearch(tabVM, Modifier.padding(top = 10.dp))
@@ -47,7 +47,7 @@ fun ReportBar(
 
 @Composable
 private fun RowInfo(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -83,7 +83,7 @@ private fun RowInfo(
 
 @Composable
 private fun RowDevice(
-    reportDevice: ReportDeviceFromTables,
+    reportDevice: ReportEmployeeFromTables,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -185,7 +185,7 @@ private fun RowDevice(
 
 @Composable
 private fun RowBar(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -220,11 +220,26 @@ private fun RowBar(
                 Modifier
                     .background(MaterialTheme.colors.secondaryVariant).padding(10.dp)
             ) {
-                Text(
-                    "№",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
-                )
+                Row(Modifier.width(55.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "number DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "number") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("number")
+                            }
+                    )
+                    Text(
+                        "№",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
                 Row(Modifier.weight(0.5f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
                     Icon(
@@ -352,7 +367,7 @@ private fun RowBar(
 
 @Composable
 private fun RowSearch(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -413,7 +428,7 @@ private fun RowSearch(
 
 @Composable
 private fun RowCreate(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {

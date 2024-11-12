@@ -1,4 +1,4 @@
-package composable.report
+package composable.reportEmployee
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,14 +14,11 @@ import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
 import data.formatDate
-import data.viewModels.ReportStringFromTables
-import data.viewModels.TablesEmployeesViewModel
-import data.viewModels.TablesGroupsViewModel
-import data.viewModels.TablesReportViewModel
+import data.viewModels.*
 
 @Composable
-fun ReportList(
-    tabVM: TablesReportViewModel,
+fun ReportEmployeeList(
+    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -41,8 +38,8 @@ fun ReportList(
 
 @Composable
 private fun Row(
-    tabVM: TablesReportViewModel,
-    it: ReportStringFromTables,
+    tabVM: TablesReportEmployeeViewModel,
+    it: ReportEmployeeStringFromTables,
 ) {
     Row {
         val newId = mutableStateOf(it.id.toString())
@@ -124,7 +121,7 @@ private fun Row(
 
 @Composable
 private fun RowUpdate(
-    it: ReportStringFromTables,
+    it: ReportEmployeeStringFromTables,
     newId: MutableState<String>,
     newDate: MutableState<String>,
     newEmployeeId: MutableState<String>,

@@ -2,6 +2,7 @@ package data.viewModels
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import data.EmployeesTable
 import data.StringsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
@@ -10,7 +11,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-class TablesReportViewModel : ViewModel() {
+class TablesReportEmployeeViewModel : ViewModel() {
     var report by mutableIntStateOf(0)
 
     var searching by mutableStateOf(false)
@@ -38,17 +39,17 @@ class TablesReportViewModel : ViewModel() {
     var whereGroupId by mutableStateOf("")
     var whereGroupName by mutableStateOf("")
 
-    fun deviceGet(): ReportDeviceFromTables {
+    fun employeeGet(): ReportEmployeeFromTables {
         try {
-            val requestDevice =
+            val requestEmployee =
                 "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
                         "FROM devices JOIN types ON devices.type_id = types.id " +
                         "WHERE devices.id = $report " +
                         "LIMIT 1"
             return transaction {
-                exec(requestDevice) { row ->
+                exec(requestEmployee) { row ->
                     if (row.next()) {
-                        ReportDeviceFromTables(
+                        ReportEmployeeFromTables(
                             id = row.getInt("id"),
                             name = row.getString("name"),
                             date = row.getString("date"),
@@ -57,13 +58,13 @@ class TablesReportViewModel : ViewModel() {
                             typeName = row.getString("type_name")
                         )
                     } else {
-                        ReportDeviceFromTables(-1, "REQUEST", "REQUEST", -1, -1, "$row")
+                        ReportEmployeeFromTables(-1, "REQUEST", "REQUEST", -1, -1, "$row")
                     }
                 }!!
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return ReportDeviceFromTables(-1, "DB", "DB", -1, -1, "$e")
+            return ReportEmployeeFromTables(-1, "DB", "DB", -1, -1, "$e")
         }
     }
 
@@ -127,13 +128,13 @@ class TablesReportViewModel : ViewModel() {
         return descending
     }
 
-    fun listGet(): List<ReportStringFromTables> {
+    fun listGet(): List<ReportEmployeeStringFromTables> {
         try {
             return transaction {
                 val result = exec(request) { row ->
                     generateSequence {
                         if (row.next()) {
-                            ReportStringFromTables(
+                            ReportEmployeeStringFromTables(
                                 number = row.getInt("number"),
                                 id = row.getInt("id"),
                                 date = row.getString("date"),
@@ -147,7 +148,6 @@ class TablesReportViewModel : ViewModel() {
                         }
                     }.toList()
                 }
-                println()
                 result ?: emptyList()
             }
         } catch (e: Exception) {
@@ -159,7 +159,7 @@ class TablesReportViewModel : ViewModel() {
     fun delete(itId: Int): Boolean {
         try {
             transaction {
-                StringsTable.deleteWhere { id.eq(itId) }
+                EmployeesTable.deleteWhere { id.eq(itId) }
             }
             listUpdate()
             return true
@@ -222,7 +222,7 @@ class TablesReportViewModel : ViewModel() {
     }
 }
 
-data class ReportDeviceFromTables(
+data class ReportEmployeeFromTables(
     val id: Int,
     val name: String,
     val date: String,
@@ -231,7 +231,7 @@ data class ReportDeviceFromTables(
     val typeName: String,
 )
 
-data class ReportStringFromTables(
+data class ReportEmployeeStringFromTables(
     var editing: MutableState<Boolean> = mutableStateOf(false),
     var canUpdate: MutableState<Boolean> = mutableStateOf(true),
     var canDelete: MutableState<Boolean> = mutableStateOf(true),
