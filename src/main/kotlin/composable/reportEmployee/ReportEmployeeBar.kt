@@ -203,22 +203,27 @@ private fun RowBar(
                 Modifier
                     .background(MaterialTheme.colors.secondaryVariant).padding(10.dp)
             ) {
-                Row(Modifier.width(55.dp)) {
+                Text(
+                    "№",
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
+                )
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "number DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "date_give DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "number") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "date_give") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("number")
+                                descending = tabVM.listOrderBy("date_give")
                             }
                     )
                     Text(
-                        "№",
+                        "Дата получения",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -227,14 +232,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "strings.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "strings.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("strings.id")
+                                descending = tabVM.listOrderBy("id")
                             }
                     )
                     Text(
@@ -243,42 +248,22 @@ private fun RowBar(
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
-                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                Row(Modifier.weight(1.5f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "strings.date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "strings.date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("strings.date")
+                                descending = tabVM.listOrderBy("name")
                             }
                     )
                     Text(
-                        "Даты",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
-                Row(Modifier.weight(0.7f).padding(start = 10.dp)) {
-                    var descending by remember { mutableStateOf(false) }
-                    Icon(
-                        if (descending) {
-                            if (tabVM.order1 == "employees.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
-                        } else {
-                            if (tabVM.order1 == "employees.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                            .clickable {
-                                descending = tabVM.listOrderBy("employees.id")
-                            }
-                    )
-                    Text(
-                        "ID сотрудника",
+                        "Название",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -287,38 +272,18 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "employees.name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "employees.name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("employees.name")
+                                descending = tabVM.listOrderBy("date")
                             }
                     )
                     Text(
-                        "Название сотрудника",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
-                Row(Modifier.weight(0.5f).padding(start = 10.dp)) {
-                    var descending by remember { mutableStateOf(false) }
-                    Icon(
-                        if (descending) {
-                            if (tabVM.order1 == "groups.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
-                        } else {
-                            if (tabVM.order1 == "groups.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                            .clickable {
-                                descending = tabVM.listOrderBy("groups.id")
-                            }
-                    )
-                    Text(
-                        "ID групп",
+                        "Дата",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -327,18 +292,58 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "groups.name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "price DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "groups.name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "price") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("groups.name")
+                                descending = tabVM.listOrderBy("price")
                             }
                     )
                     Text(
-                        "Название группы",
+                        "Стоимость",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "type_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "type_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("type_id")
+                            }
+                    )
+                    Text(
+                        "ID типа",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
+                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "type_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "type_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("type_name")
+                            }
+                    )
+                    Text(
+                        "Название типа",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )

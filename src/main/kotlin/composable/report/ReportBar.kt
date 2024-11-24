@@ -229,14 +229,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "strings.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "strings.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("strings.id")
+                                descending = tabVM.listOrderBy("id")
                             }
                     )
                     Text(
@@ -249,14 +249,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "strings.date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "strings.date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("strings.date")
+                                descending = tabVM.listOrderBy("date")
                             }
                     )
                     Text(
@@ -269,14 +269,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "employees.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "employee_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "employees.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "employee_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("employees.id")
+                                descending = tabVM.listOrderBy("employee_id")
                             }
                     )
                     Text(
@@ -289,14 +289,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "employees.name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "employee_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "employees.name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "employee_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("employees.name")
+                                descending = tabVM.listOrderBy("employee_name")
                             }
                     )
                     Text(
@@ -309,14 +309,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "groups.id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "group_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "groups.id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "group_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("groups.id")
+                                descending = tabVM.listOrderBy("group_id")
                             }
                     )
                     Text(
@@ -329,14 +329,14 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "groups.name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "group_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "groups.name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "group_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("groups.name")
+                                descending = tabVM.listOrderBy("group_name")
                             }
                     )
                     Text(

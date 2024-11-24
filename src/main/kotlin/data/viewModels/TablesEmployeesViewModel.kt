@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 class TablesEmployeesViewModel : ViewModel() {
-    var report by mutableIntStateOf(0)
+    var report by mutableIntStateOf(IntDB("reportDefaultEmployee", 0).toInt())
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)

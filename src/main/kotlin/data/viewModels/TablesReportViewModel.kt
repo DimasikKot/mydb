@@ -16,15 +16,8 @@ class TablesReportViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf(
-        "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
-                "FROM strings " +
-                "JOIN employees ON strings.employee_id = employees.id " +
-                "JOIN groups ON employees.group_id = groups.id " +
-                "WHERE strings.device_id = $report " +
-                "ORDER BY strings.date"
-    )
-    var order1 by mutableStateOf("strings.date")
+    private var request by mutableStateOf("")
+    var order1 by mutableStateOf("date")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
     private var order4 by mutableStateOf("")
@@ -64,6 +57,35 @@ class TablesReportViewModel : ViewModel() {
         } catch (e: Exception) {
             e.printStackTrace()
             return ReportDeviceFromTables(-1, "DB", "DB", -1, -1, "$e")
+        }
+    }
+
+    fun listGet(): List<ReportStringFromTables> {
+        try {
+            return transaction {
+                val result = exec(request) { row ->
+                    generateSequence {
+                        if (row.next()) {
+                            ReportStringFromTables(
+                                number = row.getInt("number"),
+                                id = row.getInt("id"),
+                                date = row.getString("date"),
+                                employeeID = row.getInt("employee_id"),
+                                employeeName = row.getString("employee_name"),
+                                groupId = row.getInt("group_id"),
+                                groupName = row.getString("group_name"),
+                            )
+                        } else {
+                            null
+                        }
+                    }.toList()
+                }
+                println()
+                result ?: emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return emptyList()
         }
     }
 
@@ -125,35 +147,6 @@ class TablesReportViewModel : ViewModel() {
         }
         listUpdate()
         return descending
-    }
-
-    fun listGet(): List<ReportStringFromTables> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            ReportStringFromTables(
-                                number = row.getInt("number"),
-                                id = row.getInt("id"),
-                                date = row.getString("date"),
-                                employeeID = row.getInt("employee_id"),
-                                employeeName = row.getString("employee_name"),
-                                groupId = row.getInt("group_id"),
-                                groupName = row.getString("group_name"),
-                            )
-                        } else {
-                            null
-                        }
-                    }.toList()
-                }
-                println()
-                result ?: emptyList()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
-        }
     }
 
     fun delete(itId: Int): Boolean {

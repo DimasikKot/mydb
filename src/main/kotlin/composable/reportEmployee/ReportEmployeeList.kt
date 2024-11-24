@@ -84,32 +84,37 @@ private fun Row(
                         modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
                     )
                     Text(
+                        formatDate(it.dateGive),
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                    )
+                    Text(
                         it.id.toString(),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        formatDate(it.date),
+                        it.name,
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.weight(1.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                    )
+                    Text(
+                        it.date,
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        "it.employeeID.toString()",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
-                    Text(
-                        "it.employeeName",
+                        it.price.toString(),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        "it.groupId.toString()",
+                        it.typeId.toString(),
                         style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        "it.groupName",
+                        it.typeName,
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )

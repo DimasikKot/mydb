@@ -33,4 +33,6 @@ class SettingsViewModel: ViewModel() {
             else -> 1
         }
     }
+    var reportDefaultDevice by IntDB("reportDefaultDevice", 0)
+    var reportDefaultEmployee by IntDB("reportDefaultEmployee", 0)
 }

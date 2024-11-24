@@ -17,14 +17,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf(
-        "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.date AS date_give, strings.device_id AS id, devices.name, devices.date, devices.price, devices.type_id AS type_id, devices.type_name AS type_name " +
-                "FROM strings " +
-                "JOIN devices ON strings.device_id = devices.id " +
-                "JOIN types ON devices.type_id = types.id " +
-                "WHERE strings.device_id = $report " +
-                "ORDER BY strings.date"
-    )
+    private var request by mutableStateOf("")
     var order1 by mutableStateOf("strings.date")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
@@ -42,20 +35,20 @@ class TablesReportEmployeeViewModel : ViewModel() {
     fun employeeGet(): ReportEmployeeFromTables {
         try {
             val requestEmployee =
-                "SELECT employees.id, employees.name, employees.group_id, groups.name AS group_name, " +
-                            "(SELECT SUM(devices.price) " +
-                            "FROM devices " +
-                            "JOIN " +
-                                "(SELECT strings.device_id, MAX(strings.date) AS latest_date " +
-                                    "FROM strings " +
-                                    "WHERE strings.employee_id = $report " +
-                                    "GROUP BY strings.device_id) AS latest " +
-                                "ON devices.id = latest.device_id " +
-                            "JOIN strings ON devices.id = strings.device_id AND strings.date = latest.latest_date " +
-                            "WHERE strings.employee_id = $report) AS total_price " +
+                "SELECT employees.id, employees.name, employees.group_id, groups.name AS group_name, (" +
+                            "SELECT SUM(devices.price) " +
+                            "FROM strings " +
+                            "JOIN devices ON devices.id = strings.device_id " +
+                            "JOIN (" +
+                                "SELECT MAX(date) AS date_give_latest " +
+                                "FROM strings " +
+                                "GROUP BY device_id" +
+                            ") ON date_give_latest = strings.date " +
+                            "WHERE strings.employee_id = $report" +
+                        ") AS total_price " +
                         "FROM employees " +
                         "JOIN groups " +
-                            "ON employees.group_id = groups.id " +
+                        "ON employees.group_id = groups.id " +
                         "WHERE employees.id = $report " +
                         "LIMIT 1"
             return transaction {
@@ -69,23 +62,57 @@ class TablesReportEmployeeViewModel : ViewModel() {
                             totalPrice = row.getInt("total_price")
                         )
                     } else {
-                        ReportEmployeeFromTables(-1, "REQUEST", -1, "$row", -1)
+                        ReportEmployeeFromTables(name = "$row")
                     }
                 }!!
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return ReportEmployeeFromTables(-1, "DB", -1, "$e", -1)
+            return ReportEmployeeFromTables(name = "$e")
+        }
+    }
+
+    fun listGet(): List<ReportEmployeeStringFromTables> {
+        try {
+            return transaction {
+                val result = exec(request) { row ->
+                    generateSequence {
+                        if (row.next()) {
+                            ReportEmployeeStringFromTables(
+                                number = row.getInt("number"),
+                                dateGive = row.getString("date"),
+                                id = row.getInt("id"),
+                                name = row.getString("name"),
+                                date = row.getString("date"),
+                                price = row.getInt("price"),
+                                typeId = row.getInt("type_id"),
+                                typeName = row.getString("type_name"),
+                            )
+                        } else {
+                            null
+                        }
+                    }.toList()
+                }
+                result ?: emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return emptyList()
         }
     }
 
     fun listUpdate() {
         var requestNew =
-            "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
+            "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.date AS date_give, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
                     "FROM strings " +
-                    "JOIN employees ON strings.employee_id = employees.id " +
-                    "JOIN groups ON employees.group_id = groups.id " +
-                    "WHERE strings.device_id = $report"
+                    "JOIN devices ON strings.device_id = devices.id " +
+                    "JOIN types ON devices.type_id = types.id " +
+                    "JOIN (" +
+                        "SELECT MAX(date) AS date_give_latest " +
+                        "FROM strings " +
+                        "GROUP BY device_id" +
+                    ") ON date_give_latest = strings.date " +
+                    "WHERE strings.employee_id = $report"
         val conditions = mutableListOf<String>()
         if (whereId.isNotEmpty()) {
             conditions.add("strings.id >= $whereId")
@@ -108,7 +135,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
         if (conditions.isNotEmpty()) {
             requestNew += " and " + conditions.joinToString(" and ")
         }
-        requestNew += " ORDER BY $order1"
+//        requestNew += " ORDER BY $order1"
         requestNew += if (order2.isNotEmpty()) ", $order2" else ""
         requestNew += if (order3.isNotEmpty()) ", $order3" else ""
         requestNew += if (order4.isNotEmpty()) ", $order4" else ""
@@ -137,35 +164,6 @@ class TablesReportEmployeeViewModel : ViewModel() {
         }
         listUpdate()
         return descending
-    }
-
-    fun listGet(): List<ReportEmployeeStringFromTables> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            ReportEmployeeStringFromTables(
-                                number = row.getInt("number"),
-                                giveDate = row.getString("date_give"),
-                                id = row.getInt("id"),
-                                name = row.getString("name"),
-                                date = row.getString("date"),
-                                price = row.getInt("price"),
-                                typeId = row.getInt("type_id"),
-                                typeName = row.getString("type_name"),
-                            )
-                        } else {
-                            null
-                        }
-                    }.toList()
-                }
-                result ?: emptyList()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
-        }
     }
 
     fun delete(itId: Int): Boolean {
@@ -235,23 +233,23 @@ class TablesReportEmployeeViewModel : ViewModel() {
 }
 
 data class ReportEmployeeFromTables(
-    val id: Int,
-    val name: String,
-    val groupId: Int,
-    val groupName: String,
-    val totalPrice: Int,
+    val id: Int = -1,
+    val name: String = "null",
+    val groupId: Int = -1,
+    val groupName: String = "null",
+    val totalPrice: Int = -1,
 )
 
 data class ReportEmployeeStringFromTables(
     var editing: MutableState<Boolean> = mutableStateOf(false),
     var canUpdate: MutableState<Boolean> = mutableStateOf(true),
     var canDelete: MutableState<Boolean> = mutableStateOf(true),
-    val number: Int,
-    val giveDate: String,
-    val id: Int,
-    val name: String,
-    val date: String,
-    val price: Int,
-    val typeId: Int,
-    val typeName: String,
+    val number: Int = -1,
+    val dateGive: String = "null",
+    val id: Int = -1,
+    val name: String = "null",
+    val date: String = "null",
+    val price: Int = -1,
+    val typeId: Int = -1,
+    val typeName: String = "null",
 )

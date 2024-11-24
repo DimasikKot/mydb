@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.UiTextButton
@@ -41,6 +42,28 @@ fun AppSettings(
                 "Главная таблица при запуске: ${mainVM.setVM.appTablesBarCurrentPage}",
                 { mainVM.setVM.switchAppTablesBarCurrentPage() },
                 "Сменить"
+            )
+        }
+        item {
+            TextField(
+                value = if (mainVM.setVM.reportDefaultDevice != 0) mainVM.setVM.reportDefaultDevice.toString() else "",
+                onValueChange = {
+                    if (it == "") mainVM.setVM.reportDefaultDevice =
+                        0 else if (it.matches(regex = Regex("^\\d*\$"))) mainVM.setVM.reportDefaultDevice = it.toInt()
+                },
+                label = { Text(if (mainVM.setVM.reportDefaultDevice == 0) "При запуске учёт устройства с оперделённым ID выключен" else "При запуске учёт устройства с ID включен") },
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+            )
+        }
+        item {
+            TextField(
+                value = if (mainVM.setVM.reportDefaultEmployee != 0) mainVM.setVM.reportDefaultEmployee.toString() else "",
+                onValueChange = {
+                    if (it == "") mainVM.setVM.reportDefaultEmployee =
+                        0 else if (it.matches(regex = Regex("^\\d*\$"))) mainVM.setVM.reportDefaultEmployee = it.toInt()
+                },
+                label = { Text(if (mainVM.setVM.reportDefaultEmployee == 0) "При запуске учёт сотрудника с оперделённым ID выключен" else "При запуске учёт сотрудника с ID включен") },
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
             )
         }
         item {

@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import data.DeviceFromTable
 import data.DevicesTable
+import data.IntDB
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -14,7 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 class TablesDevicesViewModel : ViewModel() {
-    var report by mutableIntStateOf(0)
+    var report by mutableIntStateOf(IntDB("reportDefaultDevice", 0).toInt())
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
