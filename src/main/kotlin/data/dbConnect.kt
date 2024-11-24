@@ -19,9 +19,9 @@ fun dbConnect(mainVM: MainViewModel) {
         e.printStackTrace()
     }
 
-//    transaction {
-//        SchemaUtils.create(TypesTable, DevicesTable, StringsTable, EmployeesTable, GroupsTable)
-//    }
+    transaction {
+        SchemaUtils.create(TypesTable, DevicesTable, StringsTable, EmployeesTable, GroupsTable)
+    }
 
 //    try {
 //        Class.forName(driver)
