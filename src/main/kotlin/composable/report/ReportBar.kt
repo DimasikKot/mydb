@@ -365,6 +365,7 @@ private fun RowSearch(
                     value = tabVM.whereNumber,
                     onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereNumber = it },
                     label = { Text("№") },
+                    readOnly = true,
                     modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
                 )
                 TextField(

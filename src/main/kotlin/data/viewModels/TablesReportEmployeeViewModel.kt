@@ -18,10 +18,10 @@ class TablesReportEmployeeViewModel : ViewModel() {
     var creating by mutableStateOf(false)
 
     private var request by mutableStateOf(
-        "SELECT strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
+        "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.date AS date_give, strings.device_id AS id, devices.name, devices.date, devices.price, devices.type_id AS type_id, devices.type_name AS type_name " +
                 "FROM strings " +
-                "JOIN employees ON strings.employee_id = employees.id " +
-                "JOIN groups ON employees.group_id = groups.id " +
+                "JOIN devices ON strings.device_id = devices.id " +
+                "JOIN types ON devices.type_id = types.id " +
                 "WHERE strings.device_id = $report " +
                 "ORDER BY strings.date"
     )
@@ -42,9 +42,21 @@ class TablesReportEmployeeViewModel : ViewModel() {
     fun employeeGet(): ReportEmployeeFromTables {
         try {
             val requestEmployee =
-                "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
-                        "FROM devices JOIN types ON devices.type_id = types.id " +
-                        "WHERE devices.id = $report " +
+                "SELECT employees.id, employees.name, employees.group_id, groups.name AS group_name, " +
+                            "(SELECT SUM(devices.price) " +
+                            "FROM devices " +
+                            "JOIN " +
+                                "(SELECT strings.device_id, MAX(strings.date) AS latest_date " +
+                                    "FROM strings " +
+                                    "WHERE strings.employee_id = $report " +
+                                    "GROUP BY strings.device_id) AS latest " +
+                                "ON devices.id = latest.device_id " +
+                            "JOIN strings ON devices.id = strings.device_id AND strings.date = latest.latest_date " +
+                            "WHERE strings.employee_id = $report) AS total_price " +
+                        "FROM employees " +
+                        "JOIN groups " +
+                            "ON employees.group_id = groups.id " +
+                        "WHERE employees.id = $report " +
                         "LIMIT 1"
             return transaction {
                 exec(requestEmployee) { row ->
@@ -52,19 +64,18 @@ class TablesReportEmployeeViewModel : ViewModel() {
                         ReportEmployeeFromTables(
                             id = row.getInt("id"),
                             name = row.getString("name"),
-                            date = row.getString("date"),
-                            price = row.getInt("price"),
-                            typeId = row.getInt("type_id"),
-                            typeName = row.getString("type_name")
+                            groupId = row.getInt("group_id"),
+                            groupName = row.getString("group_name"),
+                            totalPrice = row.getInt("total_price")
                         )
                     } else {
-                        ReportEmployeeFromTables(-1, "REQUEST", "REQUEST", -1, -1, "$row")
+                        ReportEmployeeFromTables(-1, "REQUEST", -1, "$row", -1)
                     }
                 }!!
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return ReportEmployeeFromTables(-1, "DB", "DB", -1, -1, "$e")
+            return ReportEmployeeFromTables(-1, "DB", -1, "$e", -1)
         }
     }
 
@@ -136,12 +147,13 @@ class TablesReportEmployeeViewModel : ViewModel() {
                         if (row.next()) {
                             ReportEmployeeStringFromTables(
                                 number = row.getInt("number"),
+                                giveDate = row.getString("date_give"),
                                 id = row.getInt("id"),
+                                name = row.getString("name"),
                                 date = row.getString("date"),
-                                employeeID = row.getInt("employee_id"),
-                                employeeName = row.getString("employee_name"),
-                                groupId = row.getInt("group_id"),
-                                groupName = row.getString("group_name"),
+                                price = row.getInt("price"),
+                                typeId = row.getInt("type_id"),
+                                typeName = row.getString("type_name"),
                             )
                         } else {
                             null
@@ -225,10 +237,9 @@ class TablesReportEmployeeViewModel : ViewModel() {
 data class ReportEmployeeFromTables(
     val id: Int,
     val name: String,
-    val date: String,
-    val price: Int,
-    val typeId: Int,
-    val typeName: String,
+    val groupId: Int,
+    val groupName: String,
+    val totalPrice: Int,
 )
 
 data class ReportEmployeeStringFromTables(
@@ -236,10 +247,11 @@ data class ReportEmployeeStringFromTables(
     var canUpdate: MutableState<Boolean> = mutableStateOf(true),
     var canDelete: MutableState<Boolean> = mutableStateOf(true),
     val number: Int,
+    val giveDate: String,
     val id: Int,
+    val name: String,
     val date: String,
-    val employeeID: Int,
-    val employeeName: String,
-    var groupId: Int,
-    var groupName: String,
+    val price: Int,
+    val typeId: Int,
+    val typeName: String,
 )

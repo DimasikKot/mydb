@@ -8,10 +8,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
+import composable.ui.UiText
 import data.DateTransformation
 import data.formatDate
 import data.viewModels.ReportStringFromTables
@@ -39,6 +43,7 @@ fun ReportList(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun Row(
     tabVM: TablesReportViewModel,
@@ -101,10 +106,10 @@ private fun Row(
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
-                    Text(
-                        it.employeeName,
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                    UiText(
+                        text = it.employeeName,
+                        modifier = Modifier.weight(1f)
+                            .align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
                         it.groupId.toString(),

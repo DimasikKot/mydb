@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
-import data.formatDate
 import data.viewModels.*
 
 @Composable
@@ -34,7 +33,7 @@ fun ReportEmployeeBar(
             }
             RowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        RowDevice(tabVM.employeeGet(), Modifier.padding(top = 10.dp))
+        RowEmployee(tabVM.employeeGet(), Modifier.padding(top = 10.dp))
         RowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
             RowSearch(tabVM, Modifier.padding(top = 10.dp))
@@ -60,7 +59,7 @@ private fun RowInfo(
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
-                "Учёт устройств",
+                "Учёт устройств сотрудника",
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -82,8 +81,8 @@ private fun RowInfo(
 }
 
 @Composable
-private fun RowDevice(
-    reportDevice: ReportEmployeeFromTables,
+private fun RowEmployee(
+    reportEmployee: ReportEmployeeFromTables,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -93,12 +92,12 @@ private fun RowDevice(
         Column(modifier = Modifier.padding(10.dp)) {
             Row {
                 Text(
-                    "Код устройства",
+                    "Код сотрудника",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.id.toString(),
+                    reportEmployee.id.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -108,12 +107,12 @@ private fun RowDevice(
             )
             Row {
                 Text(
-                    "Название устройства",
+                    "Название сотрудника",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.name,
+                    reportEmployee.name,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -123,12 +122,12 @@ private fun RowDevice(
             )
             Row {
                 Text(
-                    "Дата приобретения",
+                    "Код группы",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    formatDate(reportDevice.date),
+                    reportEmployee.groupId.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -138,28 +137,12 @@ private fun RowDevice(
             )
             Row {
                 Text(
-                    "Цена приобретения",
+                    "Название группы",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.price.toString(),
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-            }
-
-            Spacer(
-                Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
-            )
-            Row {
-                Text(
-                    "Код типа",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
-                Text(
-                    reportDevice.typeId.toString(),
+                    reportEmployee.groupName,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -169,12 +152,12 @@ private fun RowDevice(
             )
             Row {
                 Text(
-                    "Название типа",
+                    "Цена всего имущества",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.typeName,
+                    reportEmployee.totalPrice.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )

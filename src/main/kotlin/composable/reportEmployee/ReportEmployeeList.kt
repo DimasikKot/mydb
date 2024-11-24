@@ -44,10 +44,10 @@ private fun Row(
     Row {
         val newId = mutableStateOf(it.id.toString())
         val newDate = mutableStateOf(it.date)
-        val newEmployeeId = mutableStateOf(it.employeeID.toString())
-        val newEmployeeName = mutableStateOf(it.employeeName)
-        val newGroupId = mutableStateOf(it.groupId.toString())
-        val newGroupName = mutableStateOf(it.groupName)
+        val newEmployeeId = mutableStateOf("it.employeeID.toString()")
+        val newEmployeeName = mutableStateOf("it.employeeName")
+        val newGroupId = mutableStateOf("it.groupId.toString()")
+        val newGroupName = mutableStateOf("it.groupName")
         UiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
@@ -94,22 +94,22 @@ private fun Row(
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        it.employeeID.toString(),
+                        "it.employeeID.toString()",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        it.employeeName,
+                        "it.employeeName",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        it.groupId.toString(),
+                        "it.groupId.toString()",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        it.groupName,
+                        "it.groupName",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
@@ -161,7 +161,7 @@ private fun RowUpdate(
                     if (newEmployeeId.value.length == 1) newEmployeeIdMenu = true
                 },
                 label = {
-                    Text(if (newEmployeeId.value == "") it.employeeID.toString() else "Новый ID сотрудника")
+                    Text(if (newEmployeeId.value == "") "it.employeeID.toString()" else "Новый ID сотрудника")
                     DropdownMenu(
                         expanded = newEmployeeIdMenu,
                         onDismissRequest = { newEmployeeIdMenu = false },
@@ -203,7 +203,7 @@ private fun RowUpdate(
             TextField(
                 value = newEmployeeName.value,
                 onValueChange = { newEmployeeName.value = it },
-                label = { Text(if (newEmployeeName.value == "") it.employeeName else "Новое название сотрудника") },
+                label = { Text(if (newEmployeeName.value == "") "it.employeeName" else "Новое название сотрудника") },
                 readOnly = true,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -214,7 +214,7 @@ private fun RowUpdate(
                     if (newGroupId.value.length == 1) newGroupIdMenu = true
                 },
                 label = {
-                    Text(if (newGroupId.value == "") it.groupId.toString() else "Новый ID группы")
+                    Text(if (newGroupId.value == "") "it.groupId.toString()" else "Новый ID группы")
                     DropdownMenu(
                         expanded = newGroupIdMenu,
                         onDismissRequest = { newGroupIdMenu = false },
@@ -250,7 +250,7 @@ private fun RowUpdate(
             TextField(
                 value = newGroupName.value,
                 onValueChange = { newGroupName.value = it },
-                label = { Text(if (newGroupName.value == "") it.groupName else "Новое название сотрудника") },
+                label = { Text(if (newGroupName.value == "") "it.groupName" else "Новое название сотрудника") },
                 readOnly = true,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )

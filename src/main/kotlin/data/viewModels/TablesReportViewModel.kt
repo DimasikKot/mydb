@@ -17,7 +17,7 @@ class TablesReportViewModel : ViewModel() {
     var creating by mutableStateOf(false)
 
     private var request by mutableStateOf(
-        "SELECT strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
+        "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
                 "FROM strings " +
                 "JOIN employees ON strings.employee_id = employees.id " +
                 "JOIN groups ON employees.group_id = groups.id " +
