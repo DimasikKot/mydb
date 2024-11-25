@@ -1,4 +1,4 @@
-package composable.report
+package composable.reportGroup
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -15,12 +15,11 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.DateTransformation
-import data.formatDate
 import data.viewModels.*
 
 @Composable
-fun ReportBar(
-    tabVM: TablesReportViewModel,
+fun ReportGroupBar(
+    tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     tabVM.listUpdate()
@@ -34,7 +33,7 @@ fun ReportBar(
             }
             RowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        RowDevice(tabVM.deviceGet(), Modifier.padding(top = 10.dp))
+        RowHead(tabVM.headGet(), Modifier.padding(top = 10.dp))
         RowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
             RowSearch(tabVM, Modifier.padding(top = 10.dp))
@@ -47,7 +46,7 @@ fun ReportBar(
 
 @Composable
 private fun RowInfo(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -60,7 +59,7 @@ private fun RowInfo(
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
-                "Учёт устройств",
+                "Учёт устройств сотрудника",
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -82,8 +81,8 @@ private fun RowInfo(
 }
 
 @Composable
-private fun RowDevice(
-    reportDevice: ReportDeviceFromTables,
+private fun RowHead(
+    reportEmployee: ReportGroupFromTables,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -93,12 +92,12 @@ private fun RowDevice(
         Column(modifier = Modifier.padding(10.dp)) {
             Row {
                 Text(
-                    "Код устройства",
+                    "Код группы",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.id.toString(),
+                    reportEmployee.id.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -108,12 +107,12 @@ private fun RowDevice(
             )
             Row {
                 Text(
-                    "Название устройства",
+                    "Название группы",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.name,
+                    reportEmployee.name,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -123,58 +122,12 @@ private fun RowDevice(
             )
             Row {
                 Text(
-                    "Дата приобретения",
+                    "Цена всего имущества",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    formatDate(reportDevice.date),
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-            }
-            Spacer(
-                Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
-            )
-            Row {
-                Text(
-                    "Цена приобретения",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
-                Text(
-                    reportDevice.price.toString(),
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-            }
-
-            Spacer(
-                Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
-            )
-            Row {
-                Text(
-                    "Код типа",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
-                Text(
-                    reportDevice.typeId.toString(),
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
-            }
-            Spacer(
-                Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
-            )
-            Row {
-                Text(
-                    "Название типа",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
-                Text(
-                    reportDevice.typeName,
+                    reportEmployee.totalPrice.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -185,7 +138,7 @@ private fun RowDevice(
 
 @Composable
 private fun RowBar(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -245,42 +198,22 @@ private fun RowBar(
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
-                Row(Modifier.weight(1f).padding(start = 10.dp)) {
+                Row(Modifier.weight(1.5f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("date")
+                                descending = tabVM.listOrderBy("name")
                             }
                     )
                     Text(
-                        "Даты",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
-                Row(Modifier.weight(0.7f).padding(start = 10.dp)) {
-                    var descending by remember { mutableStateOf(false) }
-                    Icon(
-                        if (descending) {
-                            if (tabVM.order1 == "employee_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
-                        } else {
-                            if (tabVM.order1 == "employee_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                            .clickable {
-                                descending = tabVM.listOrderBy("employee_id")
-                            }
-                    )
-                    Text(
-                        "ID сотрудника",
+                        "Имя",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -289,58 +222,18 @@ private fun RowBar(
                     var descending by remember { mutableStateOf(false) }
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "employee_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "total_price DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "employee_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == "total_price") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("employee_name")
+                                descending = tabVM.listOrderBy("total_price")
                             }
                     )
                     Text(
-                        "Название сотрудника",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
-                Row(Modifier.weight(0.5f).padding(start = 10.dp)) {
-                    var descending by remember { mutableStateOf(false) }
-                    Icon(
-                        if (descending) {
-                            if (tabVM.order1 == "group_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
-                        } else {
-                            if (tabVM.order1 == "group_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                            .clickable {
-                                descending = tabVM.listOrderBy("group_id")
-                            }
-                    )
-                    Text(
-                        "ID групп",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                }
-                Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                    var descending by remember { mutableStateOf(false) }
-                    Icon(
-                        if (descending) {
-                            if (tabVM.order1 == "group_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
-                        } else {
-                            if (tabVM.order1 == "group_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
-                        },
-                        contentDescription = null,
-                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                            .clickable {
-                                descending = tabVM.listOrderBy("group_name")
-                            }
-                    )
-                    Text(
-                        "Название группы",
+                        "Стоимость имущества",
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
@@ -352,7 +245,7 @@ private fun RowBar(
 
 @Composable
 private fun RowSearch(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -365,7 +258,6 @@ private fun RowSearch(
                     value = tabVM.whereNumber,
                     onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereNumber = it },
                     label = { Text("№") },
-                    readOnly = true,
                     modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
                 )
                 TextField(
@@ -414,7 +306,7 @@ private fun RowSearch(
 
 @Composable
 private fun RowCreate(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {

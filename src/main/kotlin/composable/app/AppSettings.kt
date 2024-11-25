@@ -67,6 +67,17 @@ fun AppSettings(
             )
         }
         item {
+            TextField(
+                value = if (mainVM.setVM.reportDefaultGroup != 0) mainVM.setVM.reportDefaultGroup.toString() else "",
+                onValueChange = {
+                    if (it == "") mainVM.setVM.reportDefaultGroup =
+                        0 else if (it.matches(regex = Regex("^\\d*\$"))) mainVM.setVM.reportDefaultGroup = it.toInt()
+                },
+                label = { Text(if (mainVM.setVM.reportDefaultGroup == 0) "При запуске учёт группы с оперделённым ID выключен" else "При запуске учёт группы с ID включен") },
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+            )
+        }
+        item {
             var textSQL by StringDB("textSQL", "")
             TextField(
                 value = textSQL,

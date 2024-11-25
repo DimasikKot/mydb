@@ -35,4 +35,5 @@ class SettingsViewModel: ViewModel() {
     }
     var reportDefaultDevice by IntDB("reportDefaultDevice", 0)
     var reportDefaultEmployee by IntDB("reportDefaultEmployee", 0)
+    var reportDefaultGroup by IntDB("reportDefaultGroup", 0)
 }

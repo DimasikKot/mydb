@@ -7,7 +7,7 @@ import data.viewModels.TablesGroupsViewModel
 @Composable
 fun AppTablesGroups(tabVM: TablesGroupsViewModel) {
     Column {
-        AppTablesGroupsBar(tabVM)
-        AppTablesGroupsList(tabVM)
+        appTablesGroupsBar(tabVM)
+        appTablesGroupsList(tabVM)
     }
 }

@@ -1,4 +1,4 @@
-package composable.report
+package composable.reportDevice
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,10 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
@@ -21,11 +18,11 @@ import data.formatDate
 import data.viewModels.ReportStringFromTables
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesGroupsViewModel
-import data.viewModels.TablesReportViewModel
+import data.viewModels.TablesReportDeviceViewModel
 
 @Composable
-fun ReportList(
-    tabVM: TablesReportViewModel,
+fun ReportDeviceList(
+    tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -43,10 +40,9 @@ fun ReportList(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun Row(
-    tabVM: TablesReportViewModel,
+    tabVM: TablesReportDeviceViewModel,
     it: ReportStringFromTables,
 ) {
     Row {

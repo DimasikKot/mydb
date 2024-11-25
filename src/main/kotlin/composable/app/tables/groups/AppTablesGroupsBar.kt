@@ -15,7 +15,7 @@ import composable.ui.UiButton
 import data.viewModels.TablesGroupsViewModel
 
 @Composable
-fun AppTablesGroupsBar(tabVM: TablesGroupsViewModel) {
+fun appTablesGroupsBar(tabVM: TablesGroupsViewModel) {
     Column(Modifier.animateContentSize()) {
         Row {
             UiButton(
@@ -25,21 +25,21 @@ fun AppTablesGroupsBar(tabVM: TablesGroupsViewModel) {
                 tabVM.listUpdate()
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
-                RowInfo(tabVM)
-                RowBar(tabVM)
+                rowInfo(tabVM)
+                rowBar(tabVM)
             }
         }
         if (tabVM.searching) {
-            RowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            RowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun RowInfo(tabVM: TablesGroupsViewModel) {
+private fun rowInfo(tabVM: TablesGroupsViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.heightIn(min = 55.dp)
@@ -66,7 +66,7 @@ private fun RowInfo(tabVM: TablesGroupsViewModel) {
 }
 
 @Composable
-private fun RowBar(tabVM: TablesGroupsViewModel) {
+private fun rowBar(tabVM: TablesGroupsViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp)
@@ -120,7 +120,7 @@ private fun RowBar(tabVM: TablesGroupsViewModel) {
 }
 
 @Composable
-private fun RowSearch(
+private fun rowSearch(
     tabVM: TablesGroupsViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -148,7 +148,7 @@ private fun RowSearch(
 }
 
 @Composable
-private fun RowCreate(
+private fun rowCreate(
     tabVM: TablesGroupsViewModel,
     modifier: Modifier = Modifier,
 ) {

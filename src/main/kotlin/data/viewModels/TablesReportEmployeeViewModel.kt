@@ -18,7 +18,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
     var creating by mutableStateOf(false)
 
     private var request by mutableStateOf("")
-    var order1 by mutableStateOf("strings.date")
+    var order1 by mutableStateOf("price")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
     private var order4 by mutableStateOf("")
@@ -32,7 +32,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
     var whereGroupId by mutableStateOf("")
     var whereGroupName by mutableStateOf("")
 
-    fun employeeGet(): ReportEmployeeFromTables {
+    fun headGet(): ReportEmployeeFromTables {
         try {
             val requestEmployee =
                 "SELECT employees.id, employees.name, employees.group_id, groups.name AS group_name, (" +
@@ -44,7 +44,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
                                 "FROM strings " +
                                 "GROUP BY device_id" +
                             ") ON date_give_latest = strings.date " +
-                            "WHERE strings.employee_id = $report" +
+                            "WHERE strings.employee_id = employees.id" +
                         ") AS total_price " +
                         "FROM employees " +
                         "JOIN groups " +
@@ -103,7 +103,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
 
     fun listUpdate() {
         var requestNew =
-            "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.date AS date_give, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
+            "SELECT ROW_NUMBER() OVER(ORDER BY devices.price NULLS LAST) AS number, strings.date AS date_give, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
                     "FROM strings " +
                     "JOIN devices ON strings.device_id = devices.id " +
                     "JOIN types ON devices.type_id = types.id " +
@@ -135,7 +135,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
         if (conditions.isNotEmpty()) {
             requestNew += " and " + conditions.joinToString(" and ")
         }
-//        requestNew += " ORDER BY $order1"
+        requestNew += " ORDER BY $order1"
         requestNew += if (order2.isNotEmpty()) ", $order2" else ""
         requestNew += if (order3.isNotEmpty()) ", $order3" else ""
         requestNew += if (order4.isNotEmpty()) ", $order4" else ""

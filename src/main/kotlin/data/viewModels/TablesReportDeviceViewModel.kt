@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-class TablesReportViewModel : ViewModel() {
+class TablesReportDeviceViewModel : ViewModel() {
     var report by mutableIntStateOf(0)
 
     var searching by mutableStateOf(false)
@@ -31,7 +31,7 @@ class TablesReportViewModel : ViewModel() {
     var whereGroupId by mutableStateOf("")
     var whereGroupName by mutableStateOf("")
 
-    fun deviceGet(): ReportDeviceFromTables {
+    fun headGet(): ReportDeviceFromTables {
         try {
             val requestDevice =
                 "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +

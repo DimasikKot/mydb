@@ -15,7 +15,7 @@ class MainViewModel: ViewModel() {
     val tabStringsVM = TablesStringsViewModel()
     val tabEmployeesVM = TablesEmployeesViewModel()
     val tabGroupsVM = TablesGroupsViewModel()
-    val tabReportVM = TablesReportViewModel()
+    val tabReportDeviceVM = TablesReportDeviceViewModel()
     val tabReportEmployeeVM = TablesReportEmployeeViewModel()
     val tabReportGroupVM = TablesReportGroupViewModel()
 }

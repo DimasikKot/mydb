@@ -9,8 +9,9 @@ import androidx.compose.ui.window.rememberWindowState
 import data.dbConnect
 import data.viewModels.MainViewModel
 import windows.App
-import windows.Report
+import windows.ReportDevice
 import windows.ReportEmployee
+import windows.ReportGroup
 
 fun main() = application {
 
@@ -29,17 +30,17 @@ fun main() = application {
     }
 
     if (mainVM.tabDevicesVM.report != 0) {
-        mainVM.tabReportVM.report = mainVM.tabDevicesVM.report
+        mainVM.tabReportDeviceVM.report = mainVM.tabDevicesVM.report
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
                 mainVM.tabDevicesVM.report = 0
-                mainVM.tabReportVM.report = 0
+                mainVM.tabReportDeviceVM.report = 0
             },
             title = "Учёт устройства",
             state = windowState
         ) {
-            Report(mainVM, Modifier.padding(10.dp))
+            ReportDevice(mainVM, Modifier.padding(10.dp))
         }
     }
 
@@ -55,6 +56,21 @@ fun main() = application {
             state = windowState
         ) {
             ReportEmployee(mainVM, Modifier.padding(10.dp))
+        }
+    }
+
+    if (mainVM.tabGroupsVM.report != 0) {
+        mainVM.tabReportGroupVM.report = mainVM.tabGroupsVM.report
+        val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
+        Window(
+            onCloseRequest = {
+                mainVM.tabGroupsVM.report = 0
+                mainVM.tabReportGroupVM.report = 0
+            },
+            title = "Учёт сотрудников группы",
+            state = windowState
+        ) {
+            ReportGroup(mainVM, Modifier.padding(10.dp))
         }
     }
 }

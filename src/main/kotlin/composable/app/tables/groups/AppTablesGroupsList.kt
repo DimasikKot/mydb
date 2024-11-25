@@ -1,12 +1,10 @@
 package composable.app.tables.groups
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -16,21 +14,23 @@ import androidx.compose.ui.unit.dp
 import composable.ui.UiButton
 import data.GroupFromTable
 import data.viewModels.TablesGroupsViewModel
+import icons.ExportNotes
+import icons.IconWindow
 
 @Composable
-fun AppTablesGroupsList(tabVM: TablesGroupsViewModel) {
+fun appTablesGroupsList(tabVM: TablesGroupsViewModel) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.listGet()) {
-            Row(tabVM, it)
+            row(tabVM, it)
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesGroupsViewModel,
     it: GroupFromTable,
 ) {
@@ -58,7 +58,7 @@ private fun Row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newName)
+            rowUpdate(it, newId, newName)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -67,11 +67,27 @@ private fun Row(
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                     )
-                    Text(
-                        it.name,
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
+                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                        Text(
+                            it.name,
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            if (tabVM.report == it.id) IconWindow else ExportNotes,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 10.dp).size(35.dp)
+                                .clickable {
+                                    if (tabVM.report != 0) {
+                                        tabVM.report = 0
+                                    } else {
+                                        tabVM.report = it.id
+                                    }
+                                }
+                        )
+                    }
                 }
             }
         }
@@ -79,7 +95,7 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: GroupFromTable,
     newId: MutableState<String>,
     newName: MutableState<String>,
