@@ -7,19 +7,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.reportDevice.*
 import data.viewModels.MainViewModel
-import theme.MainTheme
+import theme.mainTheme
 
 @Composable
-fun ReportDevice(
+fun reportDevice(
     mainVM: MainViewModel,
+    reportEmployee: MutableIntState,
+    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
-    MainTheme(mainVM.setVM.theme) {
+    mainTheme(mainVM.setVM.theme) {
         Scaffold {
             Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    ReportDeviceBar(mainVM.tabReportDeviceVM)
-                    ReportDeviceList(mainVM.tabReportDeviceVM, Modifier.padding(top = 10.dp))
+                    reportDeviceBar(mainVM.tabReportDeviceVM)
+                    reportDeviceList(mainVM.tabReportDeviceVM, reportEmployee, reportGroup, Modifier.padding(top = 10.dp))
                 }
             }
         }

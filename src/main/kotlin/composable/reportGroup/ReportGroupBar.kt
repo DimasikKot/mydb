@@ -13,39 +13,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.viewModels.*
 
 @Composable
-fun ReportGroupBar(
+fun reportGroupBar(
     tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     tabVM.listUpdate()
     Column(modifier.animateContentSize()) {
         Row {
-            UiButton(
+            uiButton(
                 Icons.Default.Update,
                 modifier = Modifier.height(55.dp).width(120.dp)
             ) {
                 tabVM.listUpdate()
             }
-            RowInfo(tabVM, Modifier.padding(start = 10.dp))
+            rowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        RowHead(tabVM.headGet(), Modifier.padding(top = 10.dp))
-        RowBar(tabVM, Modifier.padding(top = 10.dp))
+        rowHead(tabVM.headGet(), Modifier.padding(top = 10.dp))
+        rowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
-            RowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            RowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun RowInfo(
+private fun rowInfo(
     tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -55,11 +55,11 @@ private fun RowInfo(
     ) {
         Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
             Icon(
-                Icons.Default.Devices, contentDescription = null,
+                Icons.Default.Groups, contentDescription = null,
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
-                "Учёт устройств сотрудника",
+                "Учёт сотрудников группы",
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -81,7 +81,7 @@ private fun RowInfo(
 }
 
 @Composable
-private fun RowHead(
+private fun rowHead(
     reportEmployee: ReportGroupFromTables,
     modifier: Modifier = Modifier,
 ) {
@@ -137,7 +137,7 @@ private fun RowHead(
 }
 
 @Composable
-private fun RowBar(
+private fun rowBar(
     tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -244,12 +244,12 @@ private fun RowBar(
 }
 
 @Composable
-private fun RowSearch(
+private fun rowSearch(
     tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
-        UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -305,7 +305,7 @@ private fun RowSearch(
 }
 
 @Composable
-private fun RowCreate(
+private fun rowCreate(
     tabVM: TablesReportGroupViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -319,7 +319,7 @@ private fun RowCreate(
         var newGroupId by remember { mutableStateOf("") }
         var newGroupIdMenu by remember { mutableStateOf(false) }
         var newGroupName by remember { mutableStateOf("") }
-        UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.insert(newId, newDate, newEmployeeId.toInt())
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {

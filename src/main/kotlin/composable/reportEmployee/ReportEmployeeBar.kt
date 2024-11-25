@@ -13,39 +13,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.viewModels.*
+import icons.ExportNotes
+import icons.IconWindow
 
 @Composable
-fun ReportEmployeeBar(
+fun reportEmployeeBar(
     tabVM: TablesReportEmployeeViewModel,
+    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     tabVM.listUpdate()
     Column(modifier.animateContentSize()) {
         Row {
-            UiButton(
+            uiButton(
                 Icons.Default.Update,
                 modifier = Modifier.height(55.dp).width(120.dp)
             ) {
                 tabVM.listUpdate()
             }
-            RowInfo(tabVM, Modifier.padding(start = 10.dp))
+            rowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        RowEmployee(tabVM.headGet(), Modifier.padding(top = 10.dp))
-        RowBar(tabVM, Modifier.padding(top = 10.dp))
+        rowHead(tabVM.headGet(), reportGroup, Modifier.padding(top = 10.dp))
+        rowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
-            RowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            RowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun RowInfo(
+private fun rowInfo(
     tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -55,7 +58,7 @@ private fun RowInfo(
     ) {
         Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
             Icon(
-                Icons.Default.Devices, contentDescription = null,
+                Icons.Default.People, contentDescription = null,
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
@@ -81,8 +84,9 @@ private fun RowInfo(
 }
 
 @Composable
-private fun RowEmployee(
-    reportEmployee: ReportEmployeeFromTables,
+private fun rowHead(
+    it: ReportEmployeeFromTables,
+    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -97,7 +101,7 @@ private fun RowEmployee(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportEmployee.id.toString(),
+                    it.id.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -112,7 +116,7 @@ private fun RowEmployee(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportEmployee.name,
+                    it.name,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -127,7 +131,7 @@ private fun RowEmployee(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportEmployee.groupId.toString(),
+                    it.groupId.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -141,11 +145,24 @@ private fun RowEmployee(
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
-                Text(
-                    reportEmployee.groupName,
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                )
+                Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                    Text(
+                        it.groupName,
+                        style = MaterialTheme.typography.h5
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        imageVector = if (reportGroup.value == it.id) IconWindow else ExportNotes,
+                        contentDescription = null,
+                        modifier = Modifier.padding(start = 10.dp).size(35.dp).clickable {
+                            if (reportGroup.value != 0) {
+                                reportGroup.value = 0
+                            } else {
+                                reportGroup.value = it.id
+                            }
+                        }
+                    )
+                }
             }
             Spacer(
                 Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
@@ -157,7 +174,7 @@ private fun RowEmployee(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportEmployee.totalPrice.toString(),
+                    it.totalPrice.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -167,7 +184,7 @@ private fun RowEmployee(
 }
 
 @Composable
-private fun RowBar(
+private fun rowBar(
     tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -354,12 +371,12 @@ private fun RowBar(
 }
 
 @Composable
-private fun RowSearch(
+private fun rowSearch(
     tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
-        UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -415,7 +432,7 @@ private fun RowSearch(
 }
 
 @Composable
-private fun RowCreate(
+private fun rowCreate(
     tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -429,7 +446,7 @@ private fun RowCreate(
         var newGroupId by remember { mutableStateOf("") }
         var newGroupIdMenu by remember { mutableStateOf(false) }
         var newGroupName by remember { mutableStateOf("") }
-        UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.insert(newId, newDate, newEmployeeId.toInt())
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {

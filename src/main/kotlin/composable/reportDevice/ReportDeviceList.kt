@@ -1,5 +1,6 @@
 package composable.reportDevice
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,38 +12,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
-import composable.ui.UiText
+import composable.ui.uiButton
 import data.DateTransformation
 import data.formatDate
 import data.viewModels.ReportStringFromTables
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesGroupsViewModel
 import data.viewModels.TablesReportDeviceViewModel
+import icons.ExportNotes
+import icons.IconWindow
 
 @Composable
-fun ReportDeviceList(
+fun reportDeviceList(
     tabVM: TablesReportDeviceViewModel,
+    reportEmployee: MutableIntState,
+    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     Card(
-        elevation = 10.dp,
-        modifier = modifier
+        elevation = 10.dp, modifier = modifier
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.fillMaxSize().padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(tabVM.listGet()) {
-                Row(tabVM, it)
+                row(tabVM, reportEmployee, reportGroup, it)
             }
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesReportDeviceViewModel,
+    reportEmployee: MutableIntState,
+    reportGroup: MutableIntState,
     it: ReportStringFromTables,
 ) {
     Row {
@@ -52,7 +56,7 @@ private fun Row(
         val newEmployeeName = mutableStateOf(it.employeeName)
         val newGroupId = mutableStateOf(it.groupId.toString())
         val newGroupName = mutableStateOf(it.groupName)
-        UiButton(
+        uiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
         ) {
@@ -70,15 +74,14 @@ private fun Row(
                 it.editing.value = true
             }
         }
-        UiButton(
+        uiButton(
             if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
-            modifier = Modifier
-                .padding(start = 10.dp).size(55.dp)
+            modifier = Modifier.padding(start = 10.dp).size(55.dp)
         ) {
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newDate, newEmployeeId, newEmployeeName, newGroupId, newGroupName)
+            rowUpdate(it, newId, newDate, newEmployeeId, newEmployeeName, newGroupId, newGroupName)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -102,21 +105,47 @@ private fun Row(
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
-                    UiText(
-                        text = it.employeeName,
-                        modifier = Modifier.weight(1f)
-                            .align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
+                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                        Icon(
+                            if (reportEmployee.value == it.employeeID) IconWindow else ExportNotes,
+                            contentDescription = null,
+                            modifier = Modifier.size(35.dp).clickable {
+                                if (reportEmployee.value != 0) {
+                                    reportEmployee.value = 0
+                                } else {
+                                    reportEmployee.value = it.employeeID
+                                }
+                            }
+                        )
+                        Text(
+                            it.employeeName,
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.padding(start = 10.dp).align(Alignment.CenterVertically).weight(1f)
+                        )
+                    }
                     Text(
                         it.groupId.toString(),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
-                    Text(
-                        it.groupName,
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
+                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                        Icon(
+                            if (reportGroup.value == it.groupId) IconWindow else ExportNotes,
+                            contentDescription = null,
+                            modifier = Modifier.size(35.dp).clickable {
+                                if (reportGroup.value != 0) {
+                                    reportGroup.value = 0
+                                } else {
+                                    reportGroup.value = it.groupId
+                                }
+                            }
+                        )
+                        Text(
+                            it.groupName,
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).weight(1f)
+                        )
+                    }
                 }
             }
         }
@@ -124,7 +153,7 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: ReportStringFromTables,
     newId: MutableState<String>,
     newDate: MutableState<String>,
@@ -159,50 +188,46 @@ private fun RowUpdate(
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
-                value = newEmployeeId.value,
-                onValueChange = {
-                    if (it.matches(regex = Regex("^\\d*\$"))) newEmployeeId.value = it
-                    if (newEmployeeId.value.length == 1) newEmployeeIdMenu = true
-                },
-                label = {
-                    Text(if (newEmployeeId.value == "") it.employeeID.toString() else "Новый ID сотрудника")
-                    DropdownMenu(
-                        expanded = newEmployeeIdMenu,
-                        onDismissRequest = { newEmployeeIdMenu = false },
-                        offset = DpOffset(0.dp, 30.dp)
-                    ) {
-                        val employeesVM = remember { TablesEmployeesViewModel() }
-                        DropdownMenuItem({}) {
-                            TextField(
-                                value = employeesVM.whereId,
-                                onValueChange = {
-                                    if (it.matches(regex = Regex("^\\d*\$"))) {
-                                        employeesVM.whereId = it
-                                        employeesVM.listUpdate()
-                                    }
-                                },
-                                label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
-                            )
-                        }
-                        for (item in employeesVM.listGet()) {
-                            DropdownMenuItem({
-                                newEmployeeId.value = item.id.toString()
-                                newEmployeeName.value = item.name
-                                newGroupId.value = item.groupId.toString()
-                                val groupVM by mutableStateOf(TablesGroupsViewModel())
-                                for (itemGroup in groupVM.listGet()) {
-                                    if (item.groupId == itemGroup.id) {
-                                        newGroupName.value = itemGroup.name
-                                    }
+                value = newEmployeeId.value, onValueChange = {
+                if (it.matches(regex = Regex("^\\d*\$"))) newEmployeeId.value = it
+                if (newEmployeeId.value.length == 1) newEmployeeIdMenu = true
+            }, label = {
+                Text(if (newEmployeeId.value == "") it.employeeID.toString() else "Новый ID сотрудника")
+                DropdownMenu(
+                    expanded = newEmployeeIdMenu,
+                    onDismissRequest = { newEmployeeIdMenu = false },
+                    offset = DpOffset(0.dp, 30.dp)
+                ) {
+                    val employeesVM = remember { TablesEmployeesViewModel() }
+                    DropdownMenuItem({}) {
+                        TextField(
+                            value = employeesVM.whereId,
+                            onValueChange = {
+                                if (it.matches(regex = Regex("^\\d*\$"))) {
+                                    employeesVM.whereId = it
+                                    employeesVM.listUpdate()
                                 }
-                                newEmployeeIdMenu = false
-                            }) {
-                                Text("${item.id}: ${item.name}")
+                            },
+                            label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") })
+                    }
+                    for (item in employeesVM.listGet()) {
+                        DropdownMenuItem({
+                            newEmployeeId.value = item.id.toString()
+                            newEmployeeName.value = item.name
+                            newGroupId.value = item.groupId.toString()
+                            val groupVM by mutableStateOf(TablesGroupsViewModel())
+                            for (itemGroup in groupVM.listGet()) {
+                                if (item.groupId == itemGroup.id) {
+                                    newGroupName.value = itemGroup.name
+                                }
                             }
+                            newEmployeeIdMenu = false
+                        }) {
+                            Text("${item.id}: ${item.name}")
                         }
                     }
-                },
-                modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                }
+            }, modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
             TextField(
                 value = newEmployeeName.value,
@@ -234,8 +259,7 @@ private fun RowUpdate(
                                         groupsVM.listUpdate()
                                     }
                                 },
-                                label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
-                            )
+                                label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") })
                         }
                         for (item in groupsVM.listGet()) {
                             DropdownMenuItem({

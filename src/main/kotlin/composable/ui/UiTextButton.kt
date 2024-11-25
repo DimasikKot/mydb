@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 @Preview
-fun UiTextButton(
+fun uiTextButton(
     textOnText: String,
     onClick: () -> Unit,
     textOnButton: String

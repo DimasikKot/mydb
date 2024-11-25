@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import data.viewModels.NavigationViewModel
 
 @Composable
-fun AppBar(
+fun appBar(
     navVM: NavigationViewModel,
     unit1: () -> Unit = { navVM.appBarCurrentPage = 1 },
     unit2: () -> Unit = { navVM.appBarCurrentPage = 2 },

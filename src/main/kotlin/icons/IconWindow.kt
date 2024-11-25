@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.dp
 
 val IconWindow: ImageVector
 	get() {
-		if (_Window != null) {
-			return _Window!!
+		if (Window != null) {
+			return Window!!
 		}
-		_Window = ImageVector.Builder(
+		Window = ImageVector.Builder(
             name = "Window",
             defaultWidth = 16.dp,
             defaultHeight = 16.dp,
@@ -78,7 +78,7 @@ val IconWindow: ImageVector
 				close()
 			}
 		}.build()
-		return _Window!!
+		return Window!!
 	}
 
-private var _Window: ImageVector? = null
+private var Window: ImageVector? = null

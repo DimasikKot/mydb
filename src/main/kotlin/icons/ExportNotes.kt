@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.dp
 
 val ExportNotes: ImageVector
 	get() {
-		if (_Export_notes != null) {
-			return _Export_notes!!
+		if (Export_notes != null) {
+			return Export_notes!!
 		}
-		_Export_notes = ImageVector.Builder(
+		Export_notes = ImageVector.Builder(
             name = "Export_notes",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
@@ -96,7 +96,7 @@ val ExportNotes: ImageVector
 				reflectiveQuadTo(720f, 920f)
 			}
 		}.build()
-		return _Export_notes!!
+		return Export_notes!!
 	}
 
-private var _Export_notes: ImageVector? = null
+private var Export_notes: ImageVector? = null

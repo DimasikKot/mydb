@@ -11,35 +11,35 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.viewModels.TablesTypesViewModel
 
 @Composable
-fun AppTablesTypesBar(tabVM: TablesTypesViewModel) {
+fun appTablesTypesBar(tabVM: TablesTypesViewModel) {
     Column(Modifier.animateContentSize()) {
         Row {
-            UiButton(
+            uiButton(
                 Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
                 tabVM.listUpdate()
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
-                RowInfo(tabVM)
-                RowBar(tabVM)
+                rowInfo(tabVM)
+                rowBar(tabVM)
             }
         }
         if (tabVM.searching) {
-            RowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            RowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun RowInfo(tabVM: TablesTypesViewModel) {
+private fun rowInfo(tabVM: TablesTypesViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.heightIn(min = 55.dp).animateContentSize()
@@ -72,7 +72,7 @@ private fun RowInfo(tabVM: TablesTypesViewModel) {
 }
 
 @Composable
-private fun RowBar(tabVM: TablesTypesViewModel) {
+private fun rowBar(tabVM: TablesTypesViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp).animateContentSize()
@@ -126,12 +126,12 @@ private fun RowBar(tabVM: TablesTypesViewModel) {
 }
 
 @Composable
-private fun RowSearch(
+private fun rowSearch(
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.animateContentSize()) {
-        UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -154,14 +154,14 @@ private fun RowSearch(
 }
 
 @Composable
-private fun RowCreate(
+private fun rowCreate(
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.animateContentSize()) {
         var newId by remember { mutableStateOf("") }
         var newName by remember { mutableStateOf("") }
-        UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
                 tabVM.insert(newName)
             } else {

@@ -5,22 +5,23 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.reportGroup.ReportGroupBar
-import composable.reportGroup.ReportGroupList
+import composable.reportGroup.reportGroupBar
+import composable.reportGroup.reportGroupList
 import data.viewModels.MainViewModel
-import theme.MainTheme
+import theme.mainTheme
 
 @Composable
-fun ReportGroup(
+fun reportGroup(
     mainVM: MainViewModel,
+    reportEmployee: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
-    MainTheme(mainVM.setVM.theme) {
+    mainTheme(mainVM.setVM.theme) {
         Scaffold {
             Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    ReportGroupBar(mainVM.tabReportGroupVM)
-                    ReportGroupList(mainVM.tabReportGroupVM, Modifier.padding(top = 10.dp))
+                    reportGroupBar(mainVM.tabReportGroupVM)
+                    reportGroupList(mainVM.tabReportGroupVM, reportEmployee, Modifier.padding(top = 10.dp))
                 }
             }
         }

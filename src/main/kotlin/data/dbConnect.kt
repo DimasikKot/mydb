@@ -30,8 +30,8 @@ fun dbConnect(mainVM: MainViewModel) {
 //        val resultSet = connection.createStatement().executeQuery(
 //            """
 //                SELECT device_id, date, employee_id
-//                FROM dbstrings
-//                WHERE dbstrings.device_id = 11
+//                FROM strings
+//                WHERE strings.device_id = 11
 //                ORDER BY date
 //            """
 //        )

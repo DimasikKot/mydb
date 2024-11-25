@@ -11,14 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.viewModels.TablesGroupsViewModel
 
 @Composable
 fun appTablesGroupsBar(tabVM: TablesGroupsViewModel) {
     Column(Modifier.animateContentSize()) {
         Row {
-            UiButton(
+            uiButton(
                 Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
@@ -125,7 +125,7 @@ private fun rowSearch(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
-        UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -155,7 +155,7 @@ private fun rowCreate(
     Row(modifier = modifier) {
         var newId by remember { mutableStateOf("") }
         var newName by remember { mutableStateOf("") }
-        UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
                 tabVM.insert(newName)
             } else {

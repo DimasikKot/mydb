@@ -12,37 +12,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.viewModels.TablesDevicesViewModel
 import data.viewModels.TablesTypesViewModel
 
 @Composable
-fun AppTablesDevicesBar(tabVM: TablesDevicesViewModel) {
+fun appTablesDevicesBar(tabVM: TablesDevicesViewModel) {
     Column(Modifier.animateContentSize()) {
         Row {
-            UiButton(
+            uiButton(
                 Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
                 tabVM.listUpdate()
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
-                RowInfo(tabVM)
-                RowBar(tabVM)
+                rowInfo(tabVM)
+                rowBar(tabVM)
             }
         }
         if (tabVM.searching) {
-            RowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            RowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun RowInfo(tabVM: TablesDevicesViewModel) {
+private fun rowInfo(tabVM: TablesDevicesViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.heightIn(min = 55.dp)
@@ -75,7 +75,7 @@ private fun RowInfo(tabVM: TablesDevicesViewModel) {
 }
 
 @Composable
-private fun RowBar(tabVM: TablesDevicesViewModel) {
+private fun rowBar(tabVM: TablesDevicesViewModel) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp)
@@ -189,12 +189,12 @@ private fun RowBar(tabVM: TablesDevicesViewModel) {
 }
 
 @Composable
-private fun RowSearch(
+private fun rowSearch(
     tabVM: TablesDevicesViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
-        UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
         Card(elevation = 25.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -238,7 +238,7 @@ private fun RowSearch(
 }
 
 @Composable
-private fun RowCreate(
+private fun rowCreate(
     tabVM: TablesDevicesViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -249,7 +249,7 @@ private fun RowCreate(
         var newPrice by remember { mutableStateOf("") }
         var newTypeId by remember { mutableStateOf("") }
         var newTypeIdMenu by remember { mutableStateOf(false) }
-        UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             if (newId == "") {
                 tabVM.insert(newName, newDate, newPrice.toInt(), newTypeId.toInt())
             } else {

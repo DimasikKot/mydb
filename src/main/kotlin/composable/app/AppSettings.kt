@@ -7,16 +7,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.ui.UiTextButton
+import composable.ui.uiTextButton
 import data.requestSQL
 import data.StringDB
 import data.viewModels.MainViewModel
 
 @Composable
-fun AppSettings(
+fun appSettings(
     mainVM: MainViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -25,20 +24,20 @@ fun AppSettings(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            UiTextButton(
+            uiTextButton(
                 "Текущая тема: ${mainVM.setVM.theme}",
                 { mainVM.setVM.switchTheme() }, "Сменить тему"
             )
         }
         item {
-            UiTextButton(
+            uiTextButton(
                 "Главная страница при запуске: ${mainVM.setVM.appBarDefaultPage}",
                 { mainVM.setVM.switchAppBarDefaultPage() },
                 "Сменить"
             )
         }
         item {
-            UiTextButton(
+            uiTextButton(
                 "Главная таблица при запуске: ${mainVM.setVM.appTablesBarCurrentPage}",
                 { mainVM.setVM.switchAppTablesBarCurrentPage() },
                 "Сменить"

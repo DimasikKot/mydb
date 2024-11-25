@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.DeviceFromTable
 import data.formatDate
@@ -22,19 +22,19 @@ import icons.ExportNotes
 import icons.IconWindow
 
 @Composable
-fun AppTablesDevicesList(tabVM: TablesDevicesViewModel) {
+fun appTablesDevicesList(tabVM: TablesDevicesViewModel) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.listGet()) {
-            Row(tabVM, it)
+            row(tabVM, it)
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesDevicesViewModel,
     it: DeviceFromTable,
 ) {
@@ -44,7 +44,7 @@ private fun Row(
         val newDate = mutableStateOf(it.date)
         val newPrice = mutableStateOf(it.price.toString())
         val newTypeId = mutableStateOf(it.typeId.toString())
-        UiButton(
+        uiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
         ) {
@@ -64,7 +64,7 @@ private fun Row(
                 it.editing.value = true
             }
         }
-        UiButton(
+        uiButton(
             if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
             modifier = Modifier
                 .padding(start = 10.dp).size(55.dp)
@@ -72,7 +72,7 @@ private fun Row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newName, newDate, newPrice, newTypeId)
+            rowUpdate(it, newId, newName, newDate, newPrice, newTypeId)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -104,15 +104,15 @@ private fun Row(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
-                            if (tabVM.report == it.id) IconWindow else ExportNotes,
+                            if (tabVM.report.value == it.id) IconWindow else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(start = 10.dp).size(35.dp)
                                 .clickable {
-                                    if (tabVM.report != 0) {
-                                        tabVM.report = 0
+                                    if (tabVM.report.value != 0) {
+                                        tabVM.report.value = 0
                                     } else {
-                                        tabVM.report = it.id
+                                        tabVM.report.value = it.id
                                     }
                                 }
                         )
@@ -124,7 +124,7 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: DeviceFromTable,
     newId: MutableState<String>,
     newName: MutableState<String>,

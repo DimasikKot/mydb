@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.StringFromTable
 import data.formatDate
@@ -20,19 +20,19 @@ import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesStringsViewModel
 
 @Composable
-fun AppTablesStringsList(tabVM: TablesStringsViewModel) {
+fun appTablesStringsList(tabVM: TablesStringsViewModel) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.listGet()) {
-            Row(tabVM, it)
+            row(tabVM, it)
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesStringsViewModel,
     it: StringFromTable,
 ) {
@@ -41,7 +41,7 @@ private fun Row(
         val newDate = mutableStateOf(it.date)
         val newDeviceId = mutableStateOf(it.deviceId.toString())
         val newEmployeeId = mutableStateOf(it.employeeId.toString())
-        UiButton(
+        uiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
         ) {
@@ -60,7 +60,7 @@ private fun Row(
                 it.editing.value = true
             }
         }
-        UiButton(
+        uiButton(
             if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
             modifier = Modifier
                 .padding(start = 10.dp).size(55.dp)
@@ -68,7 +68,7 @@ private fun Row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newDate, newDeviceId, newEmployeeId)
+            rowUpdate(it, newId, newDate, newDeviceId, newEmployeeId)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -99,7 +99,7 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: StringFromTable,
     newId: MutableState<String>,
     newDate: MutableState<String>,

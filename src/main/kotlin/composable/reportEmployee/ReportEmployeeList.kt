@@ -1,5 +1,6 @@
 package composable.reportEmployee
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,14 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.formatDate
 import data.viewModels.*
+import icons.ExportNotes
+import icons.IconWindow
 
 @Composable
-fun ReportEmployeeList(
+fun reportEmployeeList(
     tabVM: TablesReportEmployeeViewModel,
+    reportDevice: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -30,15 +34,16 @@ fun ReportEmployeeList(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(tabVM.listGet()) {
-                Row(tabVM, it)
+                row(tabVM, reportDevice, it)
             }
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesReportEmployeeViewModel,
+    reportDevice: MutableIntState,
     it: ReportEmployeeStringFromTables,
 ) {
     Row {
@@ -48,7 +53,7 @@ private fun Row(
         val newEmployeeName = mutableStateOf("it.employeeName")
         val newGroupId = mutableStateOf("it.groupId.toString()")
         val newGroupName = mutableStateOf("it.groupName")
-        UiButton(
+        uiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
         ) {
@@ -66,7 +71,7 @@ private fun Row(
                 it.editing.value = true
             }
         }
-        UiButton(
+        uiButton(
             if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
             modifier = Modifier
                 .padding(start = 10.dp).size(55.dp)
@@ -74,7 +79,7 @@ private fun Row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newDate, newEmployeeId, newEmployeeName, newGroupId, newGroupName)
+            rowUpdate(it, newId, newDate, newEmployeeId, newEmployeeName, newGroupId, newGroupName)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -113,11 +118,25 @@ private fun Row(
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
-                    Text(
-                        it.typeName,
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
+                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                        Text(
+                            it.typeName,
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            if (reportDevice.value == it.id) IconWindow else ExportNotes,
+                            contentDescription = null,
+                            modifier = Modifier.padding(start = 10.dp).size(35.dp).clickable {
+                                if (reportDevice.value != 0) {
+                                    reportDevice.value = 0
+                                } else {
+                                    reportDevice.value = it.id
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -125,7 +144,7 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: ReportEmployeeStringFromTables,
     newId: MutableState<String>,
     newDate: MutableState<String>,

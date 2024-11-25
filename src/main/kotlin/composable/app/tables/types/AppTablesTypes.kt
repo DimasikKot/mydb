@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import data.viewModels.TablesTypesViewModel
 
 @Composable
-fun AppTablesTypes(tabVM: TablesTypesViewModel) {
+fun appTablesTypes(tabVM: TablesTypesViewModel) {
     Column {
-        AppTablesTypesBar(tabVM)
-        AppTablesTypesList(tabVM)
+        appTablesTypesBar(tabVM)
+        appTablesTypesList(tabVM)
     }
 }

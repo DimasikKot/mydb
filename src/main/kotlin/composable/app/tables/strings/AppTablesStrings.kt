@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import data.viewModels.TablesStringsViewModel
 
 @Composable
-fun AppTablesStrings(tabVM: TablesStringsViewModel) {
+fun appTablesStrings(tabVM: TablesStringsViewModel) {
     Column {
-        AppTablesStringsBar(tabVM)
-        AppTablesStringsList(tabVM)
+        appTablesStringsBar(tabVM)
+        appTablesStringsList(tabVM)
     }
 }

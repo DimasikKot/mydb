@@ -13,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 class TablesGroupsViewModel : ViewModel() {
-    var report by mutableIntStateOf(IntDB("reportDefaultGroup", 0).toInt())
+    var report = mutableIntStateOf(IntDB("reportDefaultGroup", 0).toInt())
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)

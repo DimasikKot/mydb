@@ -5,9 +5,9 @@ import androidx.compose.runtime.Composable
 import data.viewModels.TablesDevicesViewModel
 
 @Composable
-fun AppTablesDevices(tabVM: TablesDevicesViewModel) {
+fun appTablesDevices(tabVM: TablesDevicesViewModel) {
     Column {
-        AppTablesDevicesBar(tabVM)
-        AppTablesDevicesList(tabVM)
+        appTablesDevicesBar(tabVM)
+        appTablesDevicesList(tabVM)
     }
 }

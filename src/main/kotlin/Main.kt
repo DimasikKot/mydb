@@ -8,10 +8,10 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import data.dbConnect
 import data.viewModels.MainViewModel
-import windows.App
-import windows.ReportDevice
-import windows.ReportEmployee
-import windows.ReportGroup
+import windows.app
+import windows.reportDevice
+import windows.reportEmployee
+import windows.reportGroup
 
 fun main() = application {
 
@@ -25,52 +25,52 @@ fun main() = application {
             title = "Учёт устройств",
             state = windowState
         ) {
-            App(mainVM)
+            app(mainVM)
         }
     }
 
-    if (mainVM.tabDevicesVM.report != 0) {
-        mainVM.tabReportDeviceVM.report = mainVM.tabDevicesVM.report
+    if (mainVM.tabDevicesVM.report.value != 0) {
+        mainVM.tabReportDeviceVM.report = mainVM.tabDevicesVM.report.value
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
-                mainVM.tabDevicesVM.report = 0
+                mainVM.tabDevicesVM.report.value = 0
                 mainVM.tabReportDeviceVM.report = 0
             },
             title = "Учёт устройства",
             state = windowState
         ) {
-            ReportDevice(mainVM, Modifier.padding(10.dp))
+            reportDevice(mainVM, mainVM.tabEmployeesVM.report, mainVM.tabGroupsVM.report, Modifier.padding(10.dp))
         }
     }
 
-    if (mainVM.tabEmployeesVM.report != 0) {
-        mainVM.tabReportEmployeeVM.report = mainVM.tabEmployeesVM.report
+    if (mainVM.tabEmployeesVM.report.value != 0) {
+        mainVM.tabReportEmployeeVM.report = mainVM.tabEmployeesVM.report.value
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
-                mainVM.tabEmployeesVM.report = 0
+                mainVM.tabEmployeesVM.report.value = 0
                 mainVM.tabReportEmployeeVM.report = 0
             },
             title = "Учёт устройств сотрудника",
             state = windowState
         ) {
-            ReportEmployee(mainVM, Modifier.padding(10.dp))
+            reportEmployee(mainVM, mainVM.tabDevicesVM.report, mainVM.tabGroupsVM.report, Modifier.padding(10.dp))
         }
     }
 
-    if (mainVM.tabGroupsVM.report != 0) {
-        mainVM.tabReportGroupVM.report = mainVM.tabGroupsVM.report
+    if (mainVM.tabGroupsVM.report.value != 0) {
+        mainVM.tabReportGroupVM.report = mainVM.tabGroupsVM.report.value
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
-                mainVM.tabGroupsVM.report = 0
+                mainVM.tabGroupsVM.report.value = 0
                 mainVM.tabReportGroupVM.report = 0
             },
             title = "Учёт сотрудников группы",
             state = windowState
         ) {
-            ReportGroup(mainVM, Modifier.padding(10.dp))
+            reportGroup(mainVM, mainVM.tabEmployeesVM.report, Modifier.padding(10.dp))
         }
     }
 }

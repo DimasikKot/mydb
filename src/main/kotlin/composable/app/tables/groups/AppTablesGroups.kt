@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import data.viewModels.TablesGroupsViewModel
 
 @Composable
-fun AppTablesGroups(tabVM: TablesGroupsViewModel) {
+fun appTablesGroups(tabVM: TablesGroupsViewModel) {
     Column {
         appTablesGroupsBar(tabVM)
         appTablesGroupsList(tabVM)

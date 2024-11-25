@@ -13,40 +13,40 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.DateTransformation
 import data.formatDate
 import data.viewModels.*
 
 @Composable
-fun ReportDeviceBar(
+fun reportDeviceBar(
     tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
     tabVM.listUpdate()
     Column(modifier.animateContentSize()) {
         Row {
-            UiButton(
+            uiButton(
                 Icons.Default.Update,
                 modifier = Modifier.height(55.dp).width(120.dp)
             ) {
                 tabVM.listUpdate()
             }
-            RowInfo(tabVM, Modifier.padding(start = 10.dp))
+            rowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        RowHead(tabVM.headGet(), Modifier.padding(top = 10.dp))
-        RowBar(tabVM, Modifier.padding(top = 10.dp))
+        rowHead(tabVM.headGet(), Modifier.padding(top = 10.dp))
+        rowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
-            RowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            RowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun RowInfo(
+private fun rowInfo(
     tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -60,7 +60,7 @@ private fun RowInfo(
                 modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
             )
             Text(
-                "Учёт устройств",
+                "Учёт устройства",
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -82,8 +82,8 @@ private fun RowInfo(
 }
 
 @Composable
-private fun RowHead(
-    reportDevice: ReportDeviceFromTables,
+private fun rowHead(
+    reportHead: ReportDeviceFromTables,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -98,7 +98,7 @@ private fun RowHead(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.id.toString(),
+                    reportHead.id.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -113,7 +113,7 @@ private fun RowHead(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.name,
+                    reportHead.name,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -128,7 +128,7 @@ private fun RowHead(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    formatDate(reportDevice.date),
+                    formatDate(reportHead.date),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -143,7 +143,7 @@ private fun RowHead(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.price.toString(),
+                    reportHead.price.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -159,7 +159,7 @@ private fun RowHead(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.typeId.toString(),
+                    reportHead.typeId.toString(),
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -174,7 +174,7 @@ private fun RowHead(
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                 )
                 Text(
-                    reportDevice.typeName,
+                    reportHead.typeName,
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                 )
@@ -184,7 +184,7 @@ private fun RowHead(
 }
 
 @Composable
-private fun RowBar(
+private fun rowBar(
     tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -351,12 +351,12 @@ private fun RowBar(
 }
 
 @Composable
-private fun RowSearch(
+private fun rowSearch(
     tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
-        UiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
@@ -413,7 +413,7 @@ private fun RowSearch(
 }
 
 @Composable
-private fun RowCreate(
+private fun rowCreate(
     tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -427,7 +427,7 @@ private fun RowCreate(
         var newGroupId by remember { mutableStateOf("") }
         var newGroupIdMenu by remember { mutableStateOf(false) }
         var newGroupName by remember { mutableStateOf("") }
-        UiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
+        uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.insert(newId, newDate, newEmployeeId.toInt())
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {

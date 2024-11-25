@@ -14,31 +14,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
+import composable.ui.uiButton
 import data.TypeFromTable
 import data.viewModels.TablesTypesViewModel
 
 @Composable
-fun AppTablesTypesList(tabVM: TablesTypesViewModel) {
+fun appTablesTypesList(tabVM: TablesTypesViewModel) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(top = 10.dp).animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.listGet()) {
-            Row(tabVM, it)
+            row(tabVM, it)
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesTypesViewModel,
     it: TypeFromTable,
 ) {
     Row(Modifier.animateContentSize()) {
         val newId = mutableStateOf(it.id.toString())
         val newName = mutableStateOf(it.name)
-        UiButton(
+        uiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
         ) {
@@ -51,7 +51,7 @@ private fun Row(
                 it.editing.value = true
             }
         }
-        UiButton(
+        uiButton(
             if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
             modifier = Modifier
                 .padding(start = 10.dp).size(55.dp)
@@ -59,7 +59,7 @@ private fun Row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newName)
+            rowUpdate(it, newId, newName)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -80,7 +80,7 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: TypeFromTable,
     newId: MutableState<String>,
     newName: MutableState<String>,

@@ -1,6 +1,5 @@
 package data
 
-import data.viewModels.ReportEmployeeStringFromTables
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun requestSQL(request: String): String {

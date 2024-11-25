@@ -1,5 +1,6 @@
 package composable.reportGroup
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,16 +10,16 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.UiButton
-import data.DateTransformation
-import data.formatDate
+import composable.ui.uiButton
 import data.viewModels.*
+import icons.ExportNotes
+import icons.IconWindow
 
 @Composable
-fun ReportGroupList(
+fun reportGroupList(
     tabVM: TablesReportGroupViewModel,
+    reportEmployee: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -30,22 +31,23 @@ fun ReportGroupList(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(tabVM.listGet()) {
-                Row(tabVM, it)
+                row(tabVM, reportEmployee, it)
             }
         }
     }
 }
 
 @Composable
-private fun Row(
+private fun row(
     tabVM: TablesReportGroupViewModel,
+    reportEmployee: MutableIntState,
     it: ReportGroupStringFromTables,
 ) {
     Row {
         val newId = mutableStateOf(it.id.toString())
         val newName = mutableStateOf(it.name)
         val newTotalPrice = mutableStateOf(it.totalPrice.toString())
-        UiButton(
+        uiButton(
             if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
             modifier = Modifier.size(55.dp)
         ) {
@@ -63,7 +65,7 @@ private fun Row(
                 it.editing.value = true
             }
         }
-        UiButton(
+        uiButton(
             if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
             modifier = Modifier
                 .padding(start = 10.dp).size(55.dp)
@@ -71,7 +73,7 @@ private fun Row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            RowUpdate(it, newId, newName, newTotalPrice)
+            rowUpdate(it, newId, newName, newTotalPrice)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
@@ -90,11 +92,27 @@ private fun Row(
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
-                    Text(
-                        it.totalPrice.toString(),
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
+                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                        Text(
+                            it.totalPrice.toString(),
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            if (reportEmployee.value == it.id) IconWindow else ExportNotes,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 10.dp).size(35.dp)
+                                .clickable {
+                                    if (reportEmployee.value != 0) {
+                                        reportEmployee.value = 0
+                                    } else {
+                                        reportEmployee.value = it.id
+                                    }
+                                }
+                        )
+                    }
                 }
             }
         }
@@ -102,15 +120,13 @@ private fun Row(
 }
 
 @Composable
-private fun RowUpdate(
+private fun rowUpdate(
     it: ReportGroupStringFromTables,
     newId: MutableState<String>,
     newName: MutableState<String>,
     newTotalPrice: MutableState<String>,
 ) {
     var number by remember { mutableStateOf(it.number.toString()) }
-    var newEmployeeIdMenu by remember { mutableStateOf(false) }
-    var newGroupIdMenu by remember { mutableStateOf(false) }
     Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
         Row(Modifier.padding(10.dp)) {
             TextField(
@@ -124,6 +140,19 @@ private fun RowUpdate(
                 value = newId.value,
                 onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
                 label = { Text(if (newId.value == "") it.id.toString() else "Новый ID") },
+                modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
+            )
+            TextField(
+                value = newName.value,
+                onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
+                label = { Text(if (newId.value == "") it.id.toString() else "Новый ID") },
+                modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
+            )
+            TextField(
+                value = newTotalPrice.value,
+                onValueChange = { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
+                label = { Text(if (newId.value == "") it.id.toString() else "Новый ID") },
+                readOnly = true,
                 modifier = Modifier.weight(0.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
         }
