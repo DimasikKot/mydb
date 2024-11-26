@@ -5,19 +5,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import composable.ui.uiButton
 import data.DateTransformation
 import data.formatDate
 import data.viewModels.*
 import icons.ExportNotes
 import icons.IconWindow
+import icons.RefreshNotes
 
 @Composable
 fun reportEmployeeList(
@@ -53,31 +51,31 @@ private fun row(
         val newEmployeeName = mutableStateOf("it.employeeName")
         val newGroupId = mutableStateOf("it.groupId.toString()")
         val newGroupName = mutableStateOf("it.groupName")
-        uiButton(
-            if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
-            modifier = Modifier.size(55.dp)
-        ) {
-            if (it.editing.value) {
-                it.canUpdate.value = tabVM.update(
-                    it.id,
-                    newId.value.toInt(),
-                    newDate.value,
-                    newEmployeeId.value.toInt(),
-                )
-                if (it.canUpdate.value) {
-                    it.editing.value = false
-                }
-            } else {
-                it.editing.value = true
-            }
-        }
-        uiButton(
-            if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
-            modifier = Modifier
-                .padding(start = 10.dp).size(55.dp)
-        ) {
-            it.canDelete.value = tabVM.delete(it.id)
-        }
+//        uiButton(
+//            if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
+//            modifier = Modifier.size(55.dp)
+//        ) {
+//            if (it.editing.value) {
+//                it.canUpdate.value = tabVM.update(
+//                    it.id,
+//                    newId.value.toInt(),
+//                    newDate.value,
+//                    newEmployeeId.value.toInt(),
+//                )
+//                if (it.canUpdate.value) {
+//                    it.editing.value = false
+//                }
+//            } else {
+//                it.editing.value = true
+//            }
+//        }
+//        uiButton(
+//            if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
+//            modifier = Modifier
+//                .padding(start = 10.dp).size(55.dp)
+//        ) {
+//            it.canDelete.value = tabVM.delete(it.id)
+//        }
         if (it.editing.value) {
             rowUpdate(it, newId, newDate, newEmployeeId, newEmployeeName, newGroupId, newGroupName)
         } else {
@@ -126,7 +124,7 @@ private fun row(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
-                            if (reportDevice.value == it.id) IconWindow else ExportNotes,
+                            if (reportDevice.value == it.id) IconWindow else if (reportDevice.value != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier.padding(start = 10.dp).size(35.dp).fillMaxSize().clickable {
                                 if (reportDevice.value != 0) {

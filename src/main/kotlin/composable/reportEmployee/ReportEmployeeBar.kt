@@ -18,6 +18,7 @@ import data.DateTransformation
 import data.viewModels.*
 import icons.ExportNotes
 import icons.IconWindow
+import icons.RefreshNotes
 
 @Composable
 fun reportEmployeeBar(
@@ -66,19 +67,21 @@ private fun rowInfo(
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
-            Spacer(Modifier.weight(1f))
-            Icon(
-                Icons.Default.Search,
-                contentDescription = null,
-                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
-                    tabVM.searching = !tabVM.searching
-                })
-            Icon(
-                Icons.Default.NewLabel,
-                contentDescription = null,
-                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
-                    tabVM.creating = !tabVM.creating
-                })
+//            Spacer(Modifier.weight(1f))
+//            Icon(
+//                Icons.Default.Search,
+//                contentDescription = null,
+//                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
+//                    tabVM.searching = !tabVM.searching
+//                }
+//            )
+//            Icon(
+//                Icons.Default.NewLabel,
+//                contentDescription = null,
+//                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
+//                    tabVM.creating = !tabVM.creating
+//                }
+//            )
         }
     }
 }
@@ -152,7 +155,7 @@ private fun rowHead(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
-                        imageVector = if (reportGroup.value == it.groupId) IconWindow else ExportNotes,
+                        imageVector = if (reportGroup.value == it.groupId) IconWindow else if (reportGroup.value != 0) RefreshNotes else ExportNotes,
                         contentDescription = null,
                         modifier = Modifier.padding(start = 10.dp).size(35.dp).clickable {
                             if (reportGroup.value != 0) {
@@ -189,32 +192,32 @@ private fun rowBar(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
+//        Card(
+//            elevation = 10.dp,
+//            modifier = Modifier.size(55.dp).clickable {
+//                tabVM.searching = !tabVM.searching
+//            }) {
+//            Icon(
+//                Icons.Default.Search,
+//                contentDescription = null,
+//                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
+//            )
+//        }
+//        Card(
+//            elevation = 10.dp,
+//            modifier = Modifier.padding(start = 10.dp).size(55.dp)
+//                .clickable {
+//                    tabVM.creating = !tabVM.creating
+//                }) {
+//            Icon(
+//                Icons.Default.NewLabel,
+//                contentDescription = null,
+//                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
+//            )
+//        }
         Card(
             elevation = 10.dp,
-            modifier = Modifier.size(55.dp).clickable {
-                tabVM.searching = !tabVM.searching
-            }) {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = null,
-                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
-            )
-        }
-        Card(
-            elevation = 10.dp,
-            modifier = Modifier.padding(start = 10.dp).size(55.dp)
-                .clickable {
-                    tabVM.creating = !tabVM.creating
-                }) {
-            Icon(
-                Icons.Default.NewLabel,
-                contentDescription = null,
-                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
-            )
-        }
-        Card(
-            elevation = 10.dp,
-            modifier = Modifier.padding(start = 10.dp)
+            modifier = Modifier
         ) {
             Row(
                 Modifier
@@ -223,7 +226,7 @@ private fun rowBar(
                 Text(
                     "№",
                     style = MaterialTheme.typography.h5,
-                    modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
+                    modifier = Modifier.padding(start = 10.dp).width(55.dp).align(Alignment.CenterVertically)
                 )
                 Row(Modifier.weight(1f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }

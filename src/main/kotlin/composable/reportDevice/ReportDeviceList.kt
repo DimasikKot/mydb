@@ -21,6 +21,7 @@ import data.viewModels.TablesGroupsViewModel
 import data.viewModels.TablesReportDeviceViewModel
 import icons.ExportNotes
 import icons.IconWindow
+import icons.RefreshNotes
 
 @Composable
 fun reportDeviceList(
@@ -107,7 +108,7 @@ private fun row(
                     )
                     Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
                         Icon(
-                            if (reportEmployee.value == it.employeeID) IconWindow else ExportNotes,
+                            if (reportEmployee.value == it.employeeID) IconWindow else if (reportEmployee.value != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier.size(35.dp).clickable {
                                 if (reportEmployee.value != 0) {
@@ -130,7 +131,7 @@ private fun row(
                     )
                     Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
                         Icon(
-                            if (reportGroup.value == it.groupId) IconWindow else ExportNotes,
+                            if (reportGroup.value == it.groupId) IconWindow else if (reportGroup.value != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier.size(35.dp).clickable {
                                 if (reportGroup.value != 0) {

@@ -63,19 +63,21 @@ private fun rowInfo(
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
-            Spacer(Modifier.weight(1f))
-            Icon(
-                Icons.Default.Search,
-                contentDescription = null,
-                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
-                    tabVM.searching = !tabVM.searching
-                })
-            Icon(
-                Icons.Default.NewLabel,
-                contentDescription = null,
-                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
-                    tabVM.creating = !tabVM.creating
-                })
+//            Spacer(Modifier.weight(1f))
+//            Icon(
+//                Icons.Default.Search,
+//                contentDescription = null,
+//                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
+//                    tabVM.searching = !tabVM.searching
+//                }
+//            )
+//            Icon(
+//                Icons.Default.NewLabel,
+//                contentDescription = null,
+//                Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
+//                    tabVM.creating = !tabVM.creating
+//                }
+//            )
         }
     }
 }
@@ -157,32 +159,32 @@ private fun rowBar(
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
+//        Card(
+//            elevation = 10.dp,
+//            modifier = Modifier.size(55.dp).clickable {
+//                tabVM.searching = !tabVM.searching
+//            }) {
+//            Icon(
+//                Icons.Default.Search,
+//                contentDescription = null,
+//                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
+//            )
+//        }
+//        Card(
+//            elevation = 10.dp,
+//            modifier = Modifier.padding(start = 10.dp).size(55.dp)
+//                .clickable {
+//                    tabVM.creating = !tabVM.creating
+//                }) {
+//            Icon(
+//                Icons.Default.NewLabel,
+//                contentDescription = null,
+//                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
+//            )
+//        }
         Card(
             elevation = 10.dp,
-            modifier = Modifier.size(55.dp).clickable {
-                tabVM.searching = !tabVM.searching
-            }) {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = null,
-                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
-            )
-        }
-        Card(
-            elevation = 10.dp,
-            modifier = Modifier.padding(start = 10.dp).size(55.dp)
-                .clickable {
-                    tabVM.creating = !tabVM.creating
-                }) {
-            Icon(
-                Icons.Default.NewLabel,
-                contentDescription = null,
-                Modifier.size(35.dp).align(Alignment.CenterVertically).background(MaterialTheme.colors.secondaryVariant)
-            )
-        }
-        Card(
-            elevation = 10.dp,
-            modifier = Modifier.padding(start = 10.dp)
+            modifier = Modifier
         ) {
             Row(
                 Modifier
@@ -191,7 +193,7 @@ private fun rowBar(
                 Text(
                     "№",
                     style = MaterialTheme.typography.h5,
-                    modifier = Modifier.width(55.dp).align(Alignment.CenterVertically)
+                    modifier = Modifier.padding(start = 10.dp).width(55.dp).align(Alignment.CenterVertically)
                 )
                 Row(Modifier.weight(0.5f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }

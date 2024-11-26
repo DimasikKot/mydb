@@ -16,6 +16,7 @@ import data.GroupFromTable
 import data.viewModels.TablesGroupsViewModel
 import icons.ExportNotes
 import icons.IconWindow
+import icons.RefreshNotes
 
 @Composable
 fun appTablesGroupsList(tabVM: TablesGroupsViewModel) {
@@ -75,7 +76,7 @@ private fun row(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
-                            if (tabVM.report.value == it.id) IconWindow else ExportNotes,
+                            if (tabVM.report.value == it.id) IconWindow else if (tabVM.report.value != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(start = 10.dp).size(35.dp)
