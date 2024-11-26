@@ -17,7 +17,7 @@ class TablesReportDeviceViewModel : ViewModel() {
     var creating by mutableStateOf(false)
 
     private var request by mutableStateOf("")
-    var order1 by mutableStateOf("date")
+    var order1 by mutableStateOf("date DESC")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
     private var order4 by mutableStateOf("")
@@ -91,7 +91,7 @@ class TablesReportDeviceViewModel : ViewModel() {
 
     fun listUpdate() {
         var requestNew =
-            "SELECT ROW_NUMBER() OVER(ORDER BY strings.date NULLS LAST) AS number, strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
+            "SELECT ROW_NUMBER() OVER(ORDER BY strings.date DESC NULLS LAST) AS number, strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
                     "FROM strings " +
                     "JOIN employees ON strings.employee_id = employees.id " +
                     "JOIN groups ON employees.group_id = groups.id " +

@@ -63,13 +63,15 @@ private fun rowInfo(tabVM: TablesDevicesViewModel) {
                 contentDescription = null,
                 Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
                     tabVM.searching = !tabVM.searching
-                })
+                }
+            )
             Icon(
                 Icons.Default.NewLabel,
                 contentDescription = null,
                 Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
                     tabVM.creating = !tabVM.creating
-                })
+                }
+            )
         }
     }
 }

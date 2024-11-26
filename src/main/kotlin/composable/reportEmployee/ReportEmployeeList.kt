@@ -102,7 +102,7 @@ private fun row(
                         modifier = Modifier.weight(1.5f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )
                     Text(
-                        it.date,
+                        formatDate(it.date),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
                     )

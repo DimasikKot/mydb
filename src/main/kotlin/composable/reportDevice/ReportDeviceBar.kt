@@ -70,13 +70,15 @@ private fun rowInfo(
                 contentDescription = null,
                 Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
                     tabVM.searching = !tabVM.searching
-                })
+                }
+            )
             Icon(
                 Icons.Default.NewLabel,
                 contentDescription = null,
                 Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
                     tabVM.creating = !tabVM.creating
-                })
+                }
+            )
         }
     }
 }
@@ -246,7 +248,7 @@ private fun rowBar(
                     )
                 }
                 Row(Modifier.weight(1f).padding(start = 10.dp)) {
-                    var descending by remember { mutableStateOf(false) }
+                    var descending by remember { mutableStateOf(true) }
                     Icon(
                         if (descending) {
                             if (tabVM.order1 == "date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
