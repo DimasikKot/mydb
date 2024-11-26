@@ -35,22 +35,21 @@ class TablesReportEmployeeViewModel : ViewModel() {
     fun headGet(): ReportEmployeeFromTables {
         try {
             val requestEmployee =
-                "SELECT employees.id, employees.name, employees.group_id, groups.name AS group_name, (" +
-                            "SELECT SUM(devices.price) " +
-                            "FROM strings " +
-                            "JOIN devices ON devices.id = strings.device_id " +
-                            "JOIN (" +
-                                "SELECT MAX(date) AS date_give_latest " +
-                                "FROM strings " +
-                                "GROUP BY device_id" +
-                            ") ON date_give_latest = strings.date " +
-                            "WHERE strings.employee_id = employees.id" +
-                        ") AS total_price " +
-                        "FROM employees " +
-                        "JOIN groups " +
-                        "ON employees.group_id = groups.id " +
-                        "WHERE employees.id = $report " +
-                        "LIMIT 1"
+                """
+                    SELECT employees.id, employees.name, employees.group_id, groups.name AS group_name, 
+                        (SELECT SUM(devices.price) 
+                        FROM strings 
+                        JOIN devices ON devices.id = strings.device_id 
+                        WHERE strings.employee_id = employees.id AND strings.date = 
+                            (SELECT MAX(s2.date) 
+                            FROM strings AS s2 
+                            WHERE devices.id = s2.device_id 
+                            GROUP BY s2.device_id)) AS total_price 
+                    FROM employees 
+                    JOIN groups ON employees.group_id = groups.id 
+                    WHERE employees.id = $report 
+                    LIMIT 1
+                """.trimIndent()
             return transaction {
                 exec(requestEmployee) { row ->
                     if (row.next()) {
@@ -80,7 +79,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
                         if (row.next()) {
                             ReportEmployeeStringFromTables(
                                 number = row.getInt("number"),
-                                dateGive = row.getString("date"),
+                                dateGive = row.getString("date_give"),
                                 id = row.getInt("id"),
                                 name = row.getString("name"),
                                 date = row.getString("date"),
@@ -103,16 +102,17 @@ class TablesReportEmployeeViewModel : ViewModel() {
 
     fun listUpdate() {
         var requestNew =
-            "SELECT ROW_NUMBER() OVER(ORDER BY devices.price NULLS LAST) AS number, strings.date AS date_give, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
-                    "FROM strings " +
-                    "JOIN devices ON strings.device_id = devices.id " +
-                    "JOIN types ON devices.type_id = types.id " +
-                    "JOIN (" +
-                        "SELECT MAX(date) AS date_give_latest " +
-                        "FROM strings " +
-                        "GROUP BY device_id" +
-                    ") ON date_give_latest = strings.date " +
-                    "WHERE strings.employee_id = $report"
+            """
+                SELECT ROW_NUMBER() OVER(ORDER BY devices.price NULLS LAST) AS number, strings.date AS date_give, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name 
+                    FROM strings 
+                    JOIN devices ON strings.device_id = devices.id 
+                    JOIN types ON devices.type_id = types.id 
+                    WHERE strings.employee_id = $report AND strings.date = 
+                        (SELECT MAX(s2.date) 
+                        FROM strings AS s2 
+                        WHERE devices.id = s2.device_id 
+                        GROUP BY s2.device_id) 
+            """.trimIndent()
         val conditions = mutableListOf<String>()
         if (whereId.isNotEmpty()) {
             conditions.add("strings.id >= $whereId")
@@ -133,7 +133,7 @@ class TablesReportEmployeeViewModel : ViewModel() {
             conditions.add("groups.name LIKE '%$whereGroupName%'")
         }
         if (conditions.isNotEmpty()) {
-            requestNew += " and " + conditions.joinToString(" and ")
+            requestNew += " AND " + conditions.joinToString(" AND ")
         }
         requestNew += " ORDER BY $order1"
         requestNew += if (order2.isNotEmpty()) ", $order2" else ""

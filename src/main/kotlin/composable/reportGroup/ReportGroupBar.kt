@@ -122,6 +122,21 @@ private fun rowHead(
             )
             Row {
                 Text(
+                    "Количество сотрудников в группе",
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                )
+                Text(
+                    reportEmployee.employeesCount.toString(),
+                    style = MaterialTheme.typography.h5,
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                )
+            }
+            Spacer(
+                Modifier.padding(top = 5.dp).fillMaxWidth().height(1.dp).border(1.dp, MaterialTheme.colors.background)
+            )
+            Row {
+                Text(
                     "Цена всего имущества",
                     style = MaterialTheme.typography.h5,
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)

@@ -152,13 +152,13 @@ private fun rowHead(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
-                        imageVector = if (reportGroup.value == it.id) IconWindow else ExportNotes,
+                        imageVector = if (reportGroup.value == it.groupId) IconWindow else ExportNotes,
                         contentDescription = null,
                         modifier = Modifier.padding(start = 10.dp).size(35.dp).clickable {
                             if (reportGroup.value != 0) {
                                 reportGroup.value = 0
                             } else {
-                                reportGroup.value = it.id
+                                reportGroup.value = it.groupId
                             }
                         }
                     )

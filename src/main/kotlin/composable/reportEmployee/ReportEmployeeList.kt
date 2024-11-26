@@ -122,13 +122,13 @@ private fun row(
                         Text(
                             it.typeName,
                             style = MaterialTheme.typography.h5,
-                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                            modifier = Modifier.align(Alignment.CenterVertically)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
                             if (reportDevice.value == it.id) IconWindow else ExportNotes,
                             contentDescription = null,
-                            modifier = Modifier.padding(start = 10.dp).size(35.dp).clickable {
+                            modifier = Modifier.padding(start = 10.dp).size(35.dp).fillMaxSize().clickable {
                                 if (reportDevice.value != 0) {
                                     reportDevice.value = 0
                                 } else {
