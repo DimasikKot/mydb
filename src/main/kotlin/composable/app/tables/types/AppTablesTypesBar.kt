@@ -12,10 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
+import data.viewModels.MainViewModel
 import data.viewModels.TablesTypesViewModel
 
 @Composable
-fun appTablesTypesBar(tabVM: TablesTypesViewModel) {
+fun appTablesTypesBar(
+    mainVM: MainViewModel,
+    tabVM: TablesTypesViewModel
+) {
     Column(Modifier.animateContentSize()) {
         Row {
             uiButton(
@@ -26,20 +30,22 @@ fun appTablesTypesBar(tabVM: TablesTypesViewModel) {
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 rowInfo(tabVM)
-                rowBar(tabVM)
+                rowBar(mainVM, tabVM)
             }
         }
         if (tabVM.searching) {
-            rowSearch(tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(mainVM, tabVM, Modifier.padding(top = 10.dp))
         }
         if (tabVM.creating) {
-            rowCreate(tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(mainVM, tabVM, Modifier.padding(top = 10.dp))
         }
     }
 }
 
 @Composable
-private fun rowInfo(tabVM: TablesTypesViewModel) {
+private fun rowInfo(
+    tabVM: TablesTypesViewModel
+) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.heightIn(min = 55.dp).animateContentSize()
@@ -60,19 +66,24 @@ private fun rowInfo(tabVM: TablesTypesViewModel) {
                 contentDescription = null,
                 Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
                     tabVM.searching = !tabVM.searching
-                })
+                }
+            )
             Icon(
                 Icons.Default.NewLabel,
                 contentDescription = null,
                 Modifier.align(Alignment.CenterVertically).padding(start = 10.dp).size(35.dp).clickable {
                     tabVM.creating = !tabVM.creating
-                })
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun rowBar(tabVM: TablesTypesViewModel) {
+private fun rowBar(
+    mainVM: MainViewModel,
+    tabVM: TablesTypesViewModel,
+) {
     Card(
         elevation = 10.dp,
         modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp).animateContentSize()
@@ -81,27 +92,29 @@ private fun rowBar(tabVM: TablesTypesViewModel) {
             Modifier
                 .background(MaterialTheme.colors.secondaryVariant).padding(10.dp)
         ) {
-            Row(Modifier.weight(1f)) {
-                var descending by remember { mutableStateOf(false) }
-                Icon(
-                    if (descending) {
-                        if (tabVM.order1 == "id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
-                    } else {
-                        if (tabVM.order1 == "id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
-                    },
-                    contentDescription = null,
-                    modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
-                        .clickable {
-                            descending = tabVM.listOrderBy("id")
-                        }
-                )
-                Text(
-                    "ID",
-                    style = MaterialTheme.typography.h5,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
+            if (mainVM.setVM.isVision) {
+                Row(Modifier.weight(1f)) {
+                    var descending by remember { mutableStateOf(false) }
+                    Icon(
+                        if (descending) {
+                            if (tabVM.order1 == "id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                        } else {
+                            if (tabVM.order1 == "id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                        },
+                        contentDescription = null,
+                        modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
+                            .clickable {
+                                descending = tabVM.listOrderBy("id")
+                            }
+                    )
+                    Text(
+                        "ID",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                }
             }
-            Row(Modifier.weight(1f).padding(start = 10.dp)) {
+            Row(Modifier.weight(1f).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
                     if (descending) {
@@ -127,6 +140,7 @@ private fun rowBar(tabVM: TablesTypesViewModel) {
 
 @Composable
 private fun rowSearch(
+    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -136,17 +150,19 @@ private fun rowSearch(
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
-                TextField(
-                    tabVM.whereId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereId = it },
-                    label = { Text(if (tabVM.whereId == "") "Искать по ID" else "Ищем по ID") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
+                if (mainVM.setVM.isVision) {
+                    TextField(
+                        tabVM.whereId,
+                        { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereId = it },
+                        label = { Text(if (tabVM.whereId == "") "Искать по ID" else "Ищем по ID") },
+                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                    )
+                }
                 TextField(
                     tabVM.whereName,
                     { tabVM.whereName = it },
                     label = { Text(if (tabVM.whereName == "") "Искать по названию" else "Ищем по названию") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
                 )
             }
         }
@@ -155,6 +171,7 @@ private fun rowSearch(
 
 @Composable
 private fun rowCreate(
+    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -170,17 +187,19 @@ private fun rowCreate(
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
-                TextField(
-                    newId,
-                    { if (it.matches(regex = Regex("^\\d*\$"))) newId = it },
-                    label = { Text(if (newId == "") "Автоматический ID" else "Новый ID") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                )
+                if (mainVM.setVM.isVision) {
+                    TextField(
+                        newId,
+                        { if (it.matches(regex = Regex("^\\d*\$"))) newId = it },
+                        label = { Text(if (newId == "") "Автоматический ID" else "Новый ID") },
+                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                    )
+                }
                 TextField(
                     newName,
                     { newName = it },
                     label = { Text("Новое название") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
                 )
             }
         }

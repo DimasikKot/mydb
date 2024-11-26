@@ -12,22 +12,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
+import data.viewModels.MainViewModel
 import data.viewModels.TypeFromTable
 import data.viewModels.TablesTypesViewModel
 import icons.DatabaseOff
 
 @Composable
-fun appTablesTypesList(tabVM: TablesTypesViewModel) {
+fun appTablesTypesList(
+    mainVM: MainViewModel,
+    tabVM: TablesTypesViewModel
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(top = 10.dp).animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.listGet()) {
-            row(tabVM, it)
+            row(mainVM, tabVM, it)
         }
         item {
             if (tabVM.listGet().isEmpty()) {
-                Box (Modifier.fillMaxWidth().height(200.dp)) {
+                Box(Modifier.fillMaxWidth().height(200.dp)) {
                     Icon(
                         imageVector = DatabaseOff,
                         contentDescription = null,
@@ -41,6 +45,7 @@ fun appTablesTypesList(tabVM: TablesTypesViewModel) {
 
 @Composable
 private fun row(
+    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
     it: TypeFromTable,
 ) {
@@ -68,19 +73,21 @@ private fun row(
             it.canDelete.value = tabVM.delete(it.id)
         }
         if (it.editing.value) {
-            rowUpdate(it, newId, newName)
+            rowUpdate(mainVM, it, newId, newName)
         } else {
             Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
                 Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
-                    Text(
-                        it.id.toString(),
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                    )
+                    if (mainVM.setVM.isVision) {
+                        Text(
+                            it.id.toString(),
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                        )
+                    }
                     Text(
                         it.name,
                         style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
                     )
                 }
             }
@@ -90,23 +97,26 @@ private fun row(
 
 @Composable
 private fun rowUpdate(
+    mainVM: MainViewModel,
     it: TypeFromTable,
     newId: MutableState<String>,
     newName: MutableState<String>,
 ) {
     Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
         Row(Modifier.padding(10.dp).animateContentSize()) {
-            TextField(
-                newId.value,
-                { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
-                label = { Text(if (newId.value == "") it.id.toString() else "Новый ID") },
-                modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-            )
+            if (mainVM.setVM.isVision) {
+                TextField(
+                    newId.value,
+                    { if (it.matches(regex = Regex("^\\d*\$"))) newId.value = it },
+                    label = { Text(if (newId.value == "") it.id.toString() else "Новый ID") },
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                )
+            }
             TextField(
                 newName.value,
                 { newName.value = it },
                 label = { Text(if (newName.value == "") it.name else "Новое название") },
-                modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
             )
         }
     }

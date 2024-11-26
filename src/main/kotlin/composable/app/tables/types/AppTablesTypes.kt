@@ -11,7 +11,7 @@ fun appTablesTypes(
     tabVM: TablesTypesViewModel
 ) {
     Column {
-        appTablesTypesBar(tabVM)
-        appTablesTypesList(tabVM)
+        appTablesTypesBar(mainVM, tabVM)
+        appTablesTypesList(mainVM, tabVM)
     }
 }
