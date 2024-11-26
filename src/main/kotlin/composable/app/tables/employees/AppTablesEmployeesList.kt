@@ -16,6 +16,7 @@ import composable.ui.uiButton
 import data.EmployeeFromTable
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesGroupsViewModel
+import icons.DatabaseOff
 import icons.ExportNotes
 import icons.IconWindow
 import icons.RefreshNotes
@@ -28,6 +29,17 @@ fun appTablesEmployeesList(tabVM: TablesEmployeesViewModel) {
     ) {
         items(tabVM.listGet()) {
             row(tabVM, it)
+        }
+        item {
+            if (tabVM.listGet().isEmpty()) {
+                Box (Modifier.fillMaxWidth().height(200.dp)) {
+                    Icon(
+                        imageVector = DatabaseOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
+                    )
+                }
+            }
         }
     }
 }

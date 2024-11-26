@@ -17,7 +17,7 @@ import data.viewModels.MainViewModel
 @Composable
 fun appTables(mainVM: MainViewModel, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
-        appTablesBar(mainVM.navVM, modifier = Modifier.width(200.dp))
+        appTablesBar(mainVM, mainVM.navVM, modifier = Modifier.width(200.dp))
         currentTable(mainVM, Modifier.padding(start = 10.dp).fillMaxSize())
     }
 }

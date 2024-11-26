@@ -18,6 +18,7 @@ import data.formatDate
 import data.viewModels.TablesDevicesViewModel
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesStringsViewModel
+import icons.DatabaseOff
 
 @Composable
 fun appTablesStringsList(tabVM: TablesStringsViewModel) {
@@ -27,6 +28,17 @@ fun appTablesStringsList(tabVM: TablesStringsViewModel) {
     ) {
         items(tabVM.listGet()) {
             row(tabVM, it)
+        }
+        item {
+            if (tabVM.listGet().isEmpty()) {
+                Box (Modifier.fillMaxWidth().height(200.dp)) {
+                    Icon(
+                        imageVector = DatabaseOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
+                    )
+                }
+            }
         }
     }
 }

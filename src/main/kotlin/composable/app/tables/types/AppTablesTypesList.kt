@@ -4,10 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
@@ -17,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
 import data.TypeFromTable
 import data.viewModels.TablesTypesViewModel
+import icons.DatabaseOff
 
 @Composable
 fun appTablesTypesList(tabVM: TablesTypesViewModel) {
@@ -26,6 +24,17 @@ fun appTablesTypesList(tabVM: TablesTypesViewModel) {
     ) {
         items(tabVM.listGet()) {
             row(tabVM, it)
+        }
+        item {
+            if (tabVM.listGet().isEmpty()) {
+                Box (Modifier.fillMaxWidth().height(200.dp)) {
+                    Icon(
+                        imageVector = DatabaseOff,
+                        contentDescription = null,
+                        modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
+                    )
+                }
+            }
         }
     }
 }

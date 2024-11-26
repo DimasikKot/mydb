@@ -1,6 +1,7 @@
 package data.viewModels
 
 import androidx.lifecycle.ViewModel
+import data.BooleanDB
 import data.IntDB
 
 class SettingsViewModel: ViewModel() {
@@ -33,6 +34,9 @@ class SettingsViewModel: ViewModel() {
             else -> 1
         }
     }
+
+    var isVision by BooleanDB("isVision", false)
+
     var reportDefaultDevice by IntDB("reportDefaultDevice", 0)
     var reportDefaultEmployee by IntDB("reportDefaultEmployee", 0)
     var reportDefaultGroup by IntDB("reportDefaultGroup", 0)

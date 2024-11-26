@@ -8,10 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import data.viewModels.MainViewModel
 import data.viewModels.NavigationViewModel
 
 @Composable
 fun appTablesBar(
+    mainVM: MainViewModel,
     navVM: NavigationViewModel,
     unit1: () -> Unit = { navVM.appTablesBarCurrentPage = 1 },
     unit2: () -> Unit = { navVM.appTablesBarCurrentPage = 2 },
@@ -76,29 +78,31 @@ fun appTablesBar(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            Card(
-                elevation = 10.dp,
-                modifier = Modifier.weight(1f)
-            ) {
-                NavigationRailItem(
-                    icon = {
-                        Column(Modifier.fillMaxSize()) {
-                            Icon(
-                                Icons.Default.Newspaper,
-                                contentDescription = null,
-                                Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
-                            )
-                            Text(
-                                "Строки",
-                                style = MaterialTheme.typography.button,
-                                modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
-                            )
-                        }
-                    },
-                    selected = navVM.appTablesBarCurrentPage == 3,
-                    onClick = unit3,
-                    modifier = Modifier.fillMaxSize()
-                )
+            if (mainVM.setVM.isVision) {
+                Card(
+                    elevation = 10.dp,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    NavigationRailItem(
+                        icon = {
+                            Column(Modifier.fillMaxSize()) {
+                                Icon(
+                                    Icons.Default.Newspaper,
+                                    contentDescription = null,
+                                    Modifier.weight(3f).fillMaxSize().align(Alignment.CenterHorizontally)
+                                )
+                                Text(
+                                    "Строки",
+                                    style = MaterialTheme.typography.button,
+                                    modifier = Modifier.weight(1f).padding(top = 10.dp).align(Alignment.CenterHorizontally)
+                                )
+                            }
+                        },
+                        selected = navVM.appTablesBarCurrentPage == 3,
+                        onClick = unit3,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
             Card(
                 elevation = 10.dp,
