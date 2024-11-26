@@ -1,11 +1,7 @@
 package data.viewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-import data.DeviceFromTable
 import data.DevicesTable
 import data.IntDB
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -163,3 +159,14 @@ class TablesDevicesViewModel : ViewModel() {
         }
     }
 }
+
+data class DeviceFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+    val date: String,
+    val price: Int,
+    val typeId: Int,
+)

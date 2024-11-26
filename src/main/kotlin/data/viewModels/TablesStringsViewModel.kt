@@ -1,10 +1,10 @@
 package data.viewModels
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import data.StringFromTable
 import data.StringsTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -150,3 +150,13 @@ class TablesStringsViewModel : ViewModel() {
         }
     }
 }
+
+data class StringFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val deviceId: Int,
+    val date: String,
+    val employeeId: Int,
+)

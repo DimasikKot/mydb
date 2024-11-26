@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
-import data.EmployeeFromTable
+import data.viewModels.EmployeeFromTable
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesGroupsViewModel
 import icons.DatabaseOff

@@ -129,3 +129,11 @@ class TablesTypesViewModel : ViewModel() {
         }
     }
 }
+
+data class TypeFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+)

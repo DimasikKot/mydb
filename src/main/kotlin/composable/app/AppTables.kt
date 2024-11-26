@@ -31,11 +31,11 @@ private fun currentTable(
         Box(modifier = Modifier.padding(10.dp)) {
             Crossfade(mainVM.navVM.appTablesBarCurrentPage) { currentPage ->
                 when (currentPage) {
-                    2 -> appTablesDevices(mainVM.tabDevicesVM)
-                    3 -> appTablesStrings(mainVM.tabStringsVM)
-                    4 -> appTablesEmployees(mainVM.tabEmployeesVM)
-                    5 -> appTablesGroups(mainVM.tabGroupsVM)
-                    else -> appTablesTypes(mainVM.tabTypesVM)
+                    2 -> appTablesDevices(mainVM, mainVM.tabDevicesVM)
+                    3 -> appTablesStrings(mainVM, mainVM.tabStringsVM)
+                    4 -> appTablesEmployees(mainVM, mainVM.tabEmployeesVM)
+                    5 -> appTablesGroups(mainVM, mainVM.tabGroupsVM)
+                    else -> appTablesTypes(mainVM, mainVM.tabTypesVM)
                 }
             }
         }

@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
-import data.GroupFromTable
+import data.viewModels.GroupFromTable
 import data.viewModels.TablesGroupsViewModel
 import icons.DatabaseOff
 import icons.ExportNotes

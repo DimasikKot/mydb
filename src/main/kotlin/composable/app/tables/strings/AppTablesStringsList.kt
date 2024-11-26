@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
 import data.DateTransformation
-import data.StringFromTable
+import data.viewModels.StringFromTable
 import data.formatDate
 import data.viewModels.TablesDevicesViewModel
 import data.viewModels.TablesEmployeesViewModel

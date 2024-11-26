@@ -1,9 +1,6 @@
 package data.viewModels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -134,3 +131,11 @@ class TablesGroupsViewModel : ViewModel() {
         }
     }
 }
+
+data class GroupFromTable(
+    var editing: MutableState<Boolean> = mutableStateOf(false),
+    var canUpdate: MutableState<Boolean> = mutableStateOf(true),
+    var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val id: Int,
+    val name: String,
+)

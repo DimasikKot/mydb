@@ -36,24 +36,24 @@ class TablesReportGroupViewModel : ViewModel() {
         try {
             val requestEmployee =
                 """
-                    SELECT groups.id, groups.name, 
-                        (SELECT COUNT(1) 
-                        FROM employees AS e2 
-                        WHERE e2.group_id = groups.id) AS employees_count, 
-                        (SELECT SUM(
-                            (SELECT SUM(devices.price) 
-                            FROM strings 
-                            JOIN devices ON devices.id = strings.device_id 
-                            WHERE strings.employee_id = employees.id AND strings.date = 
-                                (SELECT MAX(s2.date) 
-                                FROM strings AS s2 
-                                WHERE strings.device_id = s2.device_id 
-                                GROUP BY s2.device_id))) 
-                        FROM employees 
-                        WHERE employees.group_id = groups.id) AS total_price_group 
-                    FROM groups 
-                    WHERE groups.id = $report 
-                    LIMIT 1
+                SELECT groups.id, groups.name, 
+                    (SELECT COUNT(1) 
+                    FROM employees AS e2 
+                    WHERE e2.group_id = groups.id) AS employees_count, 
+                    (SELECT SUM(
+                        (SELECT SUM(devices.price) 
+                        FROM strings 
+                        JOIN devices ON devices.id = strings.device_id 
+                        WHERE strings.employee_id = employees.id AND strings.date = 
+                            (SELECT MAX(s2.date) 
+                            FROM strings AS s2 
+                            WHERE strings.device_id = s2.device_id 
+                            GROUP BY s2.device_id))) 
+                    FROM employees 
+                    WHERE employees.group_id = groups.id) AS total_price_group 
+                FROM groups 
+                WHERE groups.id = $report 
+                LIMIT 1
                 """.trimIndent()
             return transaction {
                 exec(requestEmployee) { row ->

@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
-import data.TypeFromTable
+import data.viewModels.TypeFromTable
 import data.viewModels.TablesTypesViewModel
 import icons.DatabaseOff
 
