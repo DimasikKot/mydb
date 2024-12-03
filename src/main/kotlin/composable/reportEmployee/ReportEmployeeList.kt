@@ -31,7 +31,7 @@ fun reportEmployeeList(
             modifier = Modifier.fillMaxSize().padding(top = 10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(tabVM.listGet()) {
+            items(tabVM.list) {
                 row(tabVM, reportDevice, it)
             }
         }
@@ -202,22 +202,24 @@ private fun rowUpdate(
                                 label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
                             )
                         }
-                        for (item in employeesVM.listGet()) {
+                        for (item in employeesVM.list) {
                             DropdownMenuItem({
                                 newEmployeeId.value = item.id.toString()
                                 newEmployeeName.value = item.name
                                 newGroupId.value = item.groupId.toString()
                                 val groupVM by mutableStateOf(TablesGroupsViewModel())
-                                for (itemGroup in groupVM.listGet()) {
+                                for (itemGroup in groupVM.list) {
                                     if (item.groupId == itemGroup.id) {
                                         newGroupName.value = itemGroup.name
                                     }
                                 }
+                                groupVM.listUpdate()
                                 newEmployeeIdMenu = false
                             }) {
                                 Text("${item.id}: ${item.name}")
                             }
                         }
+                        employeesVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
@@ -255,7 +257,7 @@ private fun rowUpdate(
                                 label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
                             )
                         }
-                        for (item in groupsVM.listGet()) {
+                        for (item in groupsVM.list) {
                             DropdownMenuItem({
                                 newGroupId.value = item.id.toString()
                                 newGroupName.value = item.name
@@ -264,6 +266,7 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
+                        groupsVM.listUpdate()
                     }
                 },
                 readOnly = true,

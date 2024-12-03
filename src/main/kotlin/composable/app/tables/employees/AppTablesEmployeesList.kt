@@ -27,11 +27,11 @@ fun appTablesEmployeesList(tabVM: TablesEmployeesViewModel) {
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(tabVM.listGet()) {
+        items(tabVM.list) {
             row(tabVM, it)
         }
         item {
-            if (tabVM.listGet().isEmpty()) {
+            if (tabVM.list.isEmpty()) {
                 Box (Modifier.fillMaxWidth().height(200.dp)) {
                     Icon(
                         imageVector = DatabaseOff,
@@ -168,7 +168,7 @@ private fun rowUpdate(
                                 label = { Text(if (groupsVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
                             )
                         }
-                        for (item in groupsVM.listGet()) {
+                        for (item in groupsVM.list) {
                             DropdownMenuItem({
                                 newGroupId.value = item.id.toString()
                                 newGroupIdMenu = false
@@ -176,6 +176,7 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
+                        groupsVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

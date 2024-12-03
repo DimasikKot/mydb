@@ -26,11 +26,11 @@ fun appTablesStringsList(tabVM: TablesStringsViewModel) {
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(tabVM.listGet()) {
+        items(tabVM.list) {
             row(tabVM, it)
         }
         item {
-            if (tabVM.listGet().isEmpty()) {
+            if (tabVM.list.isEmpty()) {
                 Box (Modifier.fillMaxWidth().height(200.dp)) {
                     Icon(
                         imageVector = DatabaseOff,
@@ -200,7 +200,7 @@ private fun rowUpdate(
                                 label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
                             )
                         }
-                        for (item in employeesVM.listGet()) {
+                        for (item in employeesVM.list) {
                             DropdownMenuItem({
                                 newEmployeeId.value = item.id.toString()
                                 newEmployeeIdMenu = false
@@ -208,6 +208,7 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
+                        employeesVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

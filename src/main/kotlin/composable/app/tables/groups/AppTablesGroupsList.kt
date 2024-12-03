@@ -25,11 +25,11 @@ fun appTablesGroupsList(tabVM: TablesGroupsViewModel) {
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(tabVM.listGet()) {
+        items(tabVM.list) {
             row(tabVM, it)
         }
         item {
-            if (tabVM.listGet().isEmpty()) {
+            if (tabVM.list.isEmpty()) {
                 Box (Modifier.fillMaxWidth().height(200.dp)) {
                     Icon(
                         imageVector = DatabaseOff,

@@ -6,15 +6,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import data.StringsTable
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+@OptIn(DelicateCoroutinesApi::class)
 class TablesStringsViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
+
+    private var _list by mutableStateOf<List<StringFromTable>>(emptyList())
+    val list: List<StringFromTable>
+        get() = _list
 
     private var request by mutableStateOf("SELECT id, date, device_id, employee_id FROM strings ORDER BY device_id, id")
     var order1 by mutableStateOf("device_id")
@@ -40,6 +46,9 @@ class TablesStringsViewModel : ViewModel() {
         requestNew += if (order4.isNotEmpty()) ", $order4" else ""
         request = "SELECT id FROM strings"
         request = requestNew
+        GlobalScope.launch {
+            _list = listGet()
+        }
     }
 
     fun listOrderBy(order: String): Boolean {
@@ -61,26 +70,28 @@ class TablesStringsViewModel : ViewModel() {
         return descending
     }
 
-    fun listGet(): List<StringFromTable> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            StringFromTable(
-                                id = row.getInt("id"),
-                                date = row.getString("date"),
-                                deviceId = row.getInt("device_id"),
-                                employeeId = row.getInt("employee_id")
-                            )
-                        } else null
-                    }.toList()
+    private suspend fun listGet(): List<StringFromTable> {
+        return withContext(Dispatchers.IO) {
+            try {
+                transaction {
+                    val result = exec(request) { row ->
+                        generateSequence {
+                            if (row.next()) {
+                                StringFromTable(
+                                    id = row.getInt("id"),
+                                    date = row.getString("date"),
+                                    deviceId = row.getInt("device_id"),
+                                    employeeId = row.getInt("employee_id")
+                                )
+                            } else null
+                        }.toList()
+                    }
+                    result ?: emptyList()
                 }
-                result ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
         }
     }
 

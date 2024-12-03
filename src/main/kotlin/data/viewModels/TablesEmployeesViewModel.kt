@@ -3,17 +3,23 @@ package data.viewModels
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.*
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+@OptIn(DelicateCoroutinesApi::class)
 class TablesEmployeesViewModel : ViewModel() {
     var report = mutableIntStateOf(IntDB("reportDefaultEmployee", 0).toInt())
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
+
+    private var _list by mutableStateOf<List<EmployeeFromTable>>(emptyList())
+    val list: List<EmployeeFromTable>
+        get() = _list
 
     private var request by mutableStateOf("SELECT id, name, group_id FROM employees ORDER BY id")
     var order1 by mutableStateOf("id")
@@ -35,6 +41,9 @@ class TablesEmployeesViewModel : ViewModel() {
         requestNew += if (order3.isNotEmpty()) ", $order3" else ""
         request = "SELECT id FROM employees"
         request = requestNew
+        GlobalScope.launch {
+            _list = listGet()
+        }
     }
 
     fun listOrderBy(order: String): Boolean {
@@ -55,25 +64,27 @@ class TablesEmployeesViewModel : ViewModel() {
         return descending
     }
 
-    fun listGet(): List<EmployeeFromTable> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            EmployeeFromTable(
-                                id = row.getInt("id"),
-                                name = row.getString("name"),
-                                groupId = row.getInt("group_id")
-                            )
-                        } else null
-                    }.toList()
+    private suspend fun listGet(): List<EmployeeFromTable> {
+        return withContext(Dispatchers.IO) {
+            try {
+                transaction {
+                    val result = exec(request) { row ->
+                        generateSequence {
+                            if (row.next()) {
+                                EmployeeFromTable(
+                                    id = row.getInt("id"),
+                                    name = row.getString("name"),
+                                    groupId = row.getInt("group_id")
+                                )
+                            } else null
+                        }.toList()
+                    }
+                    result ?: emptyList()
                 }
-                result ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
         }
     }
 

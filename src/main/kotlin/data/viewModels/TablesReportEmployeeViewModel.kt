@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.EmployeesTable
 import data.StringsTable
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -11,11 +12,16 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+@OptIn(DelicateCoroutinesApi::class)
 class TablesReportEmployeeViewModel : ViewModel() {
     var report by mutableIntStateOf(0)
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
+
+    private var _list by mutableStateOf<List<ReportEmployeeStringFromTables>>(emptyList())
+    val list: List<ReportEmployeeStringFromTables>
+        get() = _list
 
     private var request by mutableStateOf("")
     var order1 by mutableStateOf("price")
@@ -71,32 +77,34 @@ class TablesReportEmployeeViewModel : ViewModel() {
         }
     }
 
-    fun listGet(): List<ReportEmployeeStringFromTables> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            ReportEmployeeStringFromTables(
-                                number = row.getInt("number"),
-                                dateGive = row.getString("date_give"),
-                                id = row.getInt("id"),
-                                name = row.getString("name"),
-                                date = row.getString("date"),
-                                price = row.getInt("price"),
-                                typeId = row.getInt("type_id"),
-                                typeName = row.getString("type_name"),
-                            )
-                        } else {
-                            null
-                        }
-                    }.toList()
+    private suspend fun listGet(): List<ReportEmployeeStringFromTables> {
+        return withContext(Dispatchers.IO) {
+            try {
+                transaction {
+                    val result = exec(request) { row ->
+                        generateSequence {
+                            if (row.next()) {
+                                ReportEmployeeStringFromTables(
+                                    number = row.getInt("number"),
+                                    dateGive = row.getString("date_give"),
+                                    id = row.getInt("id"),
+                                    name = row.getString("name"),
+                                    date = row.getString("date"),
+                                    price = row.getInt("price"),
+                                    typeId = row.getInt("type_id"),
+                                    typeName = row.getString("type_name"),
+                                )
+                            } else {
+                                null
+                            }
+                        }.toList()
+                    }
+                    result ?: emptyList()
                 }
-                result ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
         }
     }
 
@@ -143,6 +151,9 @@ class TablesReportEmployeeViewModel : ViewModel() {
         requestNew += if (order6.isNotEmpty()) ", $order5" else ""
         request = ""
         request = requestNew
+        GlobalScope.launch {
+            _list = listGet()
+        }
     }
 
     fun listOrderBy(order: String): Boolean {

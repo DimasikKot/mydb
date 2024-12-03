@@ -28,7 +28,7 @@ fun reportGroupList(
             modifier = Modifier.fillMaxSize().padding(top = 10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(tabVM.listGet()) {
+            items(tabVM.list) {
                 row(tabVM, reportEmployee, it)
             }
         }

@@ -3,6 +3,7 @@ package data.viewModels
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.StringsTable
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -10,11 +11,30 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+@OptIn(DelicateCoroutinesApi::class)
 class TablesReportDeviceViewModel : ViewModel() {
     var report by mutableIntStateOf(0)
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
+
+    private var _head by mutableStateOf(ReportDeviceFromTables())
+    val head: ReportDeviceFromTables
+        get() {
+            GlobalScope.launch {
+                _head = headGet()
+            }
+            return _head
+        }
+
+    private var _list by mutableStateOf<List<ReportDeviceStringFromTables>>(emptyList())
+    val list: List<ReportDeviceStringFromTables>
+        get() {
+            GlobalScope.launch {
+                _list = listGet()
+            }
+            return _list
+        }
 
     private var request by mutableStateOf("")
     var order1 by mutableStateOf("date DESC")
@@ -31,7 +51,7 @@ class TablesReportDeviceViewModel : ViewModel() {
     var whereGroupId by mutableStateOf("")
     var whereGroupName by mutableStateOf("")
 
-    fun headGet(): ReportDeviceFromTables {
+    private suspend fun headGet(): ReportDeviceFromTables {
         try {
             val requestDevice =
                 "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
@@ -60,32 +80,34 @@ class TablesReportDeviceViewModel : ViewModel() {
         }
     }
 
-    fun listGet(): List<ReportStringFromTables> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            ReportStringFromTables(
-                                number = row.getInt("number"),
-                                id = row.getInt("id"),
-                                date = row.getString("date"),
-                                employeeID = row.getInt("employee_id"),
-                                employeeName = row.getString("employee_name"),
-                                groupId = row.getInt("group_id"),
-                                groupName = row.getString("group_name"),
-                            )
-                        } else {
-                            null
-                        }
-                    }.toList()
+    private suspend fun listGet(): List<ReportDeviceStringFromTables> {
+        return withContext(Dispatchers.IO) {
+            try {
+                transaction {
+                    val result = exec(request) { row ->
+                        generateSequence {
+                            if (row.next()) {
+                                ReportDeviceStringFromTables(
+                                    number = row.getInt("number"),
+                                    id = row.getInt("id"),
+                                    date = row.getString("date"),
+                                    employeeID = row.getInt("employee_id"),
+                                    employeeName = row.getString("employee_name"),
+                                    groupId = row.getInt("group_id"),
+                                    groupName = row.getString("group_name"),
+                                )
+                            } else {
+                                null
+                            }
+                        }.toList()
+                    }
+                    println()
+                    result ?: emptyList()
                 }
-                println()
-                result ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
         }
     }
 
@@ -126,6 +148,9 @@ class TablesReportDeviceViewModel : ViewModel() {
         requestNew += if (order6.isNotEmpty()) ", $order5" else ""
         request = ""
         request = requestNew
+        GlobalScope.launch {
+            _list = listGet()
+        }
     }
 
     fun listOrderBy(order: String): Boolean {
@@ -216,23 +241,23 @@ class TablesReportDeviceViewModel : ViewModel() {
 }
 
 data class ReportDeviceFromTables(
-    val id: Int,
-    val name: String,
-    val date: String,
-    val price: Int,
-    val typeId: Int,
-    val typeName: String,
+    val id: Int = -1,
+    val name: String = "null",
+    val date: String = "null",
+    val price: Int = -1,
+    val typeId: Int = -1,
+    val typeName: String = "null",
 )
 
-data class ReportStringFromTables(
+data class ReportDeviceStringFromTables(
     var editing: MutableState<Boolean> = mutableStateOf(false),
     var canUpdate: MutableState<Boolean> = mutableStateOf(true),
     var canDelete: MutableState<Boolean> = mutableStateOf(true),
-    val number: Int,
-    val id: Int,
-    val date: String,
-    val employeeID: Int,
-    val employeeName: String,
-    var groupId: Int,
-    var groupName: String,
+    val number: Int = -1,
+    val id: Int = -1,
+    val date: String = "null",
+    val employeeID: Int = -1,
+    val employeeName: String = "null",
+    var groupId: Int = -1,
+    var groupName: String = "null",
 )

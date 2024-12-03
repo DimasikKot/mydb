@@ -319,7 +319,7 @@ private fun rowCreate(
                                     label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
                                 )
                             }
-                            for (item in employeesVM.listGet()) {
+                            for (item in employeesVM.list) {
                                 DropdownMenuItem({
                                     newEmployeeId = item.id.toString()
                                     newEmployeeIdMenu = false
@@ -327,6 +327,7 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
+                            employeesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

@@ -238,7 +238,7 @@ private fun rowCreate(
                                     label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
                                 )
                             }
-                            for (item in groupsVM.listGet()) {
+                            for (item in groupsVM.list) {
                                 DropdownMenuItem({
                                     newGroupId = item.id.toString()
                                     newGroupIdMenu = false
@@ -246,6 +246,7 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
+                            groupsVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

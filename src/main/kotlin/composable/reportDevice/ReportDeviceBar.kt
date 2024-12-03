@@ -34,7 +34,7 @@ fun reportDeviceBar(
             }
             rowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
-        rowHead(tabVM.headGet(), Modifier.padding(top = 10.dp))
+        rowHead(tabVM.head, Modifier.padding(top = 10.dp))
         rowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
             rowSearch(tabVM, Modifier.padding(top = 10.dp))
@@ -480,22 +480,24 @@ private fun rowCreate(
                                     label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
                                 )
                             }
-                            for (item in employeesVM.listGet()) {
+                            for (item in employeesVM.list) {
                                 DropdownMenuItem({
                                     newEmployeeId = item.id.toString()
                                     newEmployeeName = item.name
                                     newGroupId = item.groupId.toString()
                                     val groupVM by mutableStateOf(TablesGroupsViewModel())
-                                    for (itemGroup in groupVM.listGet()) {
+                                    for (itemGroup in groupVM.list) {
                                         if (item.groupId == itemGroup.id) {
                                             newGroupName = itemGroup.name
                                         }
                                     }
+                                    groupVM.listUpdate()
                                     newEmployeeIdMenu = false
                                 }) {
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
+                            employeesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
@@ -533,7 +535,7 @@ private fun rowCreate(
                                     label = { Text(if (groupVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
                                 )
                             }
-                            for (item in groupVM.listGet()) {
+                            for (item in groupVM.list) {
                                 DropdownMenuItem({
                                     newGroupId = item.id.toString()
                                     newGroupName = item.name
@@ -542,6 +544,7 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
+                            groupVM.listUpdate()
                         }
                     },
                     readOnly = true,
