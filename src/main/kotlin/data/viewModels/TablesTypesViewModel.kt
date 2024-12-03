@@ -12,52 +12,82 @@ import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
 class TablesTypesViewModel : ViewModel() {
+    private var _loading by mutableStateOf(true)
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
     private var _list by mutableStateOf<List<TypeFromTable>>(emptyList())
     val list: List<TypeFromTable>
-        get() = _list
+        get() {
+            if (_loading) {
+                listUpdate()
+            }
+            return _list
+        }
 
-    private var request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types ORDER BY id")
-    var order1 by mutableStateOf("id")
-    private var order2 by mutableStateOf("")
-    var whereId by mutableStateOf("")
-    var whereName by mutableStateOf("")
+    private var _request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types ORDER BY id")
+    private var _order1 by mutableStateOf("id")
+    val order1: String
+        get() {
+            return _order1
+        }
+    private var _order2 by mutableStateOf("")
+    private var _whereId by mutableStateOf("")
+    var whereId: String
+        get() {
+            return _whereId
+        }
+        set(value) {
+            _whereId = value
+            listUpdate()
+        }
+    private var _whereName by mutableStateOf("")
+    var whereName: String
+        get() {
+            return _whereName
+        }
+        set(value) {
+            _whereName = value
+            listUpdate()
+        }
 
     fun listUpdate() {
         var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) {
-            conditions.add("id >= $whereId")
+        if (_whereId.isNotEmpty()) {
+            conditions.add("id >= $_whereId")
         }
-        if (whereName.isNotEmpty()) {
-            conditions.add("name LIKE '%$whereName%'")
+        if (_whereName.isNotEmpty()) {
+            conditions.add("name LIKE '%$_whereName%'")
         }
         if (conditions.isNotEmpty()) {
             requestNew += " WHERE " + conditions.joinToString(" and ")
         }
-        requestNew += " ORDER BY $order1"
-        requestNew += if (order2.isNotEmpty()) ", $order2" else ""
-        request = "SELECT id FROM types"
-        request = requestNew
-        GlobalScope.launch {
-            _list = listGet()
+        requestNew += " ORDER BY $_order1"
+        requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
+        _request = requestNew
+        try {
+            GlobalScope.launch {
+                _list = listGet()
+                _loading = false
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     fun listOrderBy(order: String): Boolean {
         var descending = false
-        if (order1.isEmpty()) {
-            order1 = order
-        } else if (order1 == order) {
-            order1 = "$order DESC"
+        if (_order1.isEmpty()) {
+            _order1 = order
+        } else if (_order1 == order) {
+            _order1 = "$order DESC"
             descending = true
-        } else if (order1 == "$order DESC") {
-            order1 = order
+        } else if (_order1 == "$order DESC") {
+            _order1 = order
         } else {
-            order2 = order1
-            order1 = order
+            _order2 = _order1
+            _order1 = order
         }
         listUpdate()
         return descending
@@ -65,24 +95,19 @@ class TablesTypesViewModel : ViewModel() {
 
     private suspend fun listGet(): List<TypeFromTable> {
         return withContext(Dispatchers.IO) {
-            try {
-                transaction {
-                    val result = exec(request) { row ->
-                        generateSequence {
-                            if (row.next()) {
-                                TypeFromTable(
-                                    number = row.getInt("number"),
-                                    id = row.getInt("id"),
-                                    name = row.getString("name")
-                                )
-                            } else null
-                        }.toList()
-                    }
-                    result ?: emptyList()
+            transaction {
+                val result = exec(_request) { row ->
+                    generateSequence {
+                        if (row.next()) {
+                            TypeFromTable(
+                                number = row.getInt("number"),
+                                id = row.getInt("id"),
+                                name = row.getString("name")
+                            )
+                        } else null
+                    }.toList()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emptyList()
+                result ?: emptyList()
             }
         }
     }

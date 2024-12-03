@@ -15,6 +15,7 @@ import org.jetbrains.exposed.sql.update
 class TablesReportDeviceViewModel : ViewModel() {
     var report by mutableIntStateOf(0)
 
+    private var loading by mutableStateOf(true)
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 

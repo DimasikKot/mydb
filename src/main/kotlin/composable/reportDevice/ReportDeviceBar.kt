@@ -23,7 +23,6 @@ fun reportDeviceBar(
     tabVM: TablesReportDeviceViewModel,
     modifier: Modifier = Modifier,
 ) {
-    tabVM.listUpdate()
     Column(modifier.animateContentSize()) {
         Row {
             uiButton(

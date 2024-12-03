@@ -1,6 +1,5 @@
 package composable.app.tables.types
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,10 +17,10 @@ import data.viewModels.TablesTypesViewModel
 @Composable
 fun appTablesTypesBar(
     mainVM: MainViewModel,
-    tabVM: TablesTypesViewModel
+    tabVM: TablesTypesViewModel,
+    modifier: Modifier = Modifier
 ) {
-
-    Column(Modifier.animateContentSize()) {
+    Column(modifier) {
         Row {
             uiButton(
                 Icons.Default.Update,
@@ -49,7 +48,7 @@ private fun rowInfo(
 ) {
     Card(
         elevation = 10.dp,
-        modifier = Modifier.heightIn(min = 55.dp).animateContentSize()
+        modifier = Modifier.heightIn(min = 55.dp)
     ) {
         Row(Modifier.background(MaterialTheme.colors.secondaryVariant).padding(10.dp)) {
             Icon(
@@ -87,7 +86,7 @@ private fun rowBar(
 ) {
     Card(
         elevation = 10.dp,
-        modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp).animateContentSize()
+        modifier = Modifier.padding(top = 10.dp).heightIn(min = 55.dp)
     ) {
         Row(
             Modifier
@@ -145,7 +144,7 @@ private fun rowSearch(
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.animateContentSize()) {
+    Row(modifier = modifier) {
         uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
             tabVM.listUpdate()
         }
@@ -157,7 +156,6 @@ private fun rowSearch(
                         {
                             if (it.matches(regex = Regex("^\\d*\$"))) {
                                 tabVM.whereId = it
-                                tabVM.listUpdate()
                             }
                         },
                         label = { Text(if (tabVM.whereId == "") "Искать по ID" else "Ищем по ID") },
@@ -168,7 +166,6 @@ private fun rowSearch(
                     tabVM.whereName,
                     {
                         tabVM.whereName = it
-                        tabVM.listUpdate()
                     },
                     label = { Text(if (tabVM.whereName == "") "Искать по названию" else "Ищем по названию") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
@@ -185,7 +182,7 @@ private fun rowCreate(
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.animateContentSize()) {
+    Row(modifier = modifier) {
         var newId by remember { mutableStateOf("") }
         var newName by remember { mutableStateOf("") }
         uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {

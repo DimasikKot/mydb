@@ -12,8 +12,8 @@ fun appTablesTypes(
     mainVM: MainViewModel,
     tabVM: TablesTypesViewModel
 ) {
-    Column(Modifier.animateContentSize()) {
-        appTablesTypesBar(mainVM, tabVM)
-        appTablesTypesList(mainVM, tabVM)
+    Column(Modifier) {
+        appTablesTypesBar(mainVM, tabVM, Modifier.animateContentSize())
+        appTablesTypesList(mainVM, tabVM, Modifier.animateContentSize())
     }
 }

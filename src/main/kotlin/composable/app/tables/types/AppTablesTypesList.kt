@@ -1,6 +1,5 @@
 package composable.app.tables.types
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,10 +20,11 @@ import kotlinx.coroutines.delay
 @Composable
 fun appTablesTypesList(
     mainVM: MainViewModel,
-    tabVM: TablesTypesViewModel
+    tabVM: TablesTypesViewModel,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(top = 10.dp).animateContentSize(),
+        modifier = modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.list) {
@@ -52,11 +52,11 @@ private fun row(
 ) {
     var isView by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(it.number.toLong() * 50)
+        delay(it.number.toLong() * 100)
         isView = true
     }
     if (isView) {
-        Row(Modifier.animateContentSize()) {
+        Row(Modifier) {
             val newId = mutableStateOf(it.id.toString())
             val newName = mutableStateOf(it.name)
             uiButton(
@@ -112,7 +112,7 @@ private fun rowUpdate(
     newName: MutableState<String>,
 ) {
     Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
-        Row(Modifier.padding(10.dp).animateContentSize()) {
+        Row(Modifier.padding(10.dp)) {
             if (mainVM.setVM.isVision) {
                 TextField(
                     newId.value,

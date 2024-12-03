@@ -11,13 +11,29 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+@OptIn(DelicateCoroutinesApi::class)
 class TablesDevicesViewModel : ViewModel() {
     var report = mutableIntStateOf(IntDB("reportDefaultDevice", 0).toInt())
 
+    private var loading by mutableStateOf(true)
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    var list by mutableStateOf<List<DeviceFromTable>>(emptyList())
+    private var _list by mutableStateOf<List<DeviceFromTable>>(emptyList())
+    val list: List<DeviceFromTable>
+        get() {
+            if (loading) {
+                try {
+                    GlobalScope.launch {
+                        _list = listGet()
+                        loading = false
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            return _list
+        }
 
     private var request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name, date, price, type_id FROM devices ORDER BY id")
     var order1 by mutableStateOf("id")
@@ -31,7 +47,6 @@ class TablesDevicesViewModel : ViewModel() {
     var wherePrice by mutableStateOf("")
     var whereTypeId by mutableStateOf("")
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun listUpdate() {
         var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name, date, price, type_id FROM devices"
         val conditions = mutableListOf<String>()
@@ -49,7 +64,7 @@ class TablesDevicesViewModel : ViewModel() {
         request = "SELECT id FROM devices"
         request = requestNew
         GlobalScope.launch {
-            list = list()
+            _list = listGet()
         }
     }
 
@@ -73,7 +88,7 @@ class TablesDevicesViewModel : ViewModel() {
         return descending
     }
 
-    private suspend fun list(): List<DeviceFromTable> {
+    private suspend fun listGet(): List<DeviceFromTable> {
         return withContext(Dispatchers.IO) {
             try {
                 transaction {
