@@ -12,48 +12,88 @@ import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
 class TablesGroupsViewModel : ViewModel() {
-    var report = mutableIntStateOf(IntDB("reportDefaultGroup", 0).toInt())
+    private var _loading by mutableStateOf(true)
+    private var _list by mutableStateOf<List<GroupFromTable>>(emptyList())
+    private var _request by mutableStateOf("")
+
+    private var _order1 by mutableStateOf("name")
+    private var _order2 by mutableStateOf("")
+
+    private var _whereId by mutableStateOf("")
+    private var _whereName by mutableStateOf("")
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var _list by mutableStateOf<List<GroupFromTable>>(emptyList())
     val list: List<GroupFromTable>
-        get() = _list
+        get() {
+            if (_loading) {
+                listUpdate()
+            }
+            return _list
+        }
 
-    private var request by mutableStateOf("SELECT id, name FROM groups ORDER BY id")
-    var order1 by mutableStateOf("id")
-    private var order2 by mutableStateOf("")
-    var whereId by mutableStateOf("")
-    var whereName by mutableStateOf("")
+    val order1: String
+        get() {
+            return _order1
+        }
+
+    var whereId: String
+        get() {
+            return _whereId
+        }
+        set(value) {
+            _whereId = value
+            listUpdate()
+        }
+    var whereName: String
+        get() {
+            return _whereName
+        }
+        set(value) {
+            _whereName = value
+            listUpdate()
+        }
 
     fun listUpdate() {
         var requestNew = "SELECT id, name FROM groups"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
-        if (whereName.isNotEmpty()) { conditions.add("name LIKE '%$whereName%'") }
-        if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" and ") }
-        requestNew += " ORDER BY $order1"
-        requestNew += if (order2.isNotEmpty()) ", $order2" else ""
-        request = "SELECT id FROM groups"
-        request = requestNew
-        GlobalScope.launch {
-            _list = listGet()
+        if (_whereId.isNotEmpty()) {
+            conditions.add("id >= $_whereId")
+        }
+        if (_whereName.isNotEmpty()) {
+            conditions.add("name LIKE '%$_whereName%'")
+        }
+        if (conditions.isNotEmpty()) {
+            requestNew += " WHERE " + conditions.joinToString(" and ")
+        }
+        requestNew += " ORDER BY $_order1"
+        requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
+        _request = requestNew
+        try {
+            GlobalScope.launch {
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     fun listOrderBy(order: String): Boolean {
         var descending = false
-        if (order1.isEmpty()) {
-            order1 = order
-        } else if (order1 == order) {
-            order1 = "$order DESC"
+        if (_order1.isEmpty()) {
+            _order1 = order
+        } else if (_order1 == order) {
+            _order1 = "$order DESC"
             descending = true
-        } else if (order1 == "$order DESC") {
-            order1 = order
+        } else if (_order1 == "$order DESC") {
+            _order1 = order
         } else {
-            order2 = order1
-            order1 = order
+            _order2 = _order1
+            _order1 = order
         }
         listUpdate()
         return descending
@@ -61,84 +101,70 @@ class TablesGroupsViewModel : ViewModel() {
 
     private suspend fun listGet(): List<GroupFromTable> {
         return withContext(Dispatchers.IO) {
-            try {
-                transaction {
-                    val result = exec(request) { row ->
-                        generateSequence {
-                            if (row.next()) {
-                                GroupFromTable(
-                                    id = row.getInt("id"),
-                                    name = row.getString("name")
-                                )
-                            } else null
-                        }.toList()
-                    }
-                    result ?: emptyList()
+            transaction {
+                val result = exec(_request) { row ->
+                    generateSequence {
+                        if (row.next()) {
+                            GroupFromTable(
+                                id = row.getInt("id"),
+                                name = row.getString("name")
+                            )
+                        } else null
+                    }.toList()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emptyList()
+                result ?: emptyList()
             }
         }
     }
 
     fun delete(itId: Int): Boolean {
-        try {
+        return try {
             transaction {
                 GroupsTable.deleteWhere { id.eq(itId) }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
-    fun update(itId: Int, newId: Int, newName: String): Boolean {
-        try {
+    fun update(itId: Int, newId: String, newName: String): Boolean {
+        return try {
             transaction {
                 GroupsTable.update({ GroupsTable.id eq itId }) {
-                    it[id] = newId
+                    it[id] = newId.toInt()
                     it[name] = newName
                 }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
-    fun insert(newId: Int, newName: String): Boolean {
-        try {
+    fun insert(newId: String, newName: String): Boolean {
+        return try {
             transaction {
-                GroupsTable.insert {
-                    it[id] = newId
-                    it[name] = newName
+                if (newId == "") {
+                    GroupsTable.insert {
+                        it[name] = newName
+                    }
+                } else {
+                    GroupsTable.insert {
+                        it[id] = newId.toInt()
+                        it[name] = newName
+                    }
                 }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
-        }
-    }
-
-    fun insert(newName: String): Boolean {
-        try {
-            transaction {
-                GroupsTable.insert {
-                    it[name] = newName
-                }
-            }
-            listUpdate()
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
+            false
         }
     }
 }

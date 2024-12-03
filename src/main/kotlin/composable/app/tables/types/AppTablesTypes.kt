@@ -1,6 +1,5 @@
 package composable.app.tables.types
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -12,7 +11,7 @@ fun appTablesTypes(
 ) {
     val tabVM = TablesTypesViewModel()
     Column(Modifier) {
-        appTablesTypesBar(tabVM, Modifier.animateContentSize(), debug)
-        appTablesTypesList(tabVM, Modifier.animateContentSize(), debug)
+        appTablesTypesBar(tabVM, debug)
+        appTablesTypesList(tabVM, debug)
     }
 }

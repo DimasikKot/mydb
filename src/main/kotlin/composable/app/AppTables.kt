@@ -32,9 +32,9 @@ private fun currentTable(
             Crossfade(mainVM.navVM.appTablesBarCurrentPage) { currentPage ->
                 when (currentPage) {
                     2 -> appTablesDevices(mainVM, mainVM.setVM.debug)
-                    3 -> appTablesStrings(mainVM, mainVM.tabStringsVM)
-                    4 -> appTablesEmployees(mainVM, mainVM.tabEmployeesVM)
-                    5 -> appTablesGroups(mainVM, mainVM.tabGroupsVM)
+                    3 -> appTablesStrings()
+                    4 -> appTablesEmployees(mainVM, mainVM.setVM.debug)
+                    5 -> appTablesGroups(mainVM, mainVM.setVM.debug)
                     else -> appTablesTypes(mainVM.setVM.debug)
                 }
             }

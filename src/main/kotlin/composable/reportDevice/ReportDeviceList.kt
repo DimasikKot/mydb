@@ -15,10 +15,7 @@ import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
 import data.DateTransformation
 import data.formatDate
-import data.viewModels.ReportDeviceStringFromTables
-import data.viewModels.TablesEmployeesViewModel
-import data.viewModels.TablesGroupsViewModel
-import data.viewModels.TablesReportDeviceViewModel
+import data.viewModels.*
 import icons.ExportNotes
 import icons.IconWindow
 import icons.RefreshNotes
@@ -26,9 +23,8 @@ import icons.RefreshNotes
 @Composable
 fun reportDeviceList(
     tabVM: TablesReportDeviceViewModel,
-    reportEmployee: MutableIntState,
-    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
+    mainVM: MainViewModel
 ) {
     Card(
         elevation = 10.dp, modifier = modifier
@@ -37,7 +33,7 @@ fun reportDeviceList(
             modifier = Modifier.fillMaxSize().padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(tabVM.list) {
-                row(tabVM, reportEmployee, reportGroup, it)
+                row(tabVM, it, mainVM)
             }
         }
     }
@@ -46,9 +42,8 @@ fun reportDeviceList(
 @Composable
 private fun row(
     tabVM: TablesReportDeviceViewModel,
-    reportEmployee: MutableIntState,
-    reportGroup: MutableIntState,
     it: ReportDeviceStringFromTables,
+    mainVM: MainViewModel
 ) {
     Row {
         val newId = mutableStateOf(it.id.toString())
@@ -108,13 +103,13 @@ private fun row(
                     )
                     Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
                         Icon(
-                            if (reportEmployee.value == it.employeeID) IconWindow else if (reportEmployee.value != 0) RefreshNotes else ExportNotes,
+                            if (mainVM.winVM.reportEmployee == it.employeeID) IconWindow else if (mainVM.winVM.reportEmployee != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier.size(35.dp).clickable {
-                                if (reportEmployee.value != 0) {
-                                    reportEmployee.value = 0
+                                if (mainVM.winVM.reportEmployee != 0) {
+                                    mainVM.winVM.reportEmployee = 0
                                 } else {
-                                    reportEmployee.value = it.employeeID
+                                    mainVM.winVM.reportEmployee = it.employeeID
                                 }
                             }
                         )
@@ -131,13 +126,13 @@ private fun row(
                     )
                     Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
                         Icon(
-                            if (reportGroup.value == it.groupId) IconWindow else if (reportGroup.value != 0) RefreshNotes else ExportNotes,
+                            if (mainVM.winVM.reportGroup == it.groupId) IconWindow else if (mainVM.winVM.reportGroup != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier.size(35.dp).clickable {
-                                if (reportGroup.value != 0) {
-                                    reportGroup.value = 0
+                                if (mainVM.winVM.reportGroup != 0) {
+                                    mainVM.winVM.reportGroup = 0
                                 } else {
-                                    reportGroup.value = it.groupId
+                                    mainVM.winVM.reportGroup = it.groupId
                                 }
                             }
                         )

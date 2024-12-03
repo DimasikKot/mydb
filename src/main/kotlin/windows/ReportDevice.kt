@@ -12,8 +12,6 @@ import theme.mainTheme
 @Composable
 fun reportDevice(
     mainVM: MainViewModel,
-    reportEmployee: MutableIntState,
-    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     mainTheme(mainVM.setVM.theme) {
@@ -21,7 +19,7 @@ fun reportDevice(
             Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     reportDeviceBar(mainVM.tabReportDeviceVM)
-                    reportDeviceList(mainVM.tabReportDeviceVM, reportEmployee, reportGroup, Modifier.padding(top = 10.dp))
+                    reportDeviceList(mainVM.tabReportDeviceVM, Modifier.padding(top = 10.dp), mainVM)
                 }
             }
         }

@@ -17,8 +17,8 @@ import icons.RefreshNotes
 @Composable
 fun reportGroupList(
     tabVM: TablesReportGroupViewModel,
-    reportEmployee: MutableIntState,
     modifier: Modifier = Modifier,
+    mainVM: MainViewModel
 ) {
     Card(
         elevation = 10.dp,
@@ -29,7 +29,7 @@ fun reportGroupList(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(tabVM.list) {
-                row(tabVM, reportEmployee, it)
+                row(it, mainVM)
             }
         }
     }
@@ -37,9 +37,9 @@ fun reportGroupList(
 
 @Composable
 private fun row(
-    tabVM: TablesReportGroupViewModel,
-    reportEmployee: MutableIntState,
+//    tabVM: TablesReportGroupViewModel,
     it: ReportGroupStringFromTables,
+    mainVM: MainViewModel
 ) {
     Row {
         val newId = mutableStateOf(it.id.toString())
@@ -98,15 +98,15 @@ private fun row(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
-                            if (reportEmployee.value == it.id) IconWindow else if (reportEmployee.value != 0) RefreshNotes else ExportNotes,
+                            if (mainVM.winVM.reportEmployee == it.id) IconWindow else if (mainVM.winVM.reportEmployee != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(start = 10.dp).size(35.dp)
                                 .clickable {
-                                    if (reportEmployee.value != 0) {
-                                        reportEmployee.value = 0
+                                    if (mainVM.winVM.reportEmployee != 0) {
+                                        mainVM.winVM.reportEmployee = 0
                                     } else {
-                                        reportEmployee.value = it.id
+                                        mainVM.winVM.reportEmployee = it.id
                                     }
                                 }
                         )

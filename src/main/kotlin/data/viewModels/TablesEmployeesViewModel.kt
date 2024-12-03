@@ -12,53 +12,95 @@ import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
 class TablesEmployeesViewModel : ViewModel() {
-    var report = mutableIntStateOf(IntDB("reportDefaultEmployee", 0).toInt())
+    private var _loading by mutableStateOf(true)
+    private var _list by mutableStateOf<List<EmployeeFromTable>>(emptyList())
+    private var _request by mutableStateOf("")
+
+    private var _order1 by mutableStateOf("name")
+    private var _order2 by mutableStateOf("")
+    private var _order3 by mutableStateOf("")
+
+    private var _whereId by mutableStateOf("")
+    private var _whereName by mutableStateOf("")
+    private var _whereGroupId by mutableStateOf("")
 
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var _list by mutableStateOf<List<EmployeeFromTable>>(emptyList())
     val list: List<EmployeeFromTable>
-        get() = _list
+        get() {
+            if (_loading) {
+                listUpdate()
+            }
+            return _list
+        }
 
-    private var request by mutableStateOf("SELECT id, name, group_id FROM employees ORDER BY id")
-    var order1 by mutableStateOf("id")
-    private var order2 by mutableStateOf("")
-    private var order3 by mutableStateOf("")
-    var whereId by mutableStateOf("")
-    var whereName by mutableStateOf("")
-    var whereGroupId by mutableStateOf("")
+    val order1: String
+        get() {
+            return _order1
+        }
+
+    var whereId: String
+        get() {
+            return _whereId
+        }
+        set(value) {
+            _whereId = value
+            listUpdate()
+        }
+    var whereName: String
+        get() {
+            return _whereName
+        }
+        set(value) {
+            _whereName = value
+            listUpdate()
+        }
+    var whereGroupId: String
+        get() {
+            return _whereGroupId
+        }
+        set(value) {
+            _whereGroupId = value
+            listUpdate()
+        }
 
     fun listUpdate() {
         var requestNew = "SELECT id, name, group_id FROM employees"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
-        if (whereName.isNotEmpty()) { conditions.add("name LIKE '%$whereName%'") }
-        if (whereGroupId.isNotEmpty()) { conditions.add("group_id >= $whereGroupId") }
+        if (_whereId.isNotEmpty()) { conditions.add("id >= $_whereId") }
+        if (_whereName.isNotEmpty()) { conditions.add("name LIKE '%$_whereName%'") }
+        if (_whereGroupId.isNotEmpty()) { conditions.add("group_id >= $_whereGroupId") }
         if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" and ") }
-        requestNew += " ORDER BY $order1"
-        requestNew += if (order2.isNotEmpty()) ", $order2" else ""
-        requestNew += if (order3.isNotEmpty()) ", $order3" else ""
-        request = "SELECT id FROM employees"
-        request = requestNew
-        GlobalScope.launch {
-            _list = listGet()
+        requestNew += " ORDER BY $_order1"
+        requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
+        requestNew += if (_order3.isNotEmpty()) ", $_order3" else ""
+        _request = requestNew
+        try {
+            GlobalScope.launch {
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     fun listOrderBy(order: String): Boolean {
         var descending = false
-        if (order1.isEmpty()) {
-            order1 = order
-        } else if (order1 == order) {
-            order1 = "$order DESC"
+        if (_order1.isEmpty()) {
+            _order1 = order
+        } else if (_order1 == order) {
+            _order1 = "$order DESC"
             descending = true
-        } else if (order1 == "$order DESC") {
-            order1 = order
+        } else if (_order1 == "$order DESC") {
+            _order1 = order
         } else {
-            order3 = order2
-            order2 = order1
-            order1 = order
+            _order3 = _order2
+            _order2 = _order1
+            _order1 = order
         }
         listUpdate()
         return descending
@@ -68,7 +110,7 @@ class TablesEmployeesViewModel : ViewModel() {
         return withContext(Dispatchers.IO) {
             try {
                 transaction {
-                    val result = exec(request) { row ->
+                    val result = exec(_request) { row ->
                         generateSequence {
                             if (row.next()) {
                                 EmployeeFromTable(

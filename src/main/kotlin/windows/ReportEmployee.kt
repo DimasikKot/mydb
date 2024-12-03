@@ -13,14 +13,13 @@ import theme.mainTheme
 @Composable
 fun reportEmployee(
     mainVM: MainViewModel,
-    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     mainTheme(mainVM.setVM.theme) {
         Scaffold {
             Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    reportEmployeeBar(mainVM.tabReportEmployeeVM, reportGroup)
+                    reportEmployeeBar(mainVM.tabReportEmployeeVM, mainVM = mainVM)
                     reportEmployeeList(mainVM.tabReportEmployeeVM, Modifier.padding(top = 10.dp), mainVM)
                 }
             }

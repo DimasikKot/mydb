@@ -13,7 +13,6 @@ import theme.mainTheme
 @Composable
 fun reportGroup(
     mainVM: MainViewModel,
-    reportEmployee: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
     mainTheme(mainVM.setVM.theme) {
@@ -21,7 +20,7 @@ fun reportGroup(
             Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     reportGroupBar(mainVM.tabReportGroupVM)
-                    reportGroupList(mainVM.tabReportGroupVM, reportEmployee, Modifier.padding(top = 10.dp))
+                    reportGroupList(mainVM.tabReportGroupVM, Modifier.padding(top = 10.dp), mainVM)
                 }
             }
         }

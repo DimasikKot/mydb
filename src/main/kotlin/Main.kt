@@ -40,37 +40,37 @@ fun main() = application {
             title = "Учёт устройства",
             state = windowState
         ) {
-            reportDevice(mainVM, mainVM.tabEmployeesVM.report, mainVM.tabGroupsVM.report, Modifier.padding(10.dp))
+            reportDevice(mainVM, Modifier.padding(10.dp))
         }
     }
 
-    if (mainVM.tabEmployeesVM.report.value != 0) {
-        mainVM.tabReportEmployeeVM.report = mainVM.tabEmployeesVM.report.value
+    if (mainVM.winVM.reportEmployee != 0) {
+        mainVM.tabReportEmployeeVM.report = mainVM.winVM.reportEmployee
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
-                mainVM.tabEmployeesVM.report.value = 0
+                mainVM.winVM.reportEmployee = 0
                 mainVM.tabReportEmployeeVM.report = 0
             },
             title = "Учёт устройств сотрудника",
             state = windowState
         ) {
-            reportEmployee(mainVM, mainVM.tabGroupsVM.report, Modifier.padding(10.dp))
+            reportEmployee(mainVM, Modifier.padding(10.dp))
         }
     }
 
-    if (mainVM.tabGroupsVM.report.value != 0) {
-        mainVM.tabReportGroupVM.report = mainVM.tabGroupsVM.report.value
+    if (mainVM.winVM.reportGroup != 0) {
+        mainVM.tabReportGroupVM.report = mainVM.winVM.reportGroup
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
-                mainVM.tabGroupsVM.report.value = 0
+                mainVM.winVM.reportGroup = 0
                 mainVM.tabReportGroupVM.report = 0
             },
             title = "Учёт сотрудников группы",
             state = windowState
         ) {
-            reportGroup(mainVM, mainVM.tabEmployeesVM.report, Modifier.padding(10.dp))
+            reportGroup(mainVM, Modifier.padding(10.dp))
         }
     }
 }

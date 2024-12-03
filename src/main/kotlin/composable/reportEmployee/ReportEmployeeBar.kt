@@ -23,8 +23,8 @@ import icons.RefreshNotes
 @Composable
 fun reportEmployeeBar(
     tabVM: TablesReportEmployeeViewModel,
-    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
+    mainVM: MainViewModel
 ) {
     tabVM.listUpdate()
     Column(modifier.animateContentSize()) {
@@ -35,9 +35,9 @@ fun reportEmployeeBar(
             ) {
                 tabVM.listUpdate()
             }
-            rowInfo(tabVM, Modifier.padding(start = 10.dp))
+            rowInfo(Modifier.padding(start = 10.dp))
         }
-        rowHead(tabVM.headGet(), reportGroup, Modifier.padding(top = 10.dp))
+        rowHead(tabVM.headGet(), Modifier.padding(top = 10.dp), mainVM)
         rowBar(tabVM, Modifier.padding(top = 10.dp))
         if (tabVM.searching) {
             rowSearch(tabVM, Modifier.padding(top = 10.dp))
@@ -50,7 +50,7 @@ fun reportEmployeeBar(
 
 @Composable
 private fun rowInfo(
-    tabVM: TablesReportEmployeeViewModel,
+//    tabVM: TablesReportEmployeeViewModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -89,8 +89,8 @@ private fun rowInfo(
 @Composable
 private fun rowHead(
     it: ReportEmployeeFromTables,
-    reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
+    mainVM: MainViewModel
 ) {
     Card(
         elevation = 10.dp,
@@ -155,13 +155,13 @@ private fun rowHead(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
-                        imageVector = if (reportGroup.value == it.groupId) IconWindow else if (reportGroup.value != 0) RefreshNotes else ExportNotes,
+                        imageVector = if (mainVM.winVM.reportGroup == it.groupId) IconWindow else if (mainVM.winVM.reportGroup != 0) RefreshNotes else ExportNotes,
                         contentDescription = null,
                         modifier = Modifier.padding(start = 10.dp).size(35.dp).clickable {
-                            if (reportGroup.value != 0) {
-                                reportGroup.value = 0
+                            if (mainVM.winVM.reportGroup != 0) {
+                                mainVM.winVM.reportGroup = 0
                             } else {
-                                reportGroup.value = it.groupId
+                                mainVM.winVM.reportGroup = it.groupId
                             }
                         }
                     )

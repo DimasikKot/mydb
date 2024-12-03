@@ -1,5 +1,6 @@
 package composable.app.tables.employees
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
 import data.viewModels.EmployeeFromTable
+import data.viewModels.MainViewModel
 import data.viewModels.TablesEmployeesViewModel
 import data.viewModels.TablesGroupsViewModel
 import icons.DatabaseOff
@@ -22,24 +24,25 @@ import icons.IconWindow
 import icons.RefreshNotes
 
 @Composable
-fun appTablesEmployeesList(tabVM: TablesEmployeesViewModel) {
+fun appTablesEmployeesList(
+    tabVM: TablesEmployeesViewModel,
+    mainVM: MainViewModel
+) {
+    if (tabVM.list.isEmpty()) {
+        Box (Modifier.fillMaxWidth().height(200.dp)) {
+            Icon(
+                imageVector = DatabaseOff,
+                contentDescription = null,
+                modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
+            )
+        }
+    }
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp).animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.list) {
-            row(tabVM, it)
-        }
-        item {
-            if (tabVM.list.isEmpty()) {
-                Box (Modifier.fillMaxWidth().height(200.dp)) {
-                    Icon(
-                        imageVector = DatabaseOff,
-                        contentDescription = null,
-                        modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
-                    )
-                }
-            }
+            row(tabVM, it, mainVM)
         }
     }
 }
@@ -48,6 +51,7 @@ fun appTablesEmployeesList(tabVM: TablesEmployeesViewModel) {
 private fun row(
     tabVM: TablesEmployeesViewModel,
     it: EmployeeFromTable,
+    mainVM: MainViewModel
 ) {
     Row {
         val newId = mutableStateOf(it.id.toString())
@@ -101,15 +105,15 @@ private fun row(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
-                            if (tabVM.report.value == it.id) IconWindow else if (tabVM.report.value != 0) RefreshNotes else ExportNotes,
+                            if (mainVM.winVM.reportEmployee == it.id) IconWindow else if (mainVM.winVM.reportEmployee != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(start = 10.dp).size(35.dp)
                                 .clickable {
-                                    if (tabVM.report.value != 0) {
-                                        tabVM.report.value = 0
+                                    if (mainVM.winVM.reportEmployee != 0) {
+                                        mainVM.winVM.reportEmployee = 0
                                     } else {
-                                        tabVM.report.value = it.id
+                                        mainVM.winVM.reportEmployee = it.id
                                     }
                                 }
                         )

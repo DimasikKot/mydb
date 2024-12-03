@@ -9,10 +9,12 @@ import data.viewModels.TablesEmployeesViewModel
 @Composable
 fun appTablesEmployees(
     mainVM: MainViewModel,
-    tabVM: TablesEmployeesViewModel
+    debug: Boolean = false
 ) {
+    println(debug)
+    val tabVM = TablesEmployeesViewModel()
     Column(Modifier) {
         appTablesEmployeesBar(tabVM)
-        appTablesEmployeesList(tabVM)
+        appTablesEmployeesList(tabVM, mainVM)
     }
 }

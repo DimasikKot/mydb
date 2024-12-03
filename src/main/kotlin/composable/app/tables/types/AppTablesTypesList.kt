@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun appTablesTypesList(
     tabVM: TablesTypesViewModel,
-    modifier: Modifier = Modifier,
     debug: Boolean
 ) {
     if (tabVM.list.isEmpty()) {
@@ -33,7 +32,7 @@ fun appTablesTypesList(
         }
     }
     LazyColumn(
-        modifier = modifier.fillMaxWidth().padding(top = 10.dp).animateContentSize(),
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp).animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.list) {

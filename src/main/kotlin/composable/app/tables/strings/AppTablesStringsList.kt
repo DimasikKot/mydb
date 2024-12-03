@@ -1,5 +1,6 @@
 package composable.app.tables.strings
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,23 +23,21 @@ import icons.DatabaseOff
 
 @Composable
 fun appTablesStringsList(tabVM: TablesStringsViewModel) {
+    if (tabVM.list.isEmpty()) {
+        Box (Modifier.fillMaxWidth().height(200.dp)) {
+            Icon(
+                imageVector = DatabaseOff,
+                contentDescription = null,
+                modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
+            )
+        }
+    }
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp).animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(tabVM.list) {
             row(tabVM, it)
-        }
-        item {
-            if (tabVM.list.isEmpty()) {
-                Box (Modifier.fillMaxWidth().height(200.dp)) {
-                    Icon(
-                        imageVector = DatabaseOff,
-                        contentDescription = null,
-                        modifier = Modifier.size(200.dp).align(Alignment.Center).fillMaxSize()
-                    )
-                }
-            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package composable.app.tables.devices
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,10 +20,9 @@ import data.viewModels.TablesTypesViewModel
 @Composable
 fun appTablesDevicesBar(
     tabVM: TablesDevicesViewModel,
-    modifier: Modifier = Modifier,
     debug: Boolean
 ) {
-    Column(modifier) {
+    Column(Modifier.animateContentSize()) {
         Row {
             uiButton(
                 Icons.Default.Update,

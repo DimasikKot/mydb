@@ -8,10 +8,11 @@ import data.viewModels.TablesGroupsViewModel
 @Composable
 fun appTablesGroups(
     mainVM: MainViewModel,
-    tabVM: TablesGroupsViewModel
+    debug: Boolean = false
 ) {
+    val tabVM = TablesGroupsViewModel()
     Column {
-        appTablesGroupsBar(tabVM)
-        appTablesGroupsList(tabVM)
+        appTablesGroupsBar(tabVM, debug)
+        appTablesGroupsList(tabVM, mainVM, debug)
     }
 }
