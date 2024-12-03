@@ -15,56 +15,108 @@ import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
 class TablesStringsViewModel : ViewModel() {
+    private var _loading by mutableStateOf(true)
+    private var _list by mutableStateOf<List<StringFromTable>>(emptyList())
+    private var _request by mutableStateOf("")
+
+    private var _order1 by mutableStateOf("device_id")
+    private var _order2 by mutableStateOf("id")
+    private var _order3 by mutableStateOf("")
+    private var _order4 by mutableStateOf("")
+
+    private var _whereId by mutableStateOf("")
+    private var _whereDate by mutableStateOf("")
+    private var _whereDeviceId by mutableStateOf("")
+    private var _whereEmployeeId by mutableStateOf("")
+
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var _list by mutableStateOf<List<StringFromTable>>(emptyList())
     val list: List<StringFromTable>
-        get() = _list
+        get() {
+            if (_loading) {
+                listUpdate()
+            }
+            return _list
+        }
 
-    private var request by mutableStateOf("SELECT id, date, device_id, employee_id FROM strings ORDER BY device_id, id")
-    var order1 by mutableStateOf("device_id")
-    private var order2 by mutableStateOf("id")
-    private var order3 by mutableStateOf("")
-    private var order4 by mutableStateOf("")
-    var whereId by mutableStateOf("")
-    var whereDate by mutableStateOf("")
-    var whereDeviceId by mutableStateOf("")
-    var whereEmployeeId by mutableStateOf("")
+    val order1: String
+        get() {
+            return _order1
+        }
+
+    var whereId: String
+        get() {
+            return _whereId
+        }
+        set(value) {
+            _whereId = value
+            listUpdate()
+        }
+    var whereDate: String
+        get() {
+            return _whereDate
+        }
+        set(value) {
+            _whereDate = value
+            listUpdate()
+        }
+    var whereDeviceId: String
+        get() {
+            return _whereDeviceId
+        }
+        set(value) {
+            _whereDeviceId = value
+            listUpdate()
+        }
+    var whereEmployeeId: String
+        get() {
+            return _whereEmployeeId
+        }
+        set(value) {
+            _whereEmployeeId = value
+            listUpdate()
+        }
 
     fun listUpdate() {
         var requestNew = "SELECT id, date, device_id, employee_id FROM strings"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
-        if (whereDate.isNotEmpty()) { conditions.add("date LIKE '%$whereDate%'") }
-        if (whereDeviceId.isNotEmpty()) { conditions.add("device_id >= $whereDeviceId") }
-        if (whereEmployeeId.isNotEmpty()) { conditions.add("employee_id >= $whereEmployeeId") }
+        if (_whereId.isNotEmpty()) { conditions.add("id >= $_whereId") }
+        if (_whereDate.isNotEmpty()) { conditions.add("date LIKE '%$_whereDate%'") }
+        if (_whereDeviceId.isNotEmpty()) { conditions.add("device_id >= $_whereDeviceId") }
+        if (_whereEmployeeId.isNotEmpty()) { conditions.add("employee_id >= $_whereEmployeeId") }
         if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" and ") }
-        requestNew += " ORDER BY $order1"
-        requestNew += if (order2.isNotEmpty()) ", $order2" else ""
-        requestNew += if (order3.isNotEmpty()) ", $order3" else ""
-        requestNew += if (order4.isNotEmpty()) ", $order4" else ""
-        request = "SELECT id FROM strings"
-        request = requestNew
-        GlobalScope.launch {
-            _list = listGet()
+        requestNew += " ORDER BY $_order1"
+        requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
+        requestNew += if (_order3.isNotEmpty()) ", $_order3" else ""
+        requestNew += if (_order4.isNotEmpty()) ", $_order4" else ""
+        _request = requestNew
+        try {
+            GlobalScope.launch {
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     fun listOrderBy(order: String): Boolean {
         var descending = false
-        if (order1.isEmpty()) {
-            order1 = order
-        } else if (order1 == order) {
-            order1 = "$order DESC"
+        if (_order1.isEmpty()) {
+            _order1 = order
+        } else if (_order1 == order) {
+            _order1 = "$order DESC"
             descending = true
-        } else if (order1 == "$order DESC") {
-            order1 = order
+        } else if (_order1 == "$order DESC") {
+            _order1 = order
         } else {
-            order4 = order3
-            order3 = order2
-            order2 = order1
-            order1 = order
+            _order4 = _order3
+            _order3 = _order2
+            _order2 = _order1
+            _order1 = order
         }
         listUpdate()
         return descending
@@ -74,7 +126,7 @@ class TablesStringsViewModel : ViewModel() {
         return withContext(Dispatchers.IO) {
             try {
                 transaction {
-                    val result = exec(request) { row ->
+                    val result = exec(_request) { row ->
                         generateSequence {
                             if (row.next()) {
                                 StringFromTable(
