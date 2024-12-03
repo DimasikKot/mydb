@@ -3,32 +3,47 @@ package data.viewModels
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.*
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
+@OptIn(DelicateCoroutinesApi::class)
 class TablesTypesViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf("SELECT id, name FROM types ORDER BY id")
+    private var _list by mutableStateOf<List<TypeFromTable>>(emptyList())
+    val list: List<TypeFromTable>
+        get() = _list
+
+    private var request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types ORDER BY id")
     var order1 by mutableStateOf("id")
     private var order2 by mutableStateOf("")
     var whereId by mutableStateOf("")
     var whereName by mutableStateOf("")
 
     fun listUpdate() {
-        var requestNew = "SELECT id, name FROM types"
+        var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
-        if (whereName.isNotEmpty()) { conditions.add("name LIKE '%$whereName%'") }
-        if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" and ") }
+        if (whereId.isNotEmpty()) {
+            conditions.add("id >= $whereId")
+        }
+        if (whereName.isNotEmpty()) {
+            conditions.add("name LIKE '%$whereName%'")
+        }
+        if (conditions.isNotEmpty()) {
+            requestNew += " WHERE " + conditions.joinToString(" and ")
+        }
         requestNew += " ORDER BY $order1"
         requestNew += if (order2.isNotEmpty()) ", $order2" else ""
         request = "SELECT id FROM types"
         request = requestNew
+        GlobalScope.launch {
+            _list = listGet()
+        }
     }
 
     fun listOrderBy(order: String): Boolean {
@@ -48,24 +63,27 @@ class TablesTypesViewModel : ViewModel() {
         return descending
     }
 
-    fun listGet(): List<TypeFromTable> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            TypeFromTable(
-                                id = row.getInt("id"),
-                                name = row.getString("name")
-                            )
-                        } else null
-                    }.toList()
+    private suspend fun listGet(): List<TypeFromTable> {
+        return withContext(Dispatchers.IO) {
+            try {
+                transaction {
+                    val result = exec(request) { row ->
+                        generateSequence {
+                            if (row.next()) {
+                                TypeFromTable(
+                                    number = row.getInt("number"),
+                                    id = row.getInt("id"),
+                                    name = row.getString("name")
+                                )
+                            } else null
+                        }.toList()
+                    }
+                    result ?: emptyList()
                 }
-                result ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
         }
     }
 
@@ -134,6 +152,7 @@ data class TypeFromTable(
     var editing: MutableState<Boolean> = mutableStateOf(false),
     var canUpdate: MutableState<Boolean> = mutableStateOf(true),
     var canDelete: MutableState<Boolean> = mutableStateOf(true),
-    val id: Int,
-    val name: String,
+    val number: Int = -1,
+    val id: Int = -1,
+    val name: String = "null",
 )

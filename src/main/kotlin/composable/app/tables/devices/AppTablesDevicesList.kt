@@ -22,6 +22,7 @@ import icons.DatabaseOff
 import icons.ExportNotes
 import icons.IconWindow
 import icons.RefreshNotes
+import kotlinx.coroutines.delay
 
 @Composable
 fun appTablesDevicesList(tabVM: TablesDevicesViewModel) {
@@ -29,11 +30,11 @@ fun appTablesDevicesList(tabVM: TablesDevicesViewModel) {
         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(tabVM.listGet()) {
+        items(tabVM.list) {
             row(tabVM, it)
         }
         item {
-            if (tabVM.listGet().isEmpty()) {
+            if (tabVM.list.isEmpty()) {
                 Box (Modifier.fillMaxWidth().height(200.dp)) {
                     Icon(
                         imageVector = DatabaseOff,
@@ -51,84 +52,91 @@ private fun row(
     tabVM: TablesDevicesViewModel,
     it: DeviceFromTable,
 ) {
-    Row {
-        val newId = mutableStateOf(it.id.toString())
-        val newName = mutableStateOf(it.name)
-        val newDate = mutableStateOf(it.date)
-        val newPrice = mutableStateOf(it.price.toString())
-        val newTypeId = mutableStateOf(it.typeId.toString())
-        uiButton(
-            if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
-            modifier = Modifier.size(55.dp)
-        ) {
-            if (it.editing.value) {
-                it.canUpdate.value = tabVM.update(
-                    it.id,
-                    newId.value.toInt(),
-                    newName.value,
-                    newDate.value,
-                    newPrice.value.toInt(),
-                    newTypeId.value.toInt()
-                )
-                if (it.canUpdate.value) {
-                    it.editing.value = false
+    var isView by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(it.number.toLong() * 50)
+        isView = true
+    }
+    if (isView) {
+        Row {
+            val newId = mutableStateOf(it.id.toString())
+            val newName = mutableStateOf(it.name)
+            val newDate = mutableStateOf(it.date)
+            val newPrice = mutableStateOf(it.price.toString())
+            val newTypeId = mutableStateOf(it.typeId.toString())
+            uiButton(
+                if (!it.canUpdate.value) Icons.Default.EditOff else if (it.editing.value) Icons.Default.EditNote else Icons.Default.ModeEdit,
+                modifier = Modifier.size(55.dp)
+            ) {
+                if (it.editing.value) {
+                    it.canUpdate.value = tabVM.update(
+                        it.id,
+                        newId.value.toInt(),
+                        newName.value,
+                        newDate.value,
+                        newPrice.value.toInt(),
+                        newTypeId.value.toInt()
+                    )
+                    if (it.canUpdate.value) {
+                        it.editing.value = false
+                    }
+                } else {
+                    it.editing.value = true
                 }
-            } else {
-                it.editing.value = true
             }
-        }
-        uiButton(
-            if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
-            modifier = Modifier
-                .padding(start = 10.dp).size(55.dp)
-        ) {
-            it.canDelete.value = tabVM.delete(it.id)
-        }
-        if (it.editing.value) {
-            rowUpdate(it, newId, newName, newDate, newPrice, newTypeId)
-        } else {
-            Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
-                Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
-                    Text(
-                        it.id.toString(),
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                    )
-                    Text(
-                        it.name,
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
-                    Text(
-                        formatDate(it.date),
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
-                    Text(
-                        it.price.toString(),
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
-                    )
-                    Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+            uiButton(
+                if (it.canDelete.value) Icons.Default.Delete else Icons.Default.DeleteForever,
+                modifier = Modifier
+                    .padding(start = 10.dp).size(55.dp)
+            ) {
+                it.canDelete.value = tabVM.delete(it.id)
+            }
+            if (it.editing.value) {
+                rowUpdate(it, newId, newName, newDate, newPrice, newTypeId)
+            } else {
+                Card(elevation = 10.dp, modifier = Modifier.padding(start = 10.dp)) {
+                    Row(Modifier.heightIn(min = 55.dp).padding(10.dp)) {
                         Text(
-                            it.typeId.toString(),
+                            it.id.toString(),
                             style = MaterialTheme.typography.h5,
-                            modifier = Modifier.align(Alignment.CenterVertically)
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Icon(
-                            if (tabVM.report.value == it.id) IconWindow else if (tabVM.report.value != 0) RefreshNotes else ExportNotes,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .padding(start = 10.dp).size(35.dp)
-                                .clickable {
-                                    if (tabVM.report.value != 0) {
-                                        tabVM.report.value = 0
-                                    } else {
-                                        tabVM.report.value = it.id
+                        Text(
+                            it.name,
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        )
+                        Text(
+                            formatDate(it.date),
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        )
+                        Text(
+                            it.price.toString(),
+                            style = MaterialTheme.typography.h5,
+                            modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
+                        )
+                        Row(modifier = Modifier.weight(1f).padding(start = 10.dp)) {
+                            Text(
+                                it.typeId.toString(),
+                                style = MaterialTheme.typography.h5,
+                                modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Icon(
+                                if (tabVM.report.value == it.id) IconWindow else if (tabVM.report.value != 0) RefreshNotes else ExportNotes,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(start = 10.dp).size(35.dp)
+                                    .clickable {
+                                        if (tabVM.report.value != 0) {
+                                            tabVM.report.value = 0
+                                        } else {
+                                            tabVM.report.value = it.id
+                                        }
                                     }
-                                }
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -199,7 +207,7 @@ private fun rowUpdate(
                                 label = { Text(if (typesVM.whereId == "") "Искать по ID типа" else "Ищем по ID типа") }
                             )
                         }
-                        for (item in typesVM.listGet()) {
+                        for (item in typesVM.list) {
                             DropdownMenuItem({
                                 newTypeId.value = item.id.toString()
                                 newTypeIdMenu = false
@@ -207,6 +215,7 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
+                        typesVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

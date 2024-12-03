@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.DevicesTable
 import data.IntDB
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -16,7 +17,9 @@ class TablesDevicesViewModel : ViewModel() {
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var request by mutableStateOf("SELECT id, name, date, price, type_id FROM devices ORDER BY id")
+    var list by mutableStateOf<List<DeviceFromTable>>(emptyList())
+
+    private var request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name, date, price, type_id FROM devices ORDER BY id")
     var order1 by mutableStateOf("id")
     private var order2 by mutableStateOf("")
     private var order3 by mutableStateOf("")
@@ -28,8 +31,9 @@ class TablesDevicesViewModel : ViewModel() {
     var wherePrice by mutableStateOf("")
     var whereTypeId by mutableStateOf("")
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun listUpdate() {
-        var requestNew = "SELECT id, name, date, price, type_id FROM devices"
+        var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name, date, price, type_id FROM devices"
         val conditions = mutableListOf<String>()
         if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
         if (whereName.isNotEmpty()) { conditions.add("name LIKE '%$whereName%'") }
@@ -44,6 +48,9 @@ class TablesDevicesViewModel : ViewModel() {
         requestNew += if (order5.isNotEmpty()) ", $order5" else ""
         request = "SELECT id FROM devices"
         request = requestNew
+        GlobalScope.launch {
+            list = list()
+        }
     }
 
     fun listOrderBy(order: String): Boolean {
@@ -66,27 +73,30 @@ class TablesDevicesViewModel : ViewModel() {
         return descending
     }
 
-    fun listGet(): List<DeviceFromTable> {
-        try {
-            return transaction {
-                val result = exec(request) { row ->
-                    generateSequence {
-                        if (row.next()) {
-                            DeviceFromTable(
-                                id = row.getInt("id"),
-                                name = row.getString("name"),
-                                date = row.getString("date"),
-                                price = row.getInt("price"),
-                                typeId = row.getInt("type_id")
-                            )
-                        } else null
-                    }.toList()
+    private suspend fun list(): List<DeviceFromTable> {
+        return withContext(Dispatchers.IO) {
+            try {
+                transaction {
+                    val result = exec(request) { row ->
+                        generateSequence {
+                            if (row.next()) {
+                                DeviceFromTable(
+                                    number = row.getInt("number"),
+                                    id = row.getInt("id"),
+                                    name = row.getString("name"),
+                                    date = row.getString("date"),
+                                    price = row.getInt("price"),
+                                    typeId = row.getInt("type_id")
+                                )
+                            } else null
+                        }.toList()
+                    }
+                    result ?: emptyList()
                 }
-                result ?: emptyList()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return emptyList()
         }
     }
 
@@ -164,6 +174,7 @@ data class DeviceFromTable(
     var editing: MutableState<Boolean> = mutableStateOf(false),
     var canUpdate: MutableState<Boolean> = mutableStateOf(true),
     var canDelete: MutableState<Boolean> = mutableStateOf(true),
+    val number: Int,
     val id: Int,
     val name: String,
     val date: String,

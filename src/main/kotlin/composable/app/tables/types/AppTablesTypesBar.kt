@@ -20,6 +20,7 @@ fun appTablesTypesBar(
     mainVM: MainViewModel,
     tabVM: TablesTypesViewModel
 ) {
+
     Column(Modifier.animateContentSize()) {
         Row {
             uiButton(
@@ -153,16 +154,25 @@ private fun rowSearch(
                 if (mainVM.setVM.isVision) {
                     TextField(
                         tabVM.whereId,
-                        { if (it.matches(regex = Regex("^\\d*\$"))) tabVM.whereId = it },
+                        {
+                            if (it.matches(regex = Regex("^\\d*\$"))) {
+                                tabVM.whereId = it
+                                tabVM.listUpdate()
+                            }
+                        },
                         label = { Text(if (tabVM.whereId == "") "Искать по ID" else "Ищем по ID") },
                         modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
                     )
                 }
                 TextField(
                     tabVM.whereName,
-                    { tabVM.whereName = it },
+                    {
+                        tabVM.whereName = it
+                        tabVM.listUpdate()
+                    },
                     label = { Text(if (tabVM.whereName == "") "Искать по названию" else "Ищем по названию") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                        .padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
                 )
             }
         }
@@ -199,7 +209,8 @@ private fun rowCreate(
                     newName,
                     { newName = it },
                     label = { Text("Новое название") },
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+                        .padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
                 )
             }
         }

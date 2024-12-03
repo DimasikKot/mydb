@@ -161,7 +161,7 @@ private fun rowUpdate(
                                 label = { Text(if (devicesVM.whereId == "") "Искать по ID устройства" else "Ищем по ID устройства") }
                             )
                         }
-                        for (item in devicesVM.listGet()) {
+                        for (item in devicesVM.list) {
                             DropdownMenuItem({
                                 newDeviceId.value = item.id.toString()
                                 newDeviceIdMenu = false
@@ -169,6 +169,7 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
+                        devicesVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

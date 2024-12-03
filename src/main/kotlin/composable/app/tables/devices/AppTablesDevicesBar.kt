@@ -313,7 +313,7 @@ private fun rowCreate(
                                     label = { Text(if (typesVM.whereId == "") "Искать по ID типа" else "Ищем по ID типа") }
                                 )
                             }
-                            for (item in typesVM.listGet()) {
+                            for (item in typesVM.list) {
                                 DropdownMenuItem({
                                     newTypeId = item.id.toString()
                                     newTypeIdMenu = false
@@ -321,6 +321,7 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
+                            typesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
