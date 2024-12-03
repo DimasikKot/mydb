@@ -11,14 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import composable.ui.uiButton
-import data.viewModels.MainViewModel
 import data.viewModels.TablesTypesViewModel
 
 @Composable
 fun appTablesTypesBar(
-    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    debug: Boolean
 ) {
     Column(modifier) {
         Row {
@@ -30,14 +29,14 @@ fun appTablesTypesBar(
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 rowInfo(tabVM)
-                rowBar(mainVM, tabVM)
+                rowBar(tabVM, debug)
             }
         }
         if (tabVM.searching) {
-            rowSearch(mainVM, tabVM, Modifier.padding(top = 10.dp))
+            rowSearch(tabVM, Modifier.padding(top = 10.dp), debug)
         }
         if (tabVM.creating) {
-            rowCreate(mainVM, tabVM, Modifier.padding(top = 10.dp))
+            rowCreate(tabVM, Modifier.padding(top = 10.dp), debug)
         }
     }
 }
@@ -81,8 +80,8 @@ private fun rowInfo(
 
 @Composable
 private fun rowBar(
-    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
+    debug: Boolean
 ) {
     Card(
         elevation = 10.dp,
@@ -92,7 +91,7 @@ private fun rowBar(
             Modifier
                 .background(MaterialTheme.colors.secondaryVariant).padding(10.dp)
         ) {
-            if (mainVM.setVM.isVision) {
+            if (debug) {
                 Row(Modifier.weight(1f)) {
                     var descending by remember { mutableStateOf(false) }
                     Icon(
@@ -114,7 +113,7 @@ private fun rowBar(
                     )
                 }
             }
-            Row(Modifier.weight(1f).padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)) {
+            Row(Modifier.weight(1f).padding(start = if (debug) 10.dp else 0.dp)) {
                 var descending by remember { mutableStateOf(false) }
                 Icon(
                     if (descending) {
@@ -140,9 +139,9 @@ private fun rowBar(
 
 @Composable
 private fun rowSearch(
-    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
+    debug: Boolean
 ) {
     Row(modifier = modifier) {
         uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
@@ -150,7 +149,7 @@ private fun rowSearch(
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
-                if (mainVM.setVM.isVision) {
+                if (debug) {
                     TextField(
                         tabVM.whereId,
                         {
@@ -169,7 +168,7 @@ private fun rowSearch(
                     },
                     label = { Text(if (tabVM.whereName == "") "Искать по названию" else "Ищем по названию") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                        .padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
+                        .padding(start = if (debug) 10.dp else 0.dp)
                 )
             }
         }
@@ -178,23 +177,19 @@ private fun rowSearch(
 
 @Composable
 private fun rowCreate(
-    mainVM: MainViewModel,
     tabVM: TablesTypesViewModel,
     modifier: Modifier = Modifier,
+    debug: Boolean
 ) {
     Row(modifier = modifier) {
         var newId by remember { mutableStateOf("") }
         var newName by remember { mutableStateOf("") }
         uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
-            if (newId == "") {
-                tabVM.insert(newName)
-            } else {
-                tabVM.insert(newId.toInt(), newName)
-            }
+            tabVM.insert(newId, newName)
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
-                if (mainVM.setVM.isVision) {
+                if (debug) {
                     TextField(
                         newId,
                         { if (it.matches(regex = Regex("^\\d*\$"))) newId = it },
@@ -207,7 +202,7 @@ private fun rowCreate(
                     { newName = it },
                     label = { Text("Новое название") },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                        .padding(start = if (mainVM.setVM.isVision) 10.dp else 0.dp)
+                        .padding(start = if (debug) 10.dp else 0.dp)
                 )
             }
         }

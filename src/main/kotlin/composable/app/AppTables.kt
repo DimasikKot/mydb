@@ -17,7 +17,7 @@ import data.viewModels.MainViewModel
 @Composable
 fun appTables(mainVM: MainViewModel, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
-        appTablesBar(mainVM, mainVM.navVM, modifier = Modifier.width(200.dp))
+        appTablesBar(mainVM.navVM, modifier = Modifier.width(200.dp), debug = mainVM.setVM.debug)
         currentTable(mainVM, Modifier.padding(start = 10.dp).fillMaxSize())
     }
 }
@@ -31,11 +31,11 @@ private fun currentTable(
         Box(modifier = Modifier.padding(10.dp)) {
             Crossfade(mainVM.navVM.appTablesBarCurrentPage) { currentPage ->
                 when (currentPage) {
-                    2 -> appTablesDevices(mainVM, mainVM.tabDevicesVM)
+                    2 -> appTablesDevices(mainVM, mainVM.setVM.debug)
                     3 -> appTablesStrings(mainVM, mainVM.tabStringsVM)
                     4 -> appTablesEmployees(mainVM, mainVM.tabEmployeesVM)
                     5 -> appTablesGroups(mainVM, mainVM.tabGroupsVM)
-                    else -> appTablesTypes(mainVM, mainVM.tabTypesVM)
+                    else -> appTablesTypes(mainVM.setVM.debug)
                 }
             }
         }

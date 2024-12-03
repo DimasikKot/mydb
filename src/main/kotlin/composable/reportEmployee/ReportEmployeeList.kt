@@ -20,8 +20,8 @@ import icons.RefreshNotes
 @Composable
 fun reportEmployeeList(
     tabVM: TablesReportEmployeeViewModel,
-    reportDevice: MutableIntState,
     modifier: Modifier = Modifier,
+    mainVM: MainViewModel
 ) {
     Card(
         elevation = 10.dp,
@@ -32,7 +32,7 @@ fun reportEmployeeList(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(tabVM.list) {
-                row(tabVM, reportDevice, it)
+                row(tabVM, it, mainVM)
             }
         }
     }
@@ -41,8 +41,8 @@ fun reportEmployeeList(
 @Composable
 private fun row(
     tabVM: TablesReportEmployeeViewModel,
-    reportDevice: MutableIntState,
     it: ReportEmployeeStringFromTables,
+    mainVM: MainViewModel
 ) {
     Row {
         val newId = mutableStateOf(it.id.toString())
@@ -124,13 +124,13 @@ private fun row(
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
-                            if (reportDevice.value == it.id) IconWindow else if (reportDevice.value != 0) RefreshNotes else ExportNotes,
+                            if (mainVM.winVM.reportDevice == it.id) IconWindow else if (mainVM.winVM.reportDevice != 0) RefreshNotes else ExportNotes,
                             contentDescription = null,
                             modifier = Modifier.padding(start = 10.dp).size(35.dp).fillMaxSize().clickable {
-                                if (reportDevice.value != 0) {
-                                    reportDevice.value = 0
+                                if (mainVM.winVM.reportDevice != 0) {
+                                    mainVM.winVM.reportDevice = 0
                                 } else {
-                                    reportDevice.value = it.id
+                                    mainVM.winVM.reportDevice = it.id
                                 }
                             }
                         )

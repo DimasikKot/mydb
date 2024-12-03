@@ -31,12 +31,12 @@ fun appSettings(
         }
         item {
             uiTextButton(
-                "Больше информации: ${mainVM.setVM.isVision}",
-                { mainVM.setVM.isVision = !mainVM.setVM.isVision },
+                "Больше информации: ${mainVM.setVM.debug}",
+                { mainVM.setVM.debug = !mainVM.setVM.debug },
                 "Изменить"
             )
         }
-        if (mainVM.setVM.isVision) {
+        if (mainVM.setVM.debug) {
             item {
                 uiTextButton(
                     "Главная страница при запуске: ${mainVM.setVM.appBarDefaultPage}",

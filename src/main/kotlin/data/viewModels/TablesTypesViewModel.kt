@@ -13,10 +13,18 @@ import org.jetbrains.exposed.sql.update
 @OptIn(DelicateCoroutinesApi::class)
 class TablesTypesViewModel : ViewModel() {
     private var _loading by mutableStateOf(true)
+    private var _list by mutableStateOf<List<TypeFromTable>>(emptyList())
+    private var _request by mutableStateOf("")
+
+    private var _order1 by mutableStateOf("name")
+    private var _order2 by mutableStateOf("")
+
+    private var _whereId by mutableStateOf("")
+    private var _whereName by mutableStateOf("")
+
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var _list by mutableStateOf<List<TypeFromTable>>(emptyList())
     val list: List<TypeFromTable>
         get() {
             if (_loading) {
@@ -25,14 +33,11 @@ class TablesTypesViewModel : ViewModel() {
             return _list
         }
 
-    private var _request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types ORDER BY id")
-    private var _order1 by mutableStateOf("id")
     val order1: String
         get() {
             return _order1
         }
-    private var _order2 by mutableStateOf("")
-    private var _whereId by mutableStateOf("")
+
     var whereId: String
         get() {
             return _whereId
@@ -41,7 +46,6 @@ class TablesTypesViewModel : ViewModel() {
             _whereId = value
             listUpdate()
         }
-    private var _whereName by mutableStateOf("")
     var whereName: String
         get() {
             return _whereName
@@ -61,7 +65,7 @@ class TablesTypesViewModel : ViewModel() {
             conditions.add("name LIKE '%$_whereName%'")
         }
         if (conditions.isNotEmpty()) {
-            requestNew += " WHERE " + conditions.joinToString(" and ")
+            requestNew += " WHERE " + conditions.joinToString(" AND ")
         }
         requestNew += " ORDER BY $_order1"
         requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
@@ -69,7 +73,9 @@ class TablesTypesViewModel : ViewModel() {
         try {
             GlobalScope.launch {
                 _list = listGet()
-                _loading = false
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -100,9 +106,7 @@ class TablesTypesViewModel : ViewModel() {
                     generateSequence {
                         if (row.next()) {
                             TypeFromTable(
-                                number = row.getInt("number"),
-                                id = row.getInt("id"),
-                                name = row.getString("name")
+                                number = row.getInt("number"), id = row.getInt("id"), name = row.getString("name")
                             )
                         } else null
                     }.toList()
@@ -113,62 +117,54 @@ class TablesTypesViewModel : ViewModel() {
     }
 
     fun delete(itId: Int): Boolean {
-        try {
+        return try {
             transaction {
                 TypesTable.deleteWhere { id.eq(itId) }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
-    fun update(itId: Int, newId: Int, newName: String): Boolean {
-        try {
+    fun update(itId: Int, newId: String, newName: String): Boolean {
+        return try {
             transaction {
                 TypesTable.update({ TypesTable.id eq itId }) {
-                    it[id] = newId
+                    it[id] = newId.toInt()
                     it[name] = newName
                 }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
-    fun insert(newId: Int, newName: String): Boolean {
-        try {
+    fun insert(newId: String, newName: String): Boolean {
+        return try {
             transaction {
-                TypesTable.insert {
-                    it[id] = newId
-                    it[name] = newName
+                if (newId == "") {
+                    TypesTable.insert {
+                        it[name] = newName
+                    }
+                } else {
+                    TypesTable.insert {
+                        it[id] = newId.toInt()
+                        it[name] = newName
+                    }
                 }
-            }
-            listUpdate()
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-    }
 
-    fun insert(newName: String): Boolean {
-        try {
-            transaction {
-                TypesTable.insert {
-                    it[name] = newName
-                }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 }

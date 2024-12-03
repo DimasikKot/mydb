@@ -13,7 +13,6 @@ import data.viewModels.NavigationViewModel
 
 @Composable
 fun appTablesBar(
-    mainVM: MainViewModel,
     navVM: NavigationViewModel,
     unit1: () -> Unit = { navVM.appTablesBarCurrentPage = 1 },
     unit2: () -> Unit = { navVM.appTablesBarCurrentPage = 2 },
@@ -21,6 +20,7 @@ fun appTablesBar(
     unit4: () -> Unit = { navVM.appTablesBarCurrentPage = 4 },
     unit5: () -> Unit = { navVM.appTablesBarCurrentPage = 5 },
     modifier: Modifier = Modifier,
+    debug: Boolean
 ) {
     Card(
         elevation = 10.dp,
@@ -78,7 +78,7 @@ fun appTablesBar(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            if (mainVM.setVM.isVision) {
+            if (debug) {
                 Card(
                     elevation = 10.dp,
                     modifier = Modifier.weight(1f)

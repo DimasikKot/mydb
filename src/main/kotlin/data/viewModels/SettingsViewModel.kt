@@ -35,7 +35,7 @@ class SettingsViewModel: ViewModel() {
         }
     }
 
-    var isVision by BooleanDB("isVision", false)
+    var debug by BooleanDB("debug", false)
 
     var reportDefaultDevice by IntDB("reportDefaultDevice", 0)
     var reportDefaultEmployee by IntDB("reportDefaultEmployee", 0)

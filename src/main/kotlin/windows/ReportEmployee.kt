@@ -13,7 +13,6 @@ import theme.mainTheme
 @Composable
 fun reportEmployee(
     mainVM: MainViewModel,
-    reportDevice: MutableIntState,
     reportGroup: MutableIntState,
     modifier: Modifier = Modifier,
 ) {
@@ -22,7 +21,7 @@ fun reportEmployee(
             Card(elevation = 10.dp, modifier = modifier) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     reportEmployeeBar(mainVM.tabReportEmployeeVM, reportGroup)
-                    reportEmployeeList(mainVM.tabReportEmployeeVM, reportDevice, Modifier.padding(top = 10.dp))
+                    reportEmployeeList(mainVM.tabReportEmployeeVM, Modifier.padding(top = 10.dp), mainVM)
                 }
             }
         }

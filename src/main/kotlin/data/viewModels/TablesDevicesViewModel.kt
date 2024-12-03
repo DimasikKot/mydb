@@ -3,7 +3,6 @@ package data.viewModels
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import data.DevicesTable
-import data.IntDB
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -13,76 +12,131 @@ import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
 class TablesDevicesViewModel : ViewModel() {
-    var report = mutableIntStateOf(IntDB("reportDefaultDevice", 0).toInt())
+    private var _loading by mutableStateOf(true)
+    private var _list by mutableStateOf<List<DeviceFromTable>>(emptyList())
+    private var _request by mutableStateOf("")
 
-    private var loading by mutableStateOf(true)
+    private var _order1 by mutableStateOf("name")
+    private var _order2 by mutableStateOf("")
+    private var _order3 by mutableStateOf("")
+    private var _order4 by mutableStateOf("")
+    private var _order5 by mutableStateOf("")
+
+    private var _whereId by mutableStateOf("")
+    private var _whereName by mutableStateOf("")
+    private var _whereDate by mutableStateOf("")
+    private var _wherePrice by mutableStateOf("")
+    private var _whereTypeId by mutableStateOf("")
+    private var _whereTypeName by mutableStateOf("")
+
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var _list by mutableStateOf<List<DeviceFromTable>>(emptyList())
     val list: List<DeviceFromTable>
         get() {
-            if (loading) {
-                try {
-                    GlobalScope.launch {
-                        _list = listGet()
-                        loading = false
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+            if (_loading) {
+                listUpdate()
             }
             return _list
         }
 
-    private var request by mutableStateOf("SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name, date, price, type_id FROM devices ORDER BY id")
-    var order1 by mutableStateOf("id")
-    private var order2 by mutableStateOf("")
-    private var order3 by mutableStateOf("")
-    private var order4 by mutableStateOf("")
-    private var order5 by mutableStateOf("")
-    var whereId by mutableStateOf("")
-    var whereName by mutableStateOf("")
-    var whereDate by mutableStateOf("")
-    var wherePrice by mutableStateOf("")
-    var whereTypeId by mutableStateOf("")
+    val order1: String
+        get() {
+            return _order1
+        }
+
+    var whereId: String
+        get() {
+            return _whereId
+        }
+        set(value) {
+            _whereId = value
+            listUpdate()
+        }
+    var whereName: String
+        get() {
+            return _whereName
+        }
+        set(value) {
+            _whereName = value
+            listUpdate()
+        }
+    var whereDate: String
+        get() {
+            return _whereDate
+        }
+        set(value) {
+            _whereDate = value
+            listUpdate()
+        }
+    var wherePrice: String
+        get() {
+            return _wherePrice
+        }
+        set(value) {
+            _wherePrice = value
+            listUpdate()
+        }
+    var whereTypeId: String
+        get() {
+            return _whereTypeId
+        }
+        set(value) {
+            _whereTypeId = value
+            listUpdate()
+        }
+    var whereTypeName: String
+        get() {
+            return _whereTypeName
+        }
+        set(value) {
+            _whereTypeName = value
+            listUpdate()
+        }
 
     fun listUpdate() {
-        var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name, date, price, type_id FROM devices"
+        var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY devices.name) AS number, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name FROM devices JOIN types ON devices.type_id = types.id"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) { conditions.add("id >= $whereId") }
-        if (whereName.isNotEmpty()) { conditions.add("name LIKE '%$whereName%'") }
-        if (whereDate.isNotEmpty()) { conditions.add("date LIKE '%$whereDate%'") }
-        if (wherePrice.isNotEmpty()) { conditions.add("price >= $wherePrice") }
-        if (whereTypeId.isNotEmpty()) { conditions.add("type_id >= $whereTypeId") }
-        if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" and ") }
-        requestNew += " ORDER BY $order1"
-        requestNew += if (order2.isNotEmpty()) ", $order2" else ""
-        requestNew += if (order3.isNotEmpty()) ", $order3" else ""
-        requestNew += if (order4.isNotEmpty()) ", $order4" else ""
-        requestNew += if (order5.isNotEmpty()) ", $order5" else ""
-        request = "SELECT id FROM devices"
-        request = requestNew
-        GlobalScope.launch {
-            _list = listGet()
+        if (_whereId.isNotEmpty()) { conditions.add("id >= $_whereId") }
+        if (_whereName.isNotEmpty()) { conditions.add("name LIKE '%$_whereName%'") }
+        if (_whereDate.isNotEmpty()) { conditions.add("date LIKE '%$_whereDate%'") }
+        if (_wherePrice.isNotEmpty()) { conditions.add("price >= $_wherePrice") }
+        if (_whereTypeId.isNotEmpty()) { conditions.add("type_id >= $_whereTypeId") }
+        if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" AND ") }
+        requestNew += " ORDER BY $_order1"
+        requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
+        requestNew += if (_order3.isNotEmpty()) ", $_order3" else ""
+        requestNew += if (_order4.isNotEmpty()) ", $_order4" else ""
+        requestNew += if (_order5.isNotEmpty()) ", $_order5" else ""
+        _request = requestNew
+        try {
+            GlobalScope.launch {
+                _list = emptyList()
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     fun listOrderBy(order: String): Boolean {
         var descending = false
-        if (order1.isEmpty()) {
-            order1 = order
-        } else if (order1 == order) {
-            order1 = "$order DESC"
+        if (_order1.isEmpty()) {
+            _order1 = order
+        } else if (_order1 == order) {
+            _order1 = "$order DESC"
             descending = true
-        } else if (order1 == "$order DESC") {
-            order1 = order
+        } else if (_order1 == "$order DESC") {
+            _order1 = order
         } else {
-            order5 = order4
-            order4 = order3
-            order3 = order2
-            order2 = order1
-            order1 = order
+            _order5 = _order4
+            _order4 = _order3
+            _order3 = _order2
+            _order2 = _order1
+            _order1 = order
         }
         listUpdate()
         return descending
@@ -90,97 +144,84 @@ class TablesDevicesViewModel : ViewModel() {
 
     private suspend fun listGet(): List<DeviceFromTable> {
         return withContext(Dispatchers.IO) {
-            try {
-                transaction {
-                    val result = exec(request) { row ->
-                        generateSequence {
-                            if (row.next()) {
-                                DeviceFromTable(
-                                    number = row.getInt("number"),
-                                    id = row.getInt("id"),
-                                    name = row.getString("name"),
-                                    date = row.getString("date"),
-                                    price = row.getInt("price"),
-                                    typeId = row.getInt("type_id")
-                                )
-                            } else null
-                        }.toList()
-                    }
-                    result ?: emptyList()
+            transaction {
+                val result = exec(_request) { row ->
+                    generateSequence {
+                        if (row.next()) {
+                            DeviceFromTable(
+                                number = row.getInt("number"),
+                                id = row.getInt("id"),
+                                name = row.getString("name"),
+                                date = row.getString("date"),
+                                price = row.getInt("price"),
+                                typeId = row.getInt("type_id"),
+                                typeName = row.getString("type_name")
+                            )
+                        } else null
+                    }.toList()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emptyList()
+                result ?: emptyList()
             }
         }
     }
 
     fun delete(itId: Int): Boolean {
-        try {
+        return try {
             transaction {
                 DevicesTable.deleteWhere { id.eq(itId) }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
-    fun update(itId: Int, newId: Int, newName: String, newDate: String, newPrice: Int, newTypeId: Int): Boolean {
-        try {
+    fun update(itId: Int, newId: String, newName: String, newDate: String, newPrice: String, newTypeId: String): Boolean {
+        return try {
             transaction {
                 DevicesTable.update({ DevicesTable.id eq itId }) {
-                    it[id] = newId
+                    it[id] = newId.toInt()
                     it[name] = newName
                     it[date] = newDate
-                    it[price] = newPrice
-                    it[typeId] = newTypeId
+                    it[price] = newPrice.toInt()
+                    it[typeId] = newTypeId.toInt()
                 }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
-    fun insert(newId: Int, newName: String, newDate: String, newPrice: Int, newTypeId: Int): Boolean {
-        try {
+    fun insert(newId: String, newName: String, newDate: String, newPrice: String, newTypeId: String): Boolean {
+        return try {
             transaction {
-                DevicesTable.insert {
-                    it[id] = newId
-                    it[name] = newName
-                    it[date] = newDate
-                    it[price] = newPrice
-                    it[typeId] = newTypeId
+                if (newId == "") {
+                    DevicesTable.insert {
+                        it[name] = newName
+                        it[date] = newDate
+                        it[price] = newPrice.toInt()
+                        it[typeId] = newTypeId.toInt()
+                    }
+                } else {
+                    DevicesTable.insert {
+                        it[id] = newId.toInt()
+                        it[name] = newName
+                        it[date] = newDate
+                        it[price] = newPrice.toInt()
+                        it[typeId] = newTypeId.toInt()
+                    }
                 }
             }
             listUpdate()
-            return true
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
-        }
-    }
-
-    fun insert(newName: String, newDate: String, newPrice: Int, newTypeId: Int): Boolean {
-        try {
-            transaction {
-                DevicesTable.insert {
-                    it[name] = newName
-                    it[date] = newDate
-                    it[price] = newPrice
-                    it[typeId] = newTypeId
-                }
-            }
-            listUpdate()
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
+            false
         }
     }
 }
@@ -195,4 +236,5 @@ data class DeviceFromTable(
     val date: String,
     val price: Int,
     val typeId: Int,
+    val typeName: String,
 )

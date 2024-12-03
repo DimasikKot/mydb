@@ -29,12 +29,12 @@ fun main() = application {
         }
     }
 
-    if (mainVM.tabDevicesVM.report.value != 0) {
-        mainVM.tabReportDeviceVM.report = mainVM.tabDevicesVM.report.value
+    if (mainVM.winVM.reportDevice != 0) {
+        mainVM.tabReportDeviceVM.report = mainVM.winVM.reportDevice
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
-                mainVM.tabDevicesVM.report.value = 0
+                mainVM.winVM.reportDevice = 0
                 mainVM.tabReportDeviceVM.report = 0
             },
             title = "Учёт устройства",
@@ -55,7 +55,7 @@ fun main() = application {
             title = "Учёт устройств сотрудника",
             state = windowState
         ) {
-            reportEmployee(mainVM, mainVM.tabDevicesVM.report, mainVM.tabGroupsVM.report, Modifier.padding(10.dp))
+            reportEmployee(mainVM, mainVM.tabGroupsVM.report, Modifier.padding(10.dp))
         }
     }
 

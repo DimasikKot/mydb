@@ -1,8 +1,12 @@
 package data.viewModels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import data.BooleanDS
 
 class WindowsViewModel : ViewModel() {
-    var app by BooleanDS(true)
+    var app by mutableStateOf(true)
+    var reportDevice by mutableIntStateOf(0)
 }
