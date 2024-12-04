@@ -94,14 +94,29 @@ class TablesDevicesViewModel : ViewModel() {
             listUpdate()
         }
 
-    fun listUpdate() {
+    fun listUpdateView() {
+        try {
+            GlobalScope.launch {
+                _list = emptyList()
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun listUpdate() {
         var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY devices.name) AS number, devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name FROM devices JOIN types ON devices.type_id = types.id"
         val conditions = mutableListOf<String>()
-        if (_whereId.isNotEmpty()) { conditions.add("id >= $_whereId") }
-        if (_whereName.isNotEmpty()) { conditions.add("name LIKE '%$_whereName%'") }
-        if (_whereDate.isNotEmpty()) { conditions.add("date LIKE '%$_whereDate%'") }
-        if (_wherePrice.isNotEmpty()) { conditions.add("price >= $_wherePrice") }
-        if (_whereTypeId.isNotEmpty()) { conditions.add("type_id >= $_whereTypeId") }
+        if (_whereId.isNotEmpty()) { conditions.add("devices.id >= $_whereId") }
+        if (_whereName.isNotEmpty()) { conditions.add("devices.name LIKE '%$_whereName%'") }
+        if (_whereDate.isNotEmpty()) { conditions.add("devices.date LIKE '%$_whereDate%'") }
+        if (_wherePrice.isNotEmpty()) { conditions.add("devices.price >= $_wherePrice") }
+        if (_whereTypeId.isNotEmpty()) { conditions.add("devices.type_id >= $_whereTypeId") }
+        if (_whereTypeName.isNotEmpty()) { conditions.add("types.name LIKE '%$_whereTypeName%'") }
         if (conditions.isNotEmpty()) { requestNew += " WHERE " + conditions.joinToString(" AND ") }
         requestNew += " ORDER BY $_order1"
         requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
@@ -111,7 +126,6 @@ class TablesDevicesViewModel : ViewModel() {
         _request = requestNew
         try {
             GlobalScope.launch {
-                _list = emptyList()
                 _list = listGet()
                 if (_list.isNotEmpty()) {
                     _loading = false

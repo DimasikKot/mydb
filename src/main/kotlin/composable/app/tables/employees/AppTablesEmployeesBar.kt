@@ -24,7 +24,7 @@ fun appTablesEmployeesBar(tabVM: TablesEmployeesViewModel) {
                 Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                tabVM.listUpdate()
+                tabVM.listUpdateView()
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 rowInfo(tabVM)
@@ -154,7 +154,7 @@ private fun rowSearch(
 ) {
     Row(modifier = modifier) {
         uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
-            tabVM.listUpdate()
+            tabVM.listUpdateView()
         }
         Card(elevation = 25.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
@@ -232,7 +232,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             groupsVM.whereId = it
-                                            groupsVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
@@ -246,7 +245,6 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            groupsVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

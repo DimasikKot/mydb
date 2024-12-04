@@ -12,7 +12,6 @@ import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
 class TablesTypesViewModel : ViewModel() {
-    private var _loading by mutableStateOf(true)
     private var _list by mutableStateOf<List<TypeFromTable>>(emptyList())
     private var _request by mutableStateOf("")
 
@@ -27,7 +26,7 @@ class TablesTypesViewModel : ViewModel() {
 
     val list: List<TypeFromTable>
         get() {
-            if (_loading) {
+            if (_list.isEmpty()) {
                 listUpdate()
             }
             return _list
@@ -55,7 +54,11 @@ class TablesTypesViewModel : ViewModel() {
             listUpdate()
         }
 
-    fun listUpdate() {
+    fun listUpdateView() {
+        _list = emptyList()
+    }
+
+    private fun listUpdate() {
         var requestNew = "SELECT ROW_NUMBER() OVER(ORDER BY id) AS number, id, name FROM types"
         val conditions = mutableListOf<String>()
         if (_whereId.isNotEmpty()) {
@@ -73,9 +76,6 @@ class TablesTypesViewModel : ViewModel() {
         try {
             GlobalScope.launch {
                 _list = listGet()
-                if (_list.isNotEmpty()) {
-                    _loading = false
-                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

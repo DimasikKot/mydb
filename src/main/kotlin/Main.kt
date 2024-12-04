@@ -30,12 +30,10 @@ fun main() = application {
     }
 
     if (mainVM.winVM.reportDevice != 0) {
-        mainVM.tabReportDeviceVM.report = mainVM.winVM.reportDevice
         val windowState = rememberWindowState(placement = WindowPlacement.Maximized)
         Window(
             onCloseRequest = {
                 mainVM.winVM.reportDevice = 0
-                mainVM.tabReportDeviceVM.report = 0
             },
             title = "Учёт устройства",
             state = windowState

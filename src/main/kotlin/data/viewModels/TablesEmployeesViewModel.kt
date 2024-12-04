@@ -65,7 +65,21 @@ class TablesEmployeesViewModel : ViewModel() {
             listUpdate()
         }
 
-    fun listUpdate() {
+    fun listUpdateView() {
+        try {
+            GlobalScope.launch {
+                _list = emptyList()
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun listUpdate() {
         var requestNew = "SELECT id, name, group_id FROM employees"
         val conditions = mutableListOf<String>()
         if (_whereId.isNotEmpty()) { conditions.add("id >= $_whereId") }

@@ -154,7 +154,6 @@ private fun rowUpdate(
                                 onValueChange = {
                                     if (it.matches(regex = Regex("^\\d*\$"))) {
                                         devicesVM.whereId = it
-                                        devicesVM.listUpdate()
                                     }
                                 },
                                 label = { Text(if (devicesVM.whereId == "") "Искать по ID устройства" else "Ищем по ID устройства") }
@@ -168,7 +167,6 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
-                        devicesVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
@@ -193,7 +191,6 @@ private fun rowUpdate(
                                 onValueChange = {
                                     if (it.matches(regex = Regex("^\\d*\$"))) {
                                         employeesVM.whereId = it
-                                        employeesVM.listUpdate()
                                     }
                                 },
                                 label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
@@ -207,7 +204,6 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
-                        employeesVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

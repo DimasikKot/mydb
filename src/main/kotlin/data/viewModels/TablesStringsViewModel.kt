@@ -78,7 +78,21 @@ class TablesStringsViewModel : ViewModel() {
             listUpdate()
         }
 
-    fun listUpdate() {
+    fun listUpdateView() {
+        try {
+            GlobalScope.launch {
+                _list = emptyList()
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun listUpdate() {
         var requestNew = "SELECT id, date, device_id, employee_id FROM strings"
         val conditions = mutableListOf<String>()
         if (_whereId.isNotEmpty()) { conditions.add("id >= $_whereId") }

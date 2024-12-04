@@ -166,7 +166,6 @@ private fun rowUpdate(
                                 onValueChange = {
                                     if (it.matches(regex = Regex("^\\d*\$"))) {
                                         groupsVM.whereId = it
-                                        groupsVM.listUpdate()
                                     }
                                 },
                                 label = { Text(if (groupsVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
@@ -180,7 +179,6 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
-                        groupsVM.listUpdate()
                     }
                 },
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

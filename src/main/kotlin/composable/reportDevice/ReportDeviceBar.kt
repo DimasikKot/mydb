@@ -29,7 +29,7 @@ fun reportDeviceBar(
                 Icons.Default.Update,
                 modifier = Modifier.height(55.dp).width(120.dp)
             ) {
-                tabVM.listUpdate()
+                tabVM.viewUpdate()
             }
             rowInfo(tabVM, Modifier.padding(start = 10.dp))
         }
@@ -228,16 +228,18 @@ private fun rowBar(
                 )
                 Row(Modifier.weight(0.5f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
+                    val itColumn = "id"
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "$itColumn DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == itColumn) Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("id")
+                                tabVM.order1 = itColumn
+                                descending = tabVM.order1 == "$itColumn DESC"
                             }
                     )
                     Text(
@@ -248,16 +250,18 @@ private fun rowBar(
                 }
                 Row(Modifier.weight(1f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(true) }
+                    val itColumn = "date"
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "date DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "$itColumn DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "date") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == itColumn) Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("date")
+                                tabVM.order1 = itColumn
+                                descending = tabVM.order1 == "$itColumn DESC"
                             }
                     )
                     Text(
@@ -268,16 +272,18 @@ private fun rowBar(
                 }
                 Row(Modifier.weight(0.7f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
+                    val itColumn = "employee_id"
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "employee_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "$itColumn DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "employee_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == itColumn) Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("employee_id")
+                                tabVM.order1 = itColumn
+                                descending = tabVM.order1 == "$itColumn DESC"
                             }
                     )
                     Text(
@@ -288,16 +294,18 @@ private fun rowBar(
                 }
                 Row(Modifier.weight(1f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
+                    val itColumn = "employee_name"
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "employee_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "$itColumn DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "employee_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == itColumn) Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("employee_name")
+                                tabVM.order1 = itColumn
+                                descending = tabVM.order1 == "$itColumn DESC"
                             }
                     )
                     Text(
@@ -308,16 +316,18 @@ private fun rowBar(
                 }
                 Row(Modifier.weight(0.5f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
+                    val itColumn = "group_id"
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "group_id DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "$itColumn DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "group_id") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == itColumn) Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("group_id")
+                                tabVM.order1 = itColumn
+                                descending = tabVM.order1 == "$itColumn DESC"
                             }
                     )
                     Text(
@@ -328,16 +338,18 @@ private fun rowBar(
                 }
                 Row(Modifier.weight(1f).padding(start = 10.dp)) {
                     var descending by remember { mutableStateOf(false) }
+                    val itColumn = "group_name"
                     Icon(
                         if (descending) {
-                            if (tabVM.order1 == "group_name DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
+                            if (tabVM.order1 == "$itColumn DESC") Icons.Default.KeyboardDoubleArrowUp else Icons.Default.KeyboardArrowUp
                         } else {
-                            if (tabVM.order1 == "group_name") Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
+                            if (tabVM.order1 == itColumn) Icons.Default.KeyboardDoubleArrowDown else Icons.Default.KeyboardArrowDown
                         },
                         contentDescription = null,
                         modifier = Modifier.size(35.dp).fillMaxSize().align(Alignment.CenterVertically)
                             .clickable {
-                                descending = tabVM.listOrderBy("group_name")
+                                tabVM.order1 = itColumn
+                                descending = tabVM.order1 == "$itColumn DESC"
                             }
                     )
                     Text(
@@ -358,7 +370,7 @@ private fun rowSearch(
 ) {
     Row(modifier = modifier) {
         uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
-            tabVM.listUpdate()
+            tabVM.viewUpdate()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
@@ -429,7 +441,7 @@ private fun rowCreate(
         var newGroupIdMenu by remember { mutableStateOf(false) }
         var newGroupName by remember { mutableStateOf("") }
         uiButton(Icons.Default.NewLabel, modifier = Modifier.height(80.dp).width(120.dp)) {
-            tabVM.insert(newId, newDate, newEmployeeId.toInt())
+            tabVM.insert(newId, newDate, newEmployeeId)
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
@@ -473,7 +485,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             employeesVM.whereId = it
-                                            employeesVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
@@ -490,13 +501,11 @@ private fun rowCreate(
                                             newGroupName = itemGroup.name
                                         }
                                     }
-                                    groupVM.listUpdate()
                                     newEmployeeIdMenu = false
                                 }) {
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            employeesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
@@ -528,7 +537,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             groupVM.whereId = it
-                                            groupVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (groupVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
@@ -543,7 +551,6 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            groupVM.listUpdate()
                         }
                     },
                     readOnly = true,

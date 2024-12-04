@@ -26,7 +26,7 @@ fun appTablesStringsBar(tabVM: TablesStringsViewModel) {
                 Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                tabVM.listUpdate()
+                tabVM.listUpdateView()
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 rowInfo(tabVM, Modifier.heightIn(min = 55.dp))
@@ -182,7 +182,7 @@ private fun rowSearch(
 ) {
     Row(modifier = modifier) {
         uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
-            tabVM.listUpdate()
+            tabVM.listUpdateView()
         }
         Card(elevation = 25.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {
@@ -274,7 +274,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             devicesVM.whereId = it
-                                            devicesVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (devicesVM.whereId == "") "Искать по ID устройства" else "Ищем по ID устройства") }
@@ -288,7 +287,6 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            devicesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)
@@ -313,7 +311,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             employeesVM.whereId = it
-                                            employeesVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
@@ -327,7 +324,6 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            employeesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 10.dp)

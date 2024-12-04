@@ -59,9 +59,9 @@ private fun row(
             if (it.editing.value) {
                 it.canUpdate.value = tabVM.update(
                     it.id,
-                    newId.value.toInt(),
+                    newId.value,
                     newDate.value,
-                    newEmployeeId.value.toInt(),
+                    newEmployeeId.value,
                 )
                 if (it.canUpdate.value) {
                     it.editing.value = false
@@ -201,7 +201,6 @@ private fun rowUpdate(
                             onValueChange = {
                                 if (it.matches(regex = Regex("^\\d*\$"))) {
                                     employeesVM.whereId = it
-                                    employeesVM.listUpdate()
                                 }
                             },
                             label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") })
@@ -217,13 +216,11 @@ private fun rowUpdate(
                                     newGroupName.value = itemGroup.name
                                 }
                             }
-                            groupVM.listUpdate()
                             newEmployeeIdMenu = false
                         }) {
                             Text("${item.id}: ${item.name}")
                         }
                     }
-                    employeesVM.listUpdate()
                 }
             }, modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
             )
@@ -254,7 +251,6 @@ private fun rowUpdate(
                                 onValueChange = {
                                     if (it.matches(regex = Regex("^\\d*\$"))) {
                                         groupsVM.whereId = it
-                                        groupsVM.listUpdate()
                                     }
                                 },
                                 label = { Text(if (groupsVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") })
@@ -268,7 +264,6 @@ private fun rowUpdate(
                                 Text("${item.id}: ${item.name}")
                             }
                         }
-                        groupsVM.listUpdate()
                     }
                 },
                 readOnly = true,

@@ -25,7 +25,7 @@ fun appTablesGroupsBar(
                 Icons.Default.Update,
                 modifier = Modifier.size(120.dp)
             ) {
-                tabVM.listUpdate()
+                tabVM.listUpdateView()
             }
             Column(modifier = Modifier.padding(start = 10.dp)) {
                 rowInfo(tabVM)
@@ -141,7 +141,7 @@ private fun rowSearch(
 ) {
     Row(modifier = modifier) {
         uiButton(Icons.Default.Search, modifier = Modifier.height(80.dp).width(120.dp)) {
-            tabVM.listUpdate()
+            tabVM.listUpdateView()
         }
         Card(elevation = 10.dp, modifier = Modifier.heightIn(min = 80.dp).padding(start = 10.dp)) {
             Row(Modifier.padding(10.dp)) {

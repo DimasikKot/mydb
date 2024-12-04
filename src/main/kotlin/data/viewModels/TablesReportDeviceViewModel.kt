@@ -12,231 +12,293 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 @OptIn(DelicateCoroutinesApi::class)
-class TablesReportDeviceViewModel : ViewModel() {
-    var report by mutableIntStateOf(0)
+class TablesReportDeviceViewModel(private val _report: Int) : ViewModel() {
+    private var _head by mutableStateOf(ReportDeviceFromTables())
+    private var _list by mutableStateOf<List<ReportDeviceStringFromTables>>(emptyList())
+    private var _request by mutableStateOf("")
 
-    private var loading by mutableStateOf(true)
+    private var _order1 by mutableStateOf("date DESC")
+    private var _order2 by mutableStateOf("")
+    private var _order3 by mutableStateOf("")
+    private var _order4 by mutableStateOf("")
+    private var _order5 by mutableStateOf("")
+    private var _order6 by mutableStateOf("")
+
+    private var _whereNumber by mutableStateOf("")
+    private var _whereId by mutableStateOf("")
+    private var _whereDate by mutableStateOf("")
+    private var _whereEmployeeID by mutableStateOf("")
+    private var _whereEmployeeName by mutableStateOf("")
+    private var _whereGroupId by mutableStateOf("")
+    private var _whereGroupName by mutableStateOf("")
+
     var searching by mutableStateOf(false)
     var creating by mutableStateOf(false)
 
-    private var _head by mutableStateOf(ReportDeviceFromTables())
     val head: ReportDeviceFromTables
-        get() {
-            GlobalScope.launch {
-                _head = headGet()
-            }
-            return _head
-        }
-
-    private var _list by mutableStateOf<List<ReportDeviceStringFromTables>>(emptyList())
+        get() = _head
     val list: List<ReportDeviceStringFromTables>
         get() {
-            GlobalScope.launch {
-                _list = listGet()
+            if (_head.id == -1 && _list.isEmpty()) {
+                _headUpdate()
+                _requestUpdate()
             }
             return _list
         }
 
-    private var request by mutableStateOf("")
-    var order1 by mutableStateOf("date DESC")
-    private var order2 by mutableStateOf("")
-    private var order3 by mutableStateOf("")
-    private var order4 by mutableStateOf("")
-    private var order5 by mutableStateOf("")
-    private var order6 by mutableStateOf("")
-    var whereNumber by mutableStateOf("")
-    var whereId by mutableStateOf("")
-    var whereDate by mutableStateOf("")
-    var whereEmployeeID by mutableStateOf("")
-    var whereEmployeeName by mutableStateOf("")
-    var whereGroupId by mutableStateOf("")
-    var whereGroupName by mutableStateOf("")
-
-    private suspend fun headGet(): ReportDeviceFromTables {
-        try {
-            val requestDevice =
-                "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
-                        "FROM devices JOIN types ON devices.type_id = types.id " +
-                        "WHERE devices.id = $report " +
-                        "LIMIT 1"
-            return transaction {
-                exec(requestDevice) { row ->
-                    if (row.next()) {
-                        ReportDeviceFromTables(
-                            id = row.getInt("id"),
-                            name = row.getString("name"),
-                            date = row.getString("date"),
-                            price = row.getInt("price"),
-                            typeId = row.getInt("type_id"),
-                            typeName = row.getString("type_name")
-                        )
-                    } else {
-                        ReportDeviceFromTables(-1, "REQUEST", "REQUEST", -1, -1, "$row")
-                    }
-                }!!
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return ReportDeviceFromTables(-1, "DB", "DB", -1, -1, "$e")
+    var order1: String
+        get() {
+            return _order1
         }
-    }
+        set(value) {
+            _listOrderBy(value)
+            _requestUpdate()
+        }
 
-    private suspend fun listGet(): List<ReportDeviceStringFromTables> {
-        return withContext(Dispatchers.IO) {
-            try {
-                transaction {
-                    val result = exec(request) { row ->
-                        generateSequence {
+    var whereNumber: String
+        get() {
+            return _whereNumber
+        }
+        set(value) {
+            _whereNumber = value
+            _requestUpdate()
+        }
+    var whereId: String
+        get() {
+            return _whereId
+        }
+        set(value) {
+            _whereId = value
+            _requestUpdate()
+        }
+    var whereDate: String
+        get() {
+            return _whereDate
+        }
+        set(value) {
+            _whereDate = value
+            _requestUpdate()
+        }
+    var whereEmployeeID: String
+        get() {
+            return _whereEmployeeID
+        }
+        set(value) {
+            _whereEmployeeID = value
+            _requestUpdate()
+        }
+    var whereEmployeeName: String
+        get() {
+            return _whereEmployeeName
+        }
+        set(value) {
+            _whereEmployeeName = value
+            _requestUpdate()
+        }
+    var whereGroupId: String
+        get() {
+            return _whereGroupId
+        }
+        set(value) {
+            _whereGroupId = value
+            _requestUpdate()
+        }
+    var whereGroupName: String
+        get() {
+            return _whereGroupName
+        }
+        set(value) {
+            _whereGroupName = value
+            _requestUpdate()
+        }
+
+    private fun _headUpdate() {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                _head = try {
+                    val requestDevice =
+                        "SELECT devices.id, devices.name, devices.date, devices.price, devices.type_id, types.name AS type_name " +
+                                "FROM devices JOIN types ON devices.type_id = types.id " +
+                                "WHERE devices.id = $_report " +
+                                "LIMIT 1"
+                    transaction {
+                        exec(requestDevice) { row ->
                             if (row.next()) {
-                                ReportDeviceStringFromTables(
-                                    number = row.getInt("number"),
+                                ReportDeviceFromTables(
                                     id = row.getInt("id"),
+                                    name = row.getString("name"),
                                     date = row.getString("date"),
-                                    employeeID = row.getInt("employee_id"),
-                                    employeeName = row.getString("employee_name"),
-                                    groupId = row.getInt("group_id"),
-                                    groupName = row.getString("group_name"),
+                                    price = row.getInt("price"),
+                                    typeId = row.getInt("type_id"),
+                                    typeName = row.getString("type_name")
                                 )
                             } else {
-                                null
+                                ReportDeviceFromTables(_report, "$row")
                             }
-                        }.toList()
+                        }!!
                     }
-                    println()
-                    result ?: emptyList()
+                } catch (e: Exception) {
+                    ReportDeviceFromTables(_report, "$e")
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emptyList()
             }
         }
     }
 
-    fun listUpdate() {
+    private fun _listUpdate() {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                _list = try {
+                    transaction {
+                        val result = exec(_request) { row ->
+                            generateSequence {
+                                if (row.next()) {
+                                    ReportDeviceStringFromTables(
+                                        number = row.getInt("number"),
+                                        id = row.getInt("id"),
+                                        date = row.getString("date"),
+                                        employeeID = row.getInt("employee_id"),
+                                        employeeName = row.getString("employee_name"),
+                                        groupId = row.getInt("group_id"),
+                                        groupName = row.getString("group_name"),
+                                    )
+                                } else {
+                                    null
+                                }
+                            }.toList()
+                        }
+                        result ?: emptyList()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    emptyList()
+                }
+            }
+        }
+    }
+
+    private fun _requestUpdate() {
         var requestNew =
             "SELECT ROW_NUMBER() OVER(ORDER BY strings.date DESC NULLS LAST) AS number, strings.id, strings.date, strings.employee_id, employees.name AS employee_name, employees.group_id AS group_id, groups.name AS group_name " +
                     "FROM strings " +
                     "JOIN employees ON strings.employee_id = employees.id " +
                     "JOIN groups ON employees.group_id = groups.id " +
-                    "WHERE strings.device_id = $report"
+                    "WHERE strings.device_id = $_report"
         val conditions = mutableListOf<String>()
-        if (whereId.isNotEmpty()) {
-            conditions.add("strings.id >= $whereId")
+        if (_whereId.isNotEmpty()) {
+            conditions.add("strings.id >= $_whereId")
         }
-        if (whereDate.isNotEmpty()) {
-            conditions.add("strings.date LIKE '%$whereDate%'")
+        if (_whereDate.isNotEmpty()) {
+            conditions.add("strings.date LIKE '%$_whereDate%'")
         }
-        if (whereEmployeeID.isNotEmpty()) {
-            conditions.add("strings.employee_id >= $whereEmployeeID")
+        if (_whereEmployeeID.isNotEmpty()) {
+            conditions.add("strings.employee_id >= $_whereEmployeeID")
         }
-        if (whereEmployeeName.isNotEmpty()) {
-            conditions.add("employees.name LIKE '%$whereEmployeeName%'")
+        if (_whereEmployeeName.isNotEmpty()) {
+            conditions.add("employees.name LIKE '%$_whereEmployeeName%'")
         }
-        if (whereGroupId.isNotEmpty()) {
-            conditions.add("employees.group_id >= $whereGroupId")
+        if (_whereGroupId.isNotEmpty()) {
+            conditions.add("employees.group_id >= $_whereGroupId")
         }
-        if (whereGroupName.isNotEmpty()) {
-            conditions.add("groups.name LIKE '%$whereGroupName%'")
+        if (_whereGroupName.isNotEmpty()) {
+            conditions.add("groups.name LIKE '%$_whereGroupName%'")
         }
         if (conditions.isNotEmpty()) {
-            requestNew += " and " + conditions.joinToString(" and ")
+            requestNew += " AND " + conditions.joinToString(" AND ")
         }
-        requestNew += " ORDER BY $order1"
-        requestNew += if (order2.isNotEmpty()) ", $order2" else ""
-        requestNew += if (order3.isNotEmpty()) ", $order3" else ""
-        requestNew += if (order4.isNotEmpty()) ", $order4" else ""
-        requestNew += if (order5.isNotEmpty()) ", $order5" else ""
-        requestNew += if (order6.isNotEmpty()) ", $order5" else ""
-        request = ""
-        request = requestNew
-        GlobalScope.launch {
-            _list = listGet()
-        }
+        requestNew += " ORDER BY $_order1"
+        requestNew += if (_order2.isNotEmpty()) ", $_order2" else ""
+        requestNew += if (_order3.isNotEmpty()) ", $_order3" else ""
+        requestNew += if (_order4.isNotEmpty()) ", $_order4" else ""
+        requestNew += if (_order5.isNotEmpty()) ", $_order5" else ""
+        requestNew += if (_order6.isNotEmpty()) ", $_order5" else ""
+        _request = requestNew
+        _listUpdate()
     }
 
-    fun listOrderBy(order: String): Boolean {
-        var descending = false
-        if (order1.isEmpty()) {
-            order1 = order
-        } else if (order1 == order) {
-            order1 = "$order DESC"
-            descending = true
-        } else if (order1 == "$order DESC") {
-            order1 = order
+    fun viewUpdate() {
+        _head = ReportDeviceFromTables()
+        _list = emptyList()
+    }
+
+    private fun _listOrderBy(order: String) {
+        if (_order1.isEmpty()) {
+            _order1 = order
+        } else if (_order1 == order) {
+            _order1 = "$order DESC"
+        } else if (_order1 == "$order DESC") {
+            _order1 = order
         } else {
-            order6 = order5
-            order5 = order4
-            order4 = order3
-            order3 = order2
-            order2 = order1
-            order1 = order
+            _order6 = _order5
+            _order5 = _order4
+            _order4 = _order3
+            _order3 = _order2
+            _order2 = _order1
+            _order1 = order
         }
-        listUpdate()
-        return descending
     }
 
     fun delete(itId: Int): Boolean {
-        try {
+        return try {
             transaction {
                 StringsTable.deleteWhere { id.eq(itId) }
             }
-            listUpdate()
-            return true
+            _requestUpdate()
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
     fun update(
         itId: Int,
-        newId: Int,
+        newId: String,
         newDate: String,
-        newEmployeeId: Int,
+        newEmployeeId: String,
     ): Boolean {
-        try {
+        return try {
             transaction {
-                StringsTable.update({ StringsTable.id.eq(itId) and StringsTable.deviceId.eq(report) }) {
-                    it[id] = newId
+                StringsTable.update({ StringsTable.id.eq(itId) and StringsTable.deviceId.eq(_report) }) {
+                    it[id] = newId.toInt()
                     it[date] = newDate
-                    it[employeeId] = newEmployeeId
+                    it[employeeId] = newEmployeeId.toInt()
                 }
             }
-            listUpdate()
-            return true
+            _requestUpdate()
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 
     fun insert(
         newId: String,
         newDate: String,
-        newEmployeeId: Int,
+        newEmployeeId: String,
     ): Boolean {
-        try {
+        return try {
             transaction {
                 if (newId == "") {
                     StringsTable.insert {
                         it[date] = newDate
-                        it[employeeId] = newEmployeeId
-                        it[deviceId] = report
+                        it[employeeId] = newEmployeeId.toInt()
+                        it[deviceId] = _report
                     }
                 } else {
                     StringsTable.insert {
                         it[id] = newId.toInt()
                         it[date] = newDate
-                        it[employeeId] = newEmployeeId
-                        it[deviceId] = report
+                        it[employeeId] = newEmployeeId.toInt()
+                        it[deviceId] = _report
                     }
                 }
             }
-            listUpdate()
-            return true
+            _requestUpdate()
+            true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 }

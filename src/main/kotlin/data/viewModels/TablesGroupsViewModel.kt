@@ -55,7 +55,21 @@ class TablesGroupsViewModel : ViewModel() {
             listUpdate()
         }
 
-    fun listUpdate() {
+    fun listUpdateView() {
+        try {
+            GlobalScope.launch {
+                _list = emptyList()
+                _list = listGet()
+                if (_list.isNotEmpty()) {
+                    _loading = false
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun listUpdate() {
         var requestNew = "SELECT id, name FROM groups"
         val conditions = mutableListOf<String>()
         if (_whereId.isNotEmpty()) {

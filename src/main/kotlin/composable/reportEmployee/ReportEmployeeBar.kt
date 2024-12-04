@@ -494,7 +494,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             employeesVM.whereId = it
-                                            employeesVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (employeesVM.whereId == "") "Искать по ID сотрудника" else "Ищем по ID сотрудника") }
@@ -511,13 +510,11 @@ private fun rowCreate(
                                             newGroupName = itemGroup.name
                                         }
                                     }
-                                    groupVM.listUpdate()
                                     newEmployeeIdMenu = false
                                 }) {
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            employeesVM.listUpdate()
                         }
                     },
                     modifier = Modifier.weight(0.7f).align(Alignment.CenterVertically).padding(start = 10.dp)
@@ -549,7 +546,6 @@ private fun rowCreate(
                                     onValueChange = {
                                         if (it.matches(regex = Regex("^\\d*\$"))) {
                                             groupVM.whereId = it
-                                            groupVM.listUpdate()
                                         }
                                     },
                                     label = { Text(if (groupVM.whereId == "") "Искать по ID группы" else "Ищем по ID группы") }
@@ -564,7 +560,6 @@ private fun rowCreate(
                                     Text("${item.id}: ${item.name}")
                                 }
                             }
-                            groupVM.listUpdate()
                         }
                     },
                     readOnly = true,
